@@ -1,6 +1,10 @@
 name: CI
 on:
   push:
+    branches-ignore:
+      - latest-release
+    tags-ignore:
+      - 'v*'
   pull_request:
 
 jobs:
