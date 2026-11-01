@@ -39,9 +39,15 @@ function parseNumberField(row: Row, text: string): number | null {
 function NumberInput({ row, draft, set, setInvalid }: SettingRowProps) {
   const key = row.key as keyof Preferences
   const [text, setText] = useState(() => formatNumber(row, draft[key] as number))
-  const [bad, setBad] = useState(false)
+  // A stored -1 ("off") is not a value: once the field is shown it must be filled in before saving.
+  const [bad, setBad] = useState(() => parseNumberField(row, formatNumber(row, draft[key] as number)) === null)
 
-  useEffect(() => () => setInvalid(key, false), [key, setInvalid])
+  useEffect(() => {
+    if (bad) setInvalid(key, true)
+    return () => setInvalid(key, false)
+    // only the initial state matters here; later changes go through onChange
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key, setInvalid])
 
   const onChange = (value: string) => {
     setText(value)

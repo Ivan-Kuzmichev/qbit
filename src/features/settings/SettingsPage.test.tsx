@@ -124,6 +124,28 @@ describe('SettingsPage', () => {
     await waitFor(() => expect(sent(f)).toEqual([{ max_ratio_enabled: false }]))
   })
 
+  it('enabling ratio when the server stored -1 needs a value before saving', async () => {
+    const f = setup({ 'app/preferences': () => json({ ...prefs, max_ratio_enabled: false, max_ratio: -1 }) })
+    const user = await open()
+    await user.click(screen.getByRole('switch', { name: 'Останавливать при ratio' }))
+    expect(screen.getByLabelText('Ratio')).toHaveValue('')
+    expect(screen.getByRole('alert')).toBeInTheDocument()
+    expect(save()).toBeDisabled()
+    await user.type(screen.getByLabelText('Ratio'), '2')
+    expect(save()).toBeEnabled()
+    await user.click(save())
+    await waitFor(() => expect(sent(f)).toEqual([{ max_ratio_enabled: true, max_ratio: 2 }]))
+  })
+
+  it('switching it back off clears the block', async () => {
+    setup({ 'app/preferences': () => json({ ...prefs, max_seeding_time_enabled: false, max_seeding_time: -1 }) })
+    const user = await open()
+    const sw = screen.getByRole('switch', { name: 'Останавливать после времени раздачи' })
+    await user.click(sw)
+    await user.click(sw)
+    expect(screen.queryByRole('alert')).toBeNull()
+  })
+
   it('a port outside 1-65535 blocks saving', async () => {
     setup()
     const user = await open()
