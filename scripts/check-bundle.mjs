@@ -13,6 +13,13 @@ function walk(dir) {
 }
 
 const files = walk(DIR).filter((f) => /\.(js|css)$/.test(f))
+// A sample torrent of src/demo: the simulated API must never reach the build people install.
+const leaked = files.filter((f) => readFileSync(f, 'utf8').includes('Sintel.2010'))
+if (leaked.length > 0) {
+  console.error(`The demo leaked into the bundle: ${leaked.join(', ')}`)
+  process.exit(1)
+}
+
 const total = files.reduce((sum, f) => sum + gzipSync(readFileSync(f)).length, 0)
 const kb = (total / 1024).toFixed(1)
 

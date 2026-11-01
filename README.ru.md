@@ -19,6 +19,10 @@
   <a href="README.md">English</a> · <b>Русский</b>
 </p>
 
+<p align="center">
+  <a href="https://ivan-kuzmichev.github.io/qbit/"><b>Открыть живое демо</b></a>
+</p>
+
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="docs/screenshots/desktop-light.png">
   <img src="docs/screenshots/desktop-dark.png" alt="Главный экран qBit: список торрентов и карточка деталей под ним">
@@ -144,6 +148,8 @@ npm test              # unit-тесты (Vitest)
 npm run e2e           # e2e на настоящем qBittorrent в Docker; сначала npm run build
 npm run visual        # сверка экранов со значениями из макетов
 npm run screenshots   # пересоздаёт картинки в docs/screenshots
+npm run build:demo    # живое демо: приложение с имитацией API, сервер не нужен
+npm run e2e:demo      # проверяет эту сборку в браузере
 ```
 
 Также: `npm run typecheck`, `npm run lint`, `npm run check:bundle`.

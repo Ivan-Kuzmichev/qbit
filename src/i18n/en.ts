@@ -24,6 +24,11 @@ export const en: Dict = {
     title: 'qBittorrent 5.0 or newer is required',
     hint: 'This interface works with WebAPI 2.11 and above.',
   },
+  demo: {
+    label: 'Demo',
+    text: 'Demo with sample data: nothing downloads, and it all lives in this tab only.',
+    install: 'How to install',
+  },
   connection: {
     lost: 'No connection, retrying…',
   },

@@ -4,7 +4,7 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
-  { ignores: ['qbit/**', 'node_modules/**', 'test-results/**', 'playwright-report/**', '.superpowers/**'] },
+  { ignores: ['qbit/**', 'dist-demo/**', 'node_modules/**', 'test-results/**', 'playwright-report/**', '.superpowers/**'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

@@ -12,6 +12,8 @@
     "lint": "eslint .",
     "check:bundle": "node scripts/check-bundle.mjs",
     "e2e": "playwright test",
+    "build:demo": "VITE_DEMO=1 vite build --outDir dist-demo",
+    "e2e:demo": "playwright test -c e2e/demo/playwright.config.ts",
     "visual": "playwright test -c e2e/visual/playwright.config.ts",
     "screenshots": "SCREENSHOTS=1 playwright test -c e2e/visual/playwright.config.ts readme"
   },
