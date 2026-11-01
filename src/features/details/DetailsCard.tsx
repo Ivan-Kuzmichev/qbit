@@ -7,7 +7,7 @@ import { IconButton } from '../../components/ui/IconButton'
 import { Progress } from '../../components/ui/Progress'
 import { Tabs } from '../../components/ui/Tabs'
 import { t } from '../../i18n/ru'
-import { formatBytes, formatEta, formatSpeed, plural } from '../../lib/format'
+import { formatBytes, formatEta, formatSpeed, percentOf, plural } from '../../lib/format'
 import { useDialogs } from '../../store/dialogs'
 import { useTorrents } from '../../store/torrents'
 import { runTorrentAction } from '../torrents/actions'
@@ -41,7 +41,7 @@ export function DetailsCard() {
 
   const status = uiStatus(torrent)
   const progress = Math.min(1, Math.max(0, num(torrent.progress)))
-  const percent = Math.floor(progress * 100)
+  const percent = percentOf(progress)
   const resume = status.action === 'start'
   const hashes = [hash]
   // Swarm size as the trackers report it; both are -1 until a tracker has answered.

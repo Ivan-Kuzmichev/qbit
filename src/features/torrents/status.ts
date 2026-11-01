@@ -1,12 +1,12 @@
 import type { Torrent } from '../../api/types'
 import { t } from '../../i18n/ru'
-import { formatBytes, formatEta, plural } from '../../lib/format'
+import { formatBytes, formatEta, percentOf, plural } from '../../lib/format'
 
 export type UiKind =
   | 'downloading' | 'seeding' | 'done' | 'paused' | 'queued' | 'checking' | 'moving' | 'error'
 export type RowAction = 'stop' | 'start' | 'forceStart' | 'recheck' | null
 
-const pct = (p: number) => `${Math.floor((Number.isFinite(p) ? p : 0) * 100)}%`
+const pct = (p: number) => `${percentOf(p)}%`
 const peers = (n: number) => plural(Number.isFinite(n) ? n : 0, t.plural.peers)
 
 export function uiStatus(tor: Torrent): { kind: UiKind; action: RowAction; sub: string } {

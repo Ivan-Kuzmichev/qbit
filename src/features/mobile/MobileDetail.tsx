@@ -5,7 +5,7 @@ import { Chip } from '../../components/ui/Chip'
 import { Progress } from '../../components/ui/Progress'
 import { Tabs } from '../../components/ui/Tabs'
 import { t } from '../../i18n/ru'
-import { formatBytes, formatEta, formatSpeed, plural } from '../../lib/format'
+import { formatBytes, formatEta, formatSpeed, percentOf, plural } from '../../lib/format'
 import { navigate } from '../../lib/router'
 import { useDialogs } from '../../store/dialogs'
 import { useTorrents } from '../../store/torrents'
@@ -38,7 +38,7 @@ export function MobileDetail({ hash }: { hash: string }) {
   // Before the first sync the list is empty: that is "not loaded yet", not "removed".
   const synced = useTorrents((s) => s.rid > 0)
   const [tab, setTab] = useState<DetailsTab>('files')
-  const [picking, setPicking] = useState<TreeNode | null>(null)
+  const [picking, setPicking] = useState<{ node: TreeNode; apply: (ids: number[], priority: number) => void } | null>(null)
   const data = useDetailsPolling(torrent ? hash : null, tab)
 
   useEffect(() => {
@@ -67,7 +67,7 @@ export function MobileDetail({ hash }: { hash: string }) {
 
   const status = uiStatus(torrent)
   const progress = Math.min(1, Math.max(0, num(torrent.progress)))
-  const percent = Math.floor(progress * 100)
+  const percent = percentOf(progress)
   const resume = status.action === 'start'
   const complete = Number.isFinite(torrent.num_complete) ? torrent.num_complete : -1
   const incomplete = Number.isFinite(torrent.num_incomplete) ? torrent.num_incomplete : -1
@@ -122,7 +122,7 @@ export function MobileDetail({ hash }: { hash: string }) {
         </div>
         <div className={styles.panel} role="tabpanel" id="details-panel" aria-labelledby={`details-tab-${tab}`} data-tab={tab}>
           {tab === 'files' && data.files && (
-            <FilesTab key={hash} files={data.files} variant="mobile" onSetPriority={setPriority} onPickPriority={setPicking} />
+            <FilesTab key={hash} files={data.files} variant="mobile" onSetPriority={setPriority} onPickPriority={(node, apply) => setPicking({ node, apply })} />
           )}
           {tab === 'trackers' && (
             <TrackersTab
@@ -151,15 +151,15 @@ export function MobileDetail({ hash }: { hash: string }) {
 
       {picking && (
         <ActionSheet
-          title={`${t.mobile.priorityTitle}: ${picking.name}`}
+          title={`${t.mobile.priorityTitle}: ${picking.node.name}`}
           items={PRIORITIES.map((p) => ({
             id: String(p),
             label: t.details.files.priorities[p],
-            checked: picking.priority === p,
+            checked: picking.node.priority === p,
             onSelect: () => {
-              const ids = picking.ids
+              const { node, apply } = picking
               setPicking(null)
-              void setPriority(ids, p).catch(() => {})
+              apply(node.ids, p)
             },
           }))}
           onClose={() => setPicking(null)}

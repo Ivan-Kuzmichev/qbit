@@ -69,3 +69,9 @@ const dateFormat = new Intl.DateTimeFormat('ru', { day: '2-digit', month: '2-dig
 export function formatDate(unixSeconds: number): string {
   return Number.isFinite(unixSeconds) && unixSeconds > 0 ? dateFormat.format(new Date(unixSeconds * 1000)) : '—'
 }
+
+/** Whole percent for a 0..1 progress; floors, but tolerates float error (0.29 * 100 = 28.999...). Never 100 before completion. */
+export function percentOf(p: number): number {
+  if (!Number.isFinite(p)) return 0
+  return Math.min(100, Math.max(0, Math.floor(p * 100 + 1e-6)))
+}

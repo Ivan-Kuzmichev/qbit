@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatBytes, formatEta, formatLimitSpeed, formatSpeed, plural } from './format'
+import { formatBytes, formatEta, formatLimitSpeed, formatSpeed, percentOf, plural } from './format'
 
 const P: [string, string, string] = ['пир', 'пира', 'пиров']
 
@@ -45,5 +45,16 @@ describe('format', () => {
     expect(plural(0, P)).toBe('0 пиров')
     expect(plural(111, P)).toBe('111 пиров')
     expect(plural(121, P)).toBe('121 пир')
+  })
+})
+
+describe('percentOf', () => {
+  it('floors without float error and never rounds up to 100', () => {
+    expect(percentOf(0.29)).toBe(29)
+    expect(percentOf(0.57)).toBe(57)
+    expect(percentOf(0.58)).toBe(58)
+    expect(percentOf(0.999)).toBe(99)
+    expect(percentOf(1)).toBe(100)
+    expect(percentOf(NaN)).toBe(0)
   })
 })

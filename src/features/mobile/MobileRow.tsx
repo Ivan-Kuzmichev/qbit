@@ -2,7 +2,7 @@ import { memo } from 'react'
 import type { Torrent } from '../../api/types'
 import { Progress } from '../../components/ui/Progress'
 import { t } from '../../i18n/ru'
-import { formatBytes, formatEta, formatSpeed } from '../../lib/format'
+import { formatBytes, formatEta, formatSpeed, percentOf } from '../../lib/format'
 import { shownSpeed } from '../torrents/columns'
 import { uiStatus } from '../torrents/status'
 import { STATUS_VIEW } from '../torrents/TorrentRow'
@@ -30,7 +30,7 @@ export interface MobileRowProps {
 export const MobileRow = memo(function MobileRow({ torrent, top, index, count }: MobileRowProps) {
   const { kind } = uiStatus(torrent)
   const view = STATUS_VIEW[kind]
-  const pct = Math.floor((Number.isFinite(torrent.progress) ? torrent.progress : 0) * 100)
+  const pct = percentOf(torrent.progress)
   return (
     <div
       role="listitem"

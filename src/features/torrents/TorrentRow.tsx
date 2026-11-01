@@ -7,7 +7,7 @@ import type { Torrent } from '../../api/types'
 import { IconButton } from '../../components/ui/IconButton'
 import { Progress } from '../../components/ui/Progress'
 import { t } from '../../i18n/ru'
-import { formatBytes, formatDate, formatSpeed } from '../../lib/format'
+import { formatBytes, formatDate, formatSpeed, percentOf } from '../../lib/format'
 import { shownSpeed, type Column } from './columns'
 import { runRowAction } from './actions'
 import { uiStatus, type RowAction, type UiKind } from './status'
@@ -84,7 +84,7 @@ function Cell({ column, torrent, status }: { column: Column; torrent: Torrent; s
           <div className={styles.bar}>
             <Progress value={torrent.progress} tone={view.tone} height={12} />
           </div>
-          <span className={styles.pct}>{Math.floor((Number.isFinite(torrent.progress) ? torrent.progress : 0) * 100)}%</span>
+          <span className={styles.pct}>{percentOf(torrent.progress)}%</span>
         </div>
       )
     case 'speed': {
