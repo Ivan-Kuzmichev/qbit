@@ -48,6 +48,26 @@ describe('useDetailsPolling', () => {
     unmount()
   })
 
+  it('merges a partial peer update into the stored peer and keeps untouched peers as the same object', async () => {
+    let n = 0
+    routes({
+      'sync/torrentPeers': () => {
+        n++
+        return n === 1
+          ? json({ rid: 1, full_update: true, peers: { 'a:1': { ip: 'a', port: 1, progress: 0.1 }, 'b:2': { ip: 'b', port: 2, progress: 0.2 } } })
+          : json({ rid: 2, peers: { 'a:1': { progress: 0.5 } } })
+      },
+    })
+    const { result, unmount } = renderHook(() => useDetailsPolling('a', 'peers'))
+    await flush(0)
+    const before = result.current.peers
+    await flush(2000)
+    const [a, b] = result.current.peers
+    expect(a).toMatchObject({ ip: 'a', port: 1, progress: 0.5 })
+    expect(b).toBe(before[1])
+    unmount()
+  })
+
   it('polls peers every 2 s with rid, merging increments', async () => {
     let n = 0
     const urls: string[] = []

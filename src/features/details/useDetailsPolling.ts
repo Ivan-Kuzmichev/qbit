@@ -147,7 +147,8 @@ export function useDetailsPolling(hash: string | null, tab: DetailsTab): Details
       rid = resp.rid
       patch((s) => {
         const peerMap = resp.full_update ? {} : { ...s.peerMap }
-        Object.assign(peerMap, resp.peers)
+        // An update carries only the changed fields of a peer: merge, don't replace.
+        for (const [key, fields] of Object.entries(resp.peers ?? {})) peerMap[key] = { ...peerMap[key], ...fields }
         for (const key of resp.peers_removed ?? []) delete peerMap[key]
         return { peerMap, showFlags: resp.show_flags ?? s.showFlags }
       })

@@ -14,7 +14,10 @@ import { runTorrentAction } from '../torrents/actions'
 import { uiStatus } from '../torrents/status'
 import styles from './DetailsCard.module.css'
 import { FilesTab } from './FilesTab'
+import { InfoTab } from './InfoTab'
+import { PeersTab } from './PeersTab'
 import { PieceMap } from './PieceMap'
+import { TrackersTab } from './TrackersTab'
 import { useDetailsPolling, type DetailsTab } from './useDetailsPolling'
 
 const num = (n: number | undefined) => (Number.isFinite(n) ? (n as number) : 0)
@@ -39,6 +42,10 @@ export function DetailsCard() {
   const percent = Math.floor(progress * 100)
   const resume = status.action === 'start'
   const hashes = [hash]
+  // Swarm size as the trackers report it; both are -1 until a tracker has answered.
+  const complete = Number.isFinite(torrent.num_complete) ? torrent.num_complete : -1
+  const incomplete = Number.isFinite(torrent.num_incomplete) ? torrent.num_incomplete : -1
+  const swarm = complete < 0 && incomplete < 0 ? null : Math.max(0, complete) + Math.max(0, incomplete)
 
   return (
     <section className={styles.card} aria-label={t.details.label}>
@@ -108,7 +115,6 @@ export function DetailsCard() {
       <div className={styles.tabs}>
         <Tabs<DetailsTab> tabs={TABS} value={tab} onChange={setTab} aria-label={t.details.tabsLabel} />
       </div>
-      {/* Task 15 fills the remaining tab bodies from `data`. */}
       <div className={styles.body} role="tabpanel" data-tab={tab}>
         {tab === 'files' && data.files && (
           <FilesTab
@@ -120,6 +126,21 @@ export function DetailsCard() {
             }}
           />
         )}
+        {tab === 'trackers' && data.trackers && (
+          <TrackersTab
+            key={hash}
+            trackers={data.trackers}
+            variant="desktop"
+            onAdd={async (urls) => {
+              await api.post('torrents/addTrackers', { hash, urls: urls.join('\n') })
+            }}
+            onRemove={async (url) => {
+              await api.post('torrents/removeTrackers', { hash, urls: url })
+            }}
+          />
+        )}
+        {tab === 'peers' && <PeersTab key={hash} peers={data.peers} swarm={swarm} variant="desktop" />}
+        {tab === 'info' && <InfoTab properties={data.properties} torrent={torrent} variant="desktop" />}
       </div>
     </section>
   )

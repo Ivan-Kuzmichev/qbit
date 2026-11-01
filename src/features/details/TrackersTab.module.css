@@ -1,0 +1,175 @@
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 6px 0;
+}
+.add {
+  gap: 6px;
+}
+.empty {
+  margin: 0;
+  padding: 14px 0 6px;
+  color: var(--muted);
+}
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 130px 64px 64px 80px 200px 32px;
+  gap: 12px;
+  align-items: center;
+}
+.head {
+  height: 36px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 12px;
+  color: var(--muted);
+}
+.row {
+  height: 44px;
+  border-bottom: 1px solid var(--divider);
+}
+.cellUrl {
+  min-width: 0;
+}
+.url {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text);
+}
+.muted {
+  color: var(--muted);
+}
+.url.muted {
+  color: var(--muted);
+}
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.num {
+  text-align: right;
+}
+.mono {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.msg {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--muted);
+}
+.menuCell {
+  display: flex;
+  justify-content: flex-end;
+}
+.more,
+.more.more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.more:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: var(--surface);
+}
+.cardTop {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cardTop .url {
+  flex: 1;
+}
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.stat b {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  color: var(--text);
+}
+.card .msg {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.mobile .more,
+.mobile .more.more {
+  width: 44px;
+  height: 44px;
+  margin: -8px -8px -8px 0;
+}
+.mobile .toolbar .add {
+  min-height: 44px;
+}
+.dialogBody {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.dialogLabel {
+  font-size: 12px;
+  color: var(--muted);
+}
+.textarea {
+  box-sizing: border-box;
+  width: 100%;
+  resize: vertical;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 16px;
+}
+.textarea:focus-visible {
+  outline: 0;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+.dialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

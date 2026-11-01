@@ -1,0 +1,10 @@
+.flag {
+  display: inline-block;
+  flex: none;
+  width: 20px;
+  height: 14px;
+  border-radius: 3px;
+  object-fit: cover;
+  outline: 1px solid rgba(255, 255, 255, 0.12);
+  outline-offset: -1px;
+}

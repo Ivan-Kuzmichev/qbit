@@ -66,6 +66,66 @@ describe('DetailsCard files tab', () => {
   })
 })
 
+describe('DetailsCard trackers, peers and info tabs', () => {
+  const bodyOf = (path: string) => String(fetchMock.mock.calls.find(([u]) => String(u).includes(path))?.[1]?.body)
+
+  it('adds trackers with one URL per line and removes one by its address', async () => {
+    const add = vi.fn(() => json(''))
+    const remove = vi.fn(() => json(''))
+    fetchMock = stubFetch({
+      'torrents/properties': () => json({}),
+      'torrents/pieceStates': () => json([]),
+      'torrents/files': () => json([]),
+      'torrents/trackers': () =>
+        json([{ url: 'udp://t.example/announce', status: 2, tier: 0, num_peers: 1, num_seeds: 2, num_leeches: 0, num_downloaded: 3, msg: '' }]),
+      'torrents/addTrackers': add,
+      'torrents/removeTrackers': remove,
+    })
+    load([tor('a')], ['a'])
+    render(<DetailsCard />)
+    await userEvent.click(screen.getByRole('tab', { name: 'Трекеры' }))
+    await userEvent.click(await screen.findByRole('button', { name: 'Действия с трекером udp://t.example/announce' }))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Удалить трекер' }))
+    await vi.waitFor(() => expect(remove).toHaveBeenCalled())
+    expect(new URLSearchParams(bodyOf('removeTrackers')).get('urls')).toBe('udp://t.example/announce')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Добавить трекер' }))
+    await userEvent.type(screen.getByRole('textbox'), 'udp://a/announce{enter}http://b/announce')
+    await userEvent.click(screen.getByRole('button', { name: 'Добавить' }))
+    await vi.waitFor(() => expect(add).toHaveBeenCalled())
+    const body = new URLSearchParams(bodyOf('addTrackers'))
+    expect(body.get('hash')).toBe('a')
+    expect(body.get('urls')).toBe('udp://a/announce\nhttp://b/announce')
+  })
+
+  it('peers tab shows connected and swarm counts from the torrent', async () => {
+    fetchMock = stubFetch({
+      'torrents/properties': () => json({}),
+      'torrents/pieceStates': () => json([]),
+      'torrents/files': () => json([]),
+      'sync/torrentPeers': () => json({ rid: 1, full_update: true, peers: { 'a:1': { ip: 'a', port: 1, client: 'x', progress: 0, flags: '', flags_desc: '' } } }),
+    })
+    load([tor('a', { num_complete: 30, num_incomplete: 11 })], ['a'])
+    render(<DetailsCard />)
+    await userEvent.click(screen.getByRole('tab', { name: 'Пиры' }))
+    expect(await screen.findByText('1 подключено · 41 в рое')).toBeInTheDocument()
+  })
+
+  it('peers tab shows only the connected count when the swarm is unknown', async () => {
+    load([tor('a', { num_complete: -1, num_incomplete: -1 })], ['a'])
+    render(<DetailsCard />)
+    await userEvent.click(screen.getByRole('tab', { name: 'Пиры' }))
+    expect(await screen.findByText('0 подключено')).toBeInTheDocument()
+  })
+
+  it('info tab shows the torrent category', async () => {
+    load([tor('a', { category: 'Movies' })], ['a'])
+    render(<DetailsCard />)
+    await userEvent.click(screen.getByRole('tab', { name: 'Сведения' }))
+    expect(await screen.findByText('Movies')).toBeInTheDocument()
+  })
+})
+
 describe('DetailsCard', () => {
   it('is hidden without selection', () => {
     load([tor('a')], [])
