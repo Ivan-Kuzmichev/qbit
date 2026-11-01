@@ -1,7 +1,8 @@
-import { Eye, EyeOff, CircleAlert, Download } from 'lucide-react'
+import { Eye, EyeOff, CircleAlert } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { login, NetworkError } from '../../api/client'
 import { Button } from '../../components/ui/Button'
+import { Logo } from '../../components/ui/Logo'
 import { Field } from '../../components/ui/Field'
 import { IconButton } from '../../components/ui/IconButton'
 import { t } from '../../i18n/ru'
@@ -44,7 +45,7 @@ export function LoginScreen({ onSuccess }: { onSuccess(): void }) {
       <form className={styles.card} aria-label={t.login.formLabel} onSubmit={submit}>
         <div className={styles.head}>
           <div className={styles.logo}>
-            <Download size={22} strokeWidth={2.4} aria-hidden="true" />
+            <Logo />
           </div>
           <div className={styles.titles}>
             <h1 className={styles.title}>{t.login.title}</h1>

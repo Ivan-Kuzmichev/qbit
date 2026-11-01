@@ -21,6 +21,11 @@ describe('LoginScreen', () => {
     expect(screen.getByLabelText('Логин')).toHaveAttribute('autocomplete', 'username')
     expect(screen.getByLabelText('Пароль')).toHaveAttribute('autocomplete', 'current-password')
   })
+  it('renders the mockup logo glyph', () => {
+    const { container } = render(<LoginScreen onSuccess={() => {}} />)
+    const path = container.querySelector('svg[aria-hidden="true"] path[d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14"]')
+    expect(path).not.toBeNull()
+  })
   it('shows the server address from location.host', () => {
     render(<LoginScreen onSuccess={() => {}} />)
     expect(screen.getByText(location.host)).toBeInTheDocument()
