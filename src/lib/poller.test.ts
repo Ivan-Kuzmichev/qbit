@@ -81,6 +81,36 @@ describe('createPoller', () => {
     expect(fn).toHaveBeenCalledTimes(4)
     p.stop()
   })
+  it('stop then start while a request is pending neither overlaps nor doubles the loop', async () => {
+    const releases: (() => void)[] = []
+    let active = 0
+    let maxActive = 0
+    const fn = vi.fn(() => {
+      active++
+      maxActive = Math.max(maxActive, active)
+      return new Promise<void>((r) => releases.push(() => { active--; r() }))
+    })
+    const p = createPoller(fn, 1000)
+    p.start()
+    await vi.advanceTimersByTimeAsync(0)
+    p.stop()
+    p.start()
+    await vi.advanceTimersByTimeAsync(0)
+    expect(fn).toHaveBeenCalledTimes(1)
+    releases[0]()
+    await vi.advanceTimersByTimeAsync(0)
+    expect(fn).toHaveBeenCalledTimes(2)
+    releases[1]()
+    await vi.advanceTimersByTimeAsync(3000)
+    releases.slice(2).forEach((r) => r())
+    // one loop only: ~1 call per second
+    expect(fn.mock.calls.length).toBeLessThanOrEqual(5)
+    p.stop()
+    const n = fn.mock.calls.length
+    await vi.advanceTimersByTimeAsync(5000)
+    expect(fn).toHaveBeenCalledTimes(n)
+    expect(maxActive).toBe(1)
+  })
   it('start twice does not double the loop', async () => {
     const fn = vi.fn().mockResolvedValue(undefined)
     const p = createPoller(fn, 1000)

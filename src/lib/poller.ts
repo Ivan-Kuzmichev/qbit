@@ -7,24 +7,35 @@ const HIDDEN_INTERVAL_MS = 10_000
 export function createPoller(fn: () => Promise<void>, intervalMs: number) {
   let timer: ReturnType<typeof setTimeout> | null = null
   let running = false
+  let inflight = false
+  let generation = 0
 
-  async function tick() {
+  async function tick(gen: number) {
     timer = null
+    inflight = true
     try {
       await fn()
     } catch {
       // the caller handles errors; polling carries on
+    } finally {
+      inflight = false
     }
     if (!running) return
+    if (gen !== generation) {
+      // stop() then start() happened while this call was pending: continue as the new loop
+      void tick(generation)
+      return
+    }
     const hidden = typeof document !== 'undefined' && document.hidden
-    timer = setTimeout(tick, hidden ? HIDDEN_INTERVAL_MS : intervalMs)
+    timer = setTimeout(() => void tick(gen), hidden ? HIDDEN_INTERVAL_MS : intervalMs)
   }
 
   return {
     start() {
       if (running) return
       running = true
-      void tick()
+      generation++
+      if (!inflight) void tick(generation)
     },
     stop() {
       running = false
