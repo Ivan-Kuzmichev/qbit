@@ -57,3 +57,10 @@ export function plural(n: number, forms: [string, string, string]): string {
   }
   return `${n} ${form}`
 }
+
+const dateFormat = new Intl.DateTimeFormat('ru', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+
+/** `unixSeconds` as in the qBittorrent API. */
+export function formatDate(unixSeconds: number): string {
+  return Number.isFinite(unixSeconds) && unixSeconds > 0 ? dateFormat.format(new Date(unixSeconds * 1000)) : '—'
+}
