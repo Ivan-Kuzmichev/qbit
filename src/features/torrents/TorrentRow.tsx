@@ -9,6 +9,7 @@ import { Progress } from '../../components/ui/Progress'
 import { t } from '../../i18n/ru'
 import { formatBytes, formatDate, formatSpeed } from '../../lib/format'
 import { shownSpeed, type Column } from './columns'
+import { runRowAction } from './actions'
 import { uiStatus, type RowAction, type UiKind } from './status'
 import styles from './TorrentRow.module.css'
 
@@ -63,21 +64,21 @@ function Cell({ column, torrent, status }: { column: Column; torrent: Torrent; s
   switch (column.id) {
     case 'name':
       return (
-        <div role="cell" className={styles.name}>
+        <div role="gridcell" className={styles.name}>
           <span className={styles.title} title={torrent.name}>{torrent.name}</span>
           <span className={styles.sub}>{status.sub}</span>
         </div>
       )
     case 'status':
       return (
-        <span role="cell" className={styles.status} style={{ color: view.color }}>
+        <span role="gridcell" className={styles.status} style={{ color: view.color }}>
           <view.Icon size={14} strokeWidth={2.2} aria-hidden="true" />
           {t.status[kind]}
         </span>
       )
     case 'progress':
       return (
-        <div role="cell" className={styles.progress}>
+        <div role="gridcell" className={styles.progress}>
           <div className={styles.bar}>
             <Progress value={torrent.progress} tone={view.tone} height={12} />
           </div>
@@ -87,19 +88,19 @@ function Cell({ column, torrent, status }: { column: Column; torrent: Torrent; s
     case 'speed': {
       const sp = shownSpeed(torrent)
       return (
-        <span role="cell" className={`${styles.mono} ${styles.right}`} style={{ color: sp.dir ? 'var(--text)' : 'var(--dim)' }}>
+        <span role="gridcell" className={`${styles.mono} ${styles.right}`} style={{ color: sp.dir ? 'var(--text)' : 'var(--dim)' }}>
           {sp.dir ? `${sp.dir === 'down' ? '↓' : '↑'} ${formatSpeed(sp.value)}` : '—'}
         </span>
       )
     }
     case 'size':
-      return <span role="cell" className={`${styles.mono} ${styles.right} ${styles.strong}`}>{formatBytes(torrent.size)}</span>
+      return <span role="gridcell" className={`${styles.mono} ${styles.right} ${styles.strong}`}>{formatBytes(torrent.size)}</span>
     case 'queue':
-      return <span role="cell" className={`${styles.mono} ${styles.right}`}>{torrent.priority > 0 ? torrent.priority : '—'}</span>
+      return <span role="gridcell" className={`${styles.mono} ${styles.right}`}>{torrent.priority > 0 ? torrent.priority : '—'}</span>
     case 'ratio':
-      return <span role="cell" className={`${styles.mono} ${styles.right}`}>{Number.isFinite(torrent.ratio) ? Math.max(0, torrent.ratio).toFixed(2) : '—'}</span>
+      return <span role="gridcell" className={`${styles.mono} ${styles.right}`}>{Number.isFinite(torrent.ratio) ? Math.max(0, torrent.ratio).toFixed(2) : '—'}</span>
     case 'added':
-      return <span role="cell" className={`${styles.mono} ${styles.right}`}>{formatDate(torrent.added_on)}</span>
+      return <span role="gridcell" className={`${styles.mono} ${styles.right}`}>{formatDate(torrent.added_on)}</span>
   }
 }
 
@@ -112,14 +113,16 @@ export const TorrentRow = memo(function TorrentRow({ torrent, columns, template,
       role="row"
       aria-rowindex={index + 2}
       aria-selected={selected}
+      data-hash={torrent.hash}
       data-selected={selected || undefined}
       className={styles.row}
       style={{ gridTemplateColumns: template, height: ROW_HEIGHT, transform: `translateY(${top}px)` }}
     >
-      <span role="cell" className={styles.actionCell}>
+      <span role="gridcell" className={styles.actionCell}>
         {Icon && action && (
           <IconButton
             aria-label={actionLabel(action, kind)}
+            onClick={() => void runRowAction(torrent, action)}
             style={{ color: kind === 'downloading' ? 'var(--accent)' : 'var(--muted)' }}
           >
             <Icon size={14} strokeWidth={2.2} aria-hidden="true" />

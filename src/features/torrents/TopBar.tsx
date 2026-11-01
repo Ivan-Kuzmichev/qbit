@@ -4,7 +4,7 @@ import { Button } from '../../components/ui/Button'
 import { t } from '../../i18n/ru'
 import { useTorrents } from '../../store/torrents'
 import { useUi } from '../../store/ui'
-import { uiStatus } from './status'
+import { pauseAllLabel, runBulkPause } from './actions'
 import styles from './TopBar.module.css'
 
 function isTyping(el: Element | null): boolean {
@@ -28,8 +28,10 @@ export function TopBar() {
     return () => document.removeEventListener('keydown', onKey)
   }, [])
 
+  const selected = useTorrents((s) => s.selected)
   const all = Object.values(torrents)
-  const allPaused = all.length > 0 && all.every((x) => uiStatus(x).action === 'start')
+  const scope = selected.size > 0 ? all.filter((x) => selected.has(x.hash)) : all
+  const allPaused = pauseAllLabel(scope) === 'start'
 
   return (
     <div className={styles.bar}>
@@ -53,7 +55,7 @@ export function TopBar() {
         <Link size={15} aria-hidden="true" />
         {t.topbar.addMagnet}
       </Button>
-      <Button>
+      <Button disabled={all.length === 0} onClick={() => void runBulkPause(allPaused ? 'start' : 'stop')}>
         {allPaused ? <Play size={15} aria-hidden="true" /> : <Pause size={15} aria-hidden="true" />}
         {allPaused ? t.topbar.resumeAll : t.topbar.pauseAll}
       </Button>

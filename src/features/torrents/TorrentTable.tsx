@@ -1,9 +1,10 @@
 import { useVirtualizer } from '@tanstack/react-virtual'
-import { useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent } from 'react'
 import { t } from '../../i18n/ru'
 import { useTorrents } from '../../store/torrents'
 import { useUi } from '../../store/ui'
 import { gridTemplate, visibleColumns } from './columns'
+import { ContextMenu, type ContextMenuProps } from './ContextMenu'
 import { ALL_FILTER } from './filters'
 import { selectVisible } from './sortTorrents'
 import { TableHeader } from './TableHeader'
@@ -26,8 +27,13 @@ function useResetStaleFilter() {
   }, [filter, categories, tags, setFilter])
 }
 
-export function TorrentTable() {
+const hashOf = (e: MouseEvent): string | null =>
+  (e.target as HTMLElement).closest<HTMLElement>('[role="row"][data-hash]')?.dataset.hash ?? null
+
+export function TorrentTable({ onDialog }: Pick<ContextMenuProps, 'onDialog'> = {}) {
   useResetStaleFilter()
+  const [menu, setMenu] = useState<{ x: number; y: number } | null>(null)
+  const closeMenu = useCallback(() => setMenu(null), [])
   const torrents = useTorrents((s) => s.torrents)
   const selected = useTorrents((s) => s.selected)
   const filter = useUi((s) => s.filter)
@@ -50,18 +56,40 @@ export function TorrentTable() {
     getItemKey: (i) => list[i].hash,
   })
 
+  // One handler for all rows keeps the memoized rows untouched.
+  function onClick(e: MouseEvent) {
+    const hash = hashOf(e)
+    if (!hash || (e.target as HTMLElement).closest('button')) return
+    const order = list.map((x) => x.hash)
+    useTorrents.getState().select(hash, e.shiftKey ? 'range' : e.ctrlKey || e.metaKey ? 'toggle' : 'single', order)
+  }
+  function onContextMenu(e: MouseEvent) {
+    const hash = hashOf(e)
+    if (!hash) return
+    e.preventDefault()
+    const state = useTorrents.getState()
+    if (!state.selected.has(hash)) state.select(hash, 'single', list.map((x) => x.hash))
+    setMenu({ x: e.clientX, y: e.clientY })
+  }
+
   return (
     <div className={styles.card}>
       <div ref={scroller} className={styles.scroller}>
         <div
-          role="table"
+          role="grid"
           aria-label={t.table.label}
           aria-rowcount={list.length + 1}
           className={styles.table}
           style={{ minWidth: MIN_WIDTH }}
         >
           <TableHeader columns={columns} template={template} />
-          <div role="rowgroup" className={styles.body} style={{ height: virtualizer.getTotalSize() }}>
+          <div
+            role="rowgroup"
+            className={styles.body}
+            style={{ height: virtualizer.getTotalSize() }}
+            onClick={onClick}
+            onContextMenu={onContextMenu}
+          >
             {virtualizer.getVirtualItems().map((v) => {
               const tor = list[v.index]
               return (
@@ -79,6 +107,7 @@ export function TorrentTable() {
           </div>
         </div>
       </div>
+      {menu && <ContextMenu x={menu.x} y={menu.y} onClose={closeMenu} onDialog={onDialog} />}
     </div>
   )
 }
