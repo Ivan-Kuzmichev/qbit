@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>qBit — Вход</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:#09090B}
+a{color:#93C5FD}a:hover{color:#BFDBFE}
+</style>
+</helmet>
+<div style="min-height: 900px; box-sizing: border-box; padding: 24px 16px; background: #09090B; color: #FAFAFA; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px">
+
+  <form style="width: 100%; max-width: 360px; box-sizing: border-box; padding: 28px; border: 1px solid #27272A; border-radius: 16px; background: #0F0F12; display: flex; flex-direction: column; gap: 20px" aria-label="Вход">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center">
+      <div style="width: 40px; height: 40px; border-radius: 11px; background: {{accent}}; color: #09090B; display: flex; align-items: center; justify-content: center">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14"></path></svg>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <h1 style="margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.01em">Вход в qBit</h1>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #A1A1AA">nas.local:8080</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px">
+      <label style="display: flex; flex-direction: column; gap: 6px">
+        <span style="font-size: 12px; color: #A1A1AA">Логин</span>
+        <input value="admin" autocomplete="username" style="height: 40px; box-sizing: border-box; padding: 0 12px; border: 1px solid #27272A; border-radius: 10px; background: #09090B; color: #FAFAFA; font: inherit; font-size: 14px; outline: 0">
+      </label>
+      <label style="display: flex; flex-direction: column; gap: 6px">
+        <span style="font-size: 12px; color: #A1A1AA">Пароль</span>
+        <span style="height: 40px; box-sizing: border-box; display: flex; align-items: center; gap: 8px; padding: 0 4px 0 12px; border: 1px solid {{accent}}; border-radius: 10px; background: #09090B; box-shadow: 0 0 0 3px {{ring}}">
+          <input type="password" value="hunter2hunter" autocomplete="current-password" style="flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: #FAFAFA; font: inherit; font-size: 14px; letter-spacing: 0.1em">
+          <button type="button" aria-label="Показать пароль" style="width: 32px; height: 32px; border: 0; background: transparent; color: #A1A1AA; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+        </span>
+      </label>
+    </div>
+
+    <sc-if value="{{showError}}" hint-placeholder-val="{{ false }}">
+      <div role="alert" style="display: flex; gap: 10px; padding: 10px 12px; border: 1px solid rgba(248, 113, 113, 0.3); border-radius: 10px; background: rgba(248, 113, 113, 0.08); color: #FCA5A5; font-size: 12px; line-height: 1.45">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex: none; margin-top: 1px" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16h.01"></path></svg>
+        <span>Неверный логин или пароль. После 5 неудачных попыток qBittorrent временно заблокирует вход с этого IP.</span>
+      </div>
+    </sc-if>
+
+    <button type="submit" style="height: 42px; border: 0; border-radius: 10px; background: {{accent}}; color: #09090B; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Войти</button>
+  </form>
+
+  <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A1A1AA">qBittorrent v5.1.2 · WebAPI 2.11</span>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#60A5FA","options":["#60A5FA","#A78BFA","#22D3EE","#FBBF24"]},"showError":{"editor":"boolean","default":true},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent ?? '#60A5FA';
+    return { accent, ring: accent + '33', showError: this.props.showError ?? true };
+  }
+}
+</script>
+</body>
+</html>

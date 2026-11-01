@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>qBit — Трекеры</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:#09090B}
+a{color:#93C5FD}a:hover{color:#BFDBFE}
+</style>
+</helmet>
+<div style="width: 1180px; height: 440px; box-sizing: border-box; padding: 20px; background: #09090B; color: #FAFAFA; font-family: 'Inter', system-ui, sans-serif; font-size: 12.5px">
+  <section style="height: 100%; box-sizing: border-box; border: 1px solid #27272A; border-radius: 12px; background: #0F0F12; display: flex; flex-direction: column" aria-label="Трекеры">
+    <div style="display: flex; align-items: center; gap: 4px; padding: 0 12px; border-bottom: 1px solid #1F1F23">
+      <button style="height: 40px; padding: 0 10px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #A1A1AA; font: inherit">Файлы</button>
+      <button style="height: 40px; padding: 0 10px; border: 0; border-bottom: 2px solid {{accent}}; background: transparent; color: #FAFAFA; font: inherit; font-weight: 500">Трекеры</button>
+      <button style="height: 40px; padding: 0 10px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #A1A1AA; font: inherit">Пиры</button>
+      <button style="height: 40px; padding: 0 10px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #A1A1AA; font: inherit">Сведения</button>
+      <button style="margin-left: auto; height: 28px; padding: 0 10px; display: flex; align-items: center; gap: 6px; border: 1px solid #27272A; border-radius: 7px; background: transparent; color: #D4D4D8; font: inherit; font-size: 12px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Добавить трекер
+      </button>
+    </div>
+    <div style="display: grid; grid-template-columns: minmax(0, 1fr) 130px 64px 64px 80px 200px; gap: 12px; align-items: center; height: 36px; padding: 0 18px; border-bottom: 1px solid #1F1F23; font-size: 12px; color: #A1A1AA">
+      <span>Адрес</span><span>Статус</span><span style="text-align: right">Сиды</span><span style="text-align: right">Пиры</span><span style="text-align: right">Скачали</span><span>Сообщение</span>
+    </div>
+    <sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+      <div style="display: grid; grid-template-columns: minmax(0, 1fr) 130px 64px 64px 80px 200px; gap: 12px; align-items: center; height: 44px; padding: 0 18px; border-bottom: 1px solid #18181B">
+        <span style="min-width: 0; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: {{r.urlColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.url}}</span>
+        <span style="display: flex; align-items: center; gap: 7px; color: {{r.color}}"><span style="width: 7px; height: 7px; border-radius: 50%; background: {{r.color}}"></span>{{r.status}}</span>
+        <span style="text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 12px">{{r.seeds}}</span>
+        <span style="text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 12px">{{r.peers}}</span>
+        <span style="text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #A1A1AA">{{r.done}}</span>
+        <span style="font-size: 12px; color: #A1A1AA; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.msg}}</span>
+      </div>
+    </sc-for>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#60A5FA","options":["#60A5FA","#A78BFA","#22D3EE","#FBBF24"]},"$preview":{"width":1180,"height":440}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent ?? '#60A5FA';
+    const ST = { ok: ['Работает', '#4ADE80'], wait: ['Обновляется', '#FBBF24'], err: ['Ошибка', '#F87171'], off: ['Отключён', '#A1A1AA'] };
+    const raw = [
+      ['** [DHT] **', 'ok', '36', '4', '—', '', true],
+      ['** [PeX] **', 'ok', '9', '2', '—', '', true],
+      ['** [LSD] **', 'off', '0', '0', '—', '', true],
+      ['udp://tracker.opentrackr.org:1337/announce', 'ok', '312', '41', '18 204', 'Следующий анонс через 24 мин', false],
+      ['udp://open.demonii.com:1337/announce', 'wait', '—', '—', '—', 'Отправка анонса…', false],
+      ['https://tracker.example.org/announce', 'err', '0', '0', '0', 'Таймаут соединения', false]
+    ];
+    const rows = raw.map(r => ({ url: r[0], status: ST[r[1]][0], color: ST[r[1]][1], seeds: r[2], peers: r[3], done: r[4], msg: r[5], urlColor: r[6] ? '#A1A1AA' : '#FAFAFA' }));
+    return { accent, rows };
+  }
+}
+</script>
+</body>
+</html>

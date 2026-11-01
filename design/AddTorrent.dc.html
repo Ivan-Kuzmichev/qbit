@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>qBit — Добавить торрент</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:#09090B}
+a{color:#93C5FD}a:hover{color:#BFDBFE}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; position: relative; overflow: hidden; background: #09090B; color: #FAFAFA; font-family: 'Inter', system-ui, sans-serif; font-size: 12.5px">
+
+  <div style="position: absolute; inset: 0; display: flex" aria-hidden="true">
+    <div style="width: 236px; background: #0C0C0E; border-right: 1px solid #1F1F23"></div>
+    <div style="flex: 1; padding: 14px 20px; display: flex; flex-direction: column; gap: 14px">
+      <div style="height: 38px; border: 1px solid #1F1F23; border-radius: 10px; background: #0F0F12"></div>
+      <div style="flex: 1; border: 1px solid #1F1F23; border-radius: 12px; background: #0F0F12"></div>
+    </div>
+  </div>
+  <div style="position: absolute; inset: 0; background: rgba(0, 0, 0, 0.62)"></div>
+
+  <section role="dialog" aria-label="Добавить торрент" style="position: absolute; left: 410px; top: 64px; width: 620px; box-sizing: border-box; border: 1px solid #27272A; border-radius: 16px; background: #0F0F12; box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5); display: flex; flex-direction: column">
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 18px 20px 14px">
+      <h2 style="margin: 0; font-size: 16px; font-weight: 600">Добавить торрент</h2>
+      <button aria-label="Закрыть" style="width: 32px; height: 32px; border: 0; border-radius: 8px; background: transparent; color: #A1A1AA; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+    </div>
+
+    <div style="padding: 0 20px 18px; display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; gap: 4px; padding: 3px; border-radius: 9px; background: #18181B">
+        <button style="flex: 1; height: 30px; border: 0; border-radius: 7px; background: #27272A; color: #FAFAFA; font: inherit; font-weight: 500">Файл .torrent</button>
+        <button style="flex: 1; height: 30px; border: 0; border-radius: 7px; background: transparent; color: #A1A1AA; font: inherit">Magnet-ссылка</button>
+      </div>
+
+      <div style="height: 104px; border: 1px dashed #3F3F46; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: #A1A1AA">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4m0 0-4 4m4-4 4 4M5 15v4h14v-4"></path></svg>
+        <span style="font-size: 13px; color: #D4D4D8">Перетащи .torrent сюда или <a href="#">выбери файл</a></span>
+        <span style="font-size: 11px">Можно несколько сразу</span>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #27272A; border-radius: 10px; background: #0C0C0E">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6v18h12V7z"></path><path d="M14 3v4h4"></path></svg>
+        <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">ubuntu-24.04.3-desktop-amd64.iso.torrent</span>
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A1A1AA">6.10 ГБ · 4 файла</span>
+        </div>
+        <button aria-label="Убрать файл" style="width: 28px; height: 28px; border: 0; background: transparent; color: #A1A1AA; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+        <label style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 6px">
+          <span style="font-size: 12px; color: #A1A1AA">Папка сохранения</span>
+          <span style="height: 36px; box-sizing: border-box; display: flex; align-items: center; gap: 8px; padding: 0 12px; border: 1px solid #27272A; border-radius: 9px; background: #09090B">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A1A1AA" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h6l2 2h10v11H3z"></path></svg>
+            <input value="/downloads/software" aria-label="Папка сохранения" style="flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: #FAFAFA; font-family: 'JetBrains Mono', monospace; font-size: 12px">
+          </span>
+        </label>
+        <label style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-size: 12px; color: #A1A1AA">Категория</span>
+          <button style="height: 36px; display: flex; align-items: center; gap: 8px; padding: 0 12px; border: 1px solid #27272A; border-radius: 9px; background: #09090B; color: #FAFAFA; font: inherit; text-align: left">
+            <span style="width: 8px; height: 8px; border-radius: 2px; background: #2DD4BF"></span><span style="flex: 1">Софт</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A1A1AA" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+          </button>
+        </label>
+        <label style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-size: 12px; color: #A1A1AA">Теги</span>
+          <span style="height: 36px; box-sizing: border-box; display: flex; align-items: center; gap: 6px; padding: 0 6px; border: 1px solid #27272A; border-radius: 9px; background: #09090B">
+            <span style="height: 22px; padding: 0 8px; border-radius: 6px; background: #1C1C20; color: #D4D4D8; font-size: 11px; display: flex; align-items: center">linux</span>
+            <input placeholder="Добавить…" aria-label="Теги" style="flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: #FAFAFA; font: inherit">
+          </span>
+        </label>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 16px">
+        <sc-for list="{{opts}}" as="o" hint-placeholder-count="4">
+          <label style="display: flex; align-items: center; gap: 10px; color: #D4D4D8">
+            <span style="width: 16px; height: 16px; box-sizing: border-box; flex: none; border-radius: 4px; border: 1px solid {{o.border}}; background: {{o.bg}}; color: #09090B; display: flex; align-items: center; justify-content: center">
+              <sc-if value="{{o.on}}" hint-placeholder-val="{{ false }}"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></sc-if>
+            </span>
+            {{o.label}}
+          </label>
+        </sc-for>
+      </div>
+
+      <div style="border: 1px solid #27272A; border-radius: 10px">
+        <div style="display: flex; justify-content: space-between; padding: 8px 12px; border-bottom: 1px solid #1F1F23; font-size: 12px; color: #A1A1AA"><span>Файлы</span><span>выбрано 4 из 4</span></div>
+        <sc-for list="{{files}}" as="x" hint-placeholder-count="4">
+          <div style="display: flex; align-items: center; gap: 10px; padding: 7px 12px">
+            <span style="width: 14px; height: 14px; flex: none; border-radius: 4px; background: {{accent}}; color: #09090B; display: flex; align-items: center; justify-content: center"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></span>
+            <span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis"><span style="color: #A1A1AA">ubuntu-24.04/</span>{{x.name}}</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A1A1AA">{{x.size}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 8px; padding: 14px 20px; border-top: 1px solid #1F1F23">
+      <span style="flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A1A1AA">Свободно 1.84 TB</span>
+      <button style="height: 36px; padding: 0 14px; border: 1px solid #27272A; border-radius: 9px; background: transparent; color: #FAFAFA; font: inherit; font-weight: 500">Отмена</button>
+      <button style="height: 36px; padding: 0 16px; border: 0; border-radius: 9px; background: {{accent}}; color: #09090B; font: inherit; font-weight: 600">Добавить</button>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#60A5FA","options":["#60A5FA","#A78BFA","#22D3EE","#FBBF24"]},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent ?? '#60A5FA';
+    const opt = (label, on) => ({ label, on, bg: on ? accent : 'transparent', border: on ? accent : '#52525B' });
+    return {
+      accent,
+      opts: [opt('Запустить сразу', true), opt('Последовательная загрузка', false), opt('Сначала первые и последние части', false), opt('Пропустить проверку хеша', false)],
+      files: [
+        { name: 'ubuntu-24.04.3-desktop-amd64.iso', size: '6.10 ГБ' },
+        { name: 'SHA256SUMS', size: '1.00 КБ' },
+        { name: 'SHA256SUMS.gpg', size: '833 Б' },
+        { name: 'README.diskdefines', size: '231 Б' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

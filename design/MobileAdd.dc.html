@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>qBit — Mobile добавить</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:#09090B}
+a{color:#93C5FD}a:hover{color:#BFDBFE}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; overflow: hidden; position: relative; background: #050506; color: #FAFAFA; font-family: 'Inter', system-ui, sans-serif; font-size: 13px">
+  <div style="padding: 20px 16px 0; color: #3F3F46; font-size: 17px; font-weight: 600" aria-hidden="true">qBit</div>
+  <a href="Mobile.dc.html" aria-label="Закрыть" style="position: absolute; inset: 0 0 auto 0; height: 64px"></a>
+
+  <section role="dialog" aria-label="Добавить торрент" style="position: absolute; left: 0; right: 0; top: 64px; bottom: 0; box-sizing: border-box; background: #0F0F12; border-top: 1px solid #27272A; border-radius: 18px 18px 0 0; display: flex; flex-direction: column">
+    <div style="display: flex; justify-content: center; padding: 10px 0 4px"><span style="width: 40px; height: 4px; border-radius: 2px; background: #3F3F46"></span></div>
+    <div style="padding: 8px 16px 0; flex: 1; display: flex; flex-direction: column; gap: 16px">
+      <h2 style="margin: 0; font-size: 17px; font-weight: 600">Добавить торрент</h2>
+      <div style="display: flex; gap: 4px; padding: 3px; border-radius: 10px; background: #18181B">
+        <button style="flex: 1; height: 34px; border: 0; border-radius: 8px; background: transparent; color: #A1A1AA; font: inherit">Файл</button>
+        <button style="flex: 1; height: 34px; border: 0; border-radius: 8px; background: #27272A; color: #FAFAFA; font: inherit; font-weight: 500">Magnet</button>
+      </div>
+      <label style="display: flex; flex-direction: column; gap: 6px">
+        <span style="font-size: 12px; color: #A1A1AA">Magnet-ссылка</span>
+        <textarea aria-label="Magnet-ссылка" style="height: 76px; box-sizing: border-box; padding: 10px 12px; border: 1px solid {{accent}}; border-radius: 10px; background: #09090B; color: #FAFAFA; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.5; resize: none; outline: 0">magnet:?xt=urn:btih:a3f9c2d17be05f4c9e8a2b6d0c1f73e98e41d0&amp;dn=archlinux-2026.11.01</textarea>
+      </label>
+      <label style="display: flex; flex-direction: column; gap: 6px">
+        <span style="font-size: 12px; color: #A1A1AA">Папка сохранения</span>
+        <span style="height: 44px; box-sizing: border-box; display: flex; align-items: center; gap: 8px; padding: 0 12px; border: 1px solid #27272A; border-radius: 10px; background: #09090B">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A1A1AA" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h6l2 2h10v11H3z"></path></svg>
+          <input value="/downloads/software" aria-label="Папка сохранения" style="flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: #FAFAFA; font-family: 'JetBrains Mono', monospace; font-size: 13px">
+        </span>
+      </label>
+      <button style="height: 44px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border: 1px solid #27272A; border-radius: 10px; background: #09090B; color: #FAFAFA; font: inherit; text-align: left">
+        <span style="font-size: 12px; color: #A1A1AA">Категория</span>
+        <span style="flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 8px"><span style="width: 8px; height: 8px; border-radius: 2px; background: #2DD4BF"></span>Софт</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A1A1AA" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
+      </button>
+      <div style="border: 1px solid #27272A; border-radius: 12px">
+        <sc-for list="{{opts}}" as="o" hint-placeholder-count="3">
+          <div style="display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 12px; border-bottom: 1px solid #18181B">
+            <span style="flex: 1">{{o.label}}</span>
+            <button aria-label="{{o.label}}" aria-pressed="{{o.on}}" style="width: 44px; height: 26px; position: relative; border: 0; padding: 0; border-radius: 13px; background: {{o.track}}">
+              <span style="position: absolute; top: 3px; left: {{o.knob}}; width: 20px; height: 20px; border-radius: 50%; background: {{o.knobBg}}"></span>
+            </button>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="padding: 12px 16px 30px; display: flex; gap: 8px; border-top: 1px solid #1F1F23">
+      <a href="Mobile.dc.html" style="height: 48px; padding: 0 18px; display: flex; align-items: center; border: 1px solid #27272A; border-radius: 12px; color: #FAFAFA; font-size: 14px; font-weight: 500; text-decoration: none">Отмена</a>
+      <button style="flex: 1; height: 48px; border: 0; border-radius: 12px; background: {{accent}}; color: #09090B; font: inherit; font-size: 15px; font-weight: 600">Добавить</button>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#60A5FA","options":["#60A5FA","#A78BFA","#22D3EE","#FBBF24"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent ?? '#60A5FA';
+    const tg = (label, on) => ({ label, on, track: on ? accent : '#3F3F46', knob: on ? '21px' : '3px', knobBg: on ? '#09090B' : '#D4D4D8' });
+    return { accent, opts: [tg('Запустить сразу', true), tg('Последовательная загрузка', false), tg('Сначала крайние части', false)] };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>qBit — Mobile список</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:#09090B}
+a{color:#93C5FD}a:hover{color:#BFDBFE}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; overflow: hidden; background: #09090B; color: #FAFAFA; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; display: flex; flex-direction: column">
+
+  <header style="padding: 16px 16px 12px; display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; align-items: center; gap: 10px">
+      <div style="width: 28px; height: 28px; border-radius: 8px; background: {{accent}}; color: #09090B; display: flex; align-items: center; justify-content: center">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14"></path></svg>
+      </div>
+      <span style="font-size: 17px; font-weight: 600">qBit</span>
+      <div style="margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.4">
+        <span style="color: {{accent}}">↓ 21.7 МБ/с</span>
+        <span style="color: #A1A1AA">↑ 3.10 МБ/с</span>
+      </div>
+      <button aria-label="Альтернативные лимиты скорости" aria-pressed="false" style="width: 40px; height: 40px; border: 1px solid #27272A; border-radius: 10px; background: #0F0F12; color: #D4D4D8; display: flex; align-items: center; justify-content: center">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 18a8 8 0 1 1 16 0M12 18l4-5"></path></svg>
+      </button>
+    </div>
+    <label style="height: 42px; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 0 12px; border: 1px solid #27272A; border-radius: 12px; background: #0F0F12">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A1A1AA" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+      <input placeholder="Поиск торрентов…" aria-label="Поиск торрентов" style="flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: #FAFAFA; font: inherit; font-size: 14px">
+    </label>
+    <div style="display: flex; gap: 6px; overflow-x: auto; margin: 0 -16px; padding: 0 16px">
+      <sc-for list="{{chips}}" as="c" hint-placeholder-count="5">
+        <button style="flex: none; height: 32px; padding: 0 12px; display: flex; align-items: center; gap: 6px; border: 1px solid {{c.border}}; border-radius: 8px; background: {{c.bg}}; color: {{c.fg}}; font: inherit; font-size: 13px; white-space: nowrap">{{c.label}}<span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: {{c.countFg}}">{{c.count}}</span></button>
+      </sc-for>
+    </div>
+  </header>
+
+  <div style="flex: 1; overflow: hidden; margin: 0 12px; border: 1px solid #27272A; border-radius: 14px 14px 0 0; border-bottom: 0; background: #0F0F12">
+    <sc-for list="{{rows}}" as="t" hint-placeholder-count="6">
+      <a href="MobileDetail.dc.html" style="display: flex; gap: 10px; padding: 13px 14px 13px 6px; border-bottom: 1px solid #18181B; background: {{t.bg}}; box-shadow: {{t.edge}}; color: inherit; text-decoration: none">
+        <span style="width: 32px; height: 32px; flex: none; display: flex; align-items: center; justify-content: center; color: {{t.color}}">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{t.icon}}"></path></svg>
+        </span>
+        <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding-top: 2px">
+          <span style="font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{t.name}}</span>
+          <div style="display: flex; align-items: center; gap: 10px">
+            <div style="flex: 1; height: 10px; background: repeating-linear-gradient(90deg, #27272A 0 3px, transparent 3px 5px)"><div style="height: 100%; width: {{t.pct}}; background: repeating-linear-gradient(90deg, {{t.bar}} 0 3px, transparent 3px 5px)"></div></div>
+            <span style="width: 36px; text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500">{{t.pct}}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: #A1A1AA">
+            <span style="color: {{t.color}}">{{t.status}}</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px">{{t.meta}}</span>
+          </div>
+        </div>
+      </a>
+    </sc-for>
+  </div>
+
+  <div style="padding: 10px 16px 30px; border-top: 1px solid #27272A; background: #0C0C0E; display: flex; gap: 8px">
+    <button style="flex: 1; height: 46px; display: flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 12px; background: {{accent}}; color: #09090B; font: inherit; font-size: 14px; font-weight: 600">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Добавить торрент
+    </button>
+    <button aria-label="Добавить magnet" style="width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; border: 1px solid #27272A; border-radius: 12px; background: #0F0F12; color: #FAFAFA">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1 1M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1-1"></path></svg>
+    </button>
+    <button aria-label="Настройки" style="width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; border: 1px solid #27272A; border-radius: 12px; background: #0F0F12; color: #FAFAFA">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg>
+    </button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#60A5FA","options":["#60A5FA","#A78BFA","#22D3EE","#FBBF24"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent ?? '#60A5FA';
+    const I = {
+      dl: 'M12 4v11m0 0 4-4m-4 4-4-4M5 20h14', seed: 'M12 20V9m0 0 4 4m-4-4-4 4M5 4h14',
+      done: 'm5 12 5 5 9-10', pause: 'M9 5v14M15 5v14', queue: 'M12 7v5l3 2M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18z'
+    };
+    const S = {
+      dl: ['Скачивается', accent, I.dl], seed: ['Раздаётся', '#4ADE80', I.seed], done: ['Готово', '#D4D4D8', I.done],
+      pause: ['Пауза', '#A1A1AA', I.pause], queue: ['В очереди', '#FBBF24', I.queue]
+    };
+    const raw = [
+      ['Blender 4.3 Splash Assets', 'dl', '62%', '↓ 12.1 МБ/с · 8 мин'],
+      ['Sintel.2010.2160p.HDR.mkv', 'dl', '34%', '↓ 9.60 МБ/с · 21 мин'],
+      ['archlinux-2026.11.01-x86_64.iso', 'seed', '100%', '↑ 310 КБ/с'],
+      ['ubuntu-24.04.3-desktop-amd64.iso', 'seed', '100%', '↑ 1.40 МБ/с'],
+      ['Tears.of.Steel.1080p.mkv', 'done', '100%', '2.60 ГБ'],
+      ['Big.Buck.Bunny.4K.60fps.mp4', 'pause', '78%', '2.65 / 3.40 ГБ']
+    ];
+    const rows = raw.map((r, i) => {
+      const s = S[r[1]];
+      return {
+        name: r[0], status: s[0], color: s[1], icon: s[2], pct: r[2], meta: r[3],
+        bar: r[1] === 'dl' ? accent : (r[1] === 'pause' || r[1] === 'queue' ? '#71717A' : '#D4D4D8'),
+        bg: i === 0 ? '#16171B' : 'transparent', edge: i === 0 ? 'inset 3px 0 0 ' + accent : 'none'
+      };
+    });
+    const cl = [['Все', 7], ['Загрузка', 2], ['Раздача', 2], ['Завершено', 1], ['Пауза', 2]];
+    const chips = cl.map((c, i) => ({
+      label: c[0], count: c[1],
+      bg: i === 0 ? '#18181B' : 'transparent', fg: i === 0 ? '#FAFAFA' : '#D4D4D8',
+      border: i === 0 ? accent : '#27272A', countFg: i === 0 ? accent : '#A1A1AA'
+    }));
+    return { accent, rows, chips };
+  }
+}
+</script>
+</body>
+</html>

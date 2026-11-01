@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>qBit — Пиры</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:#09090B}
+a{color:#93C5FD}a:hover{color:#BFDBFE}
+</style>
+</helmet>
+<div style="width: 1180px; height: 440px; box-sizing: border-box; padding: 20px; background: #09090B; color: #FAFAFA; font-family: 'Inter', system-ui, sans-serif; font-size: 12.5px">
+  <section style="height: 100%; box-sizing: border-box; border: 1px solid #27272A; border-radius: 12px; background: #0F0F12; display: flex; flex-direction: column" aria-label="Пиры">
+    <div style="display: flex; align-items: center; gap: 4px; padding: 0 12px; border-bottom: 1px solid #1F1F23">
+      <button style="height: 40px; padding: 0 10px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #A1A1AA; font: inherit">Файлы</button>
+      <button style="height: 40px; padding: 0 10px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #A1A1AA; font: inherit">Трекеры</button>
+      <button style="height: 40px; padding: 0 10px; border: 0; border-bottom: 2px solid {{accent}}; background: transparent; color: #FAFAFA; font: inherit; font-weight: 500">Пиры</button>
+      <button style="height: 40px; padding: 0 10px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #A1A1AA; font: inherit">Сведения</button>
+      <span style="margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A1A1AA">6 подключено · 41 в рое</span>
+    </div>
+    <div style="display: grid; grid-template-columns: 210px minmax(0, 1fr) 160px 96px 96px 90px 60px; gap: 12px; align-items: center; height: 36px; padding: 0 18px; border-bottom: 1px solid #1F1F23; font-size: 12px; color: #A1A1AA">
+      <span>Адрес</span><span>Клиент</span><span>Прогресс</span><span style="text-align: right">Загрузка</span><span style="text-align: right">Отдача</span><span style="text-align: right">Получено</span><span>Флаги</span>
+    </div>
+    <sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+      <div style="display: grid; grid-template-columns: 210px minmax(0, 1fr) 160px 96px 96px 90px 60px; gap: 12px; align-items: center; height: 44px; padding: 0 18px; border-bottom: 1px solid #18181B">
+        <span style="display: flex; align-items: center; gap: 10px; min-width: 0" title="{{r.country}}">
+          <span role="img" aria-label="{{r.country}}" style="width: 20px; height: 14px; flex: none; border-radius: 3px; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12); background: {{r.flag}}"></span>
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; white-space: nowrap">{{r.ip}}</span>
+        </span>
+        <span style="min-width: 0; color: #D4D4D8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.client}}</span>
+        <div style="display: flex; align-items: center; gap: 10px">
+          <div style="flex: 1; height: 10px; background: repeating-linear-gradient(90deg, #27272A 0 3px, transparent 3px 5px)"><div style="height: 100%; width: {{r.pct}}; background: repeating-linear-gradient(90deg, #D4D4D8 0 3px, transparent 3px 5px)"></div></div>
+          <span style="width: 34px; text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 11px">{{r.pct}}</span>
+        </div>
+        <span style="text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: {{r.dlColor}}">{{r.dl}}</span>
+        <span style="text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #A1A1AA">{{r.ul}}</span>
+        <span style="text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #A1A1AA">{{r.got}}</span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A1A1AA">{{r.flags}}</span>
+      </div>
+    </sc-for>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#60A5FA","options":["#60A5FA","#A78BFA","#22D3EE","#FBBF24"]},"$preview":{"width":1180,"height":440}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent ?? '#60A5FA';
+    const raw = [
+      ['203.0.113.24:51413', 'Transmission 4.0.6', '100%', '4.20 МБ/с', '0 Б/с', '612 МБ', 'D E H'],
+      ['198.51.100.7:6881', 'qBittorrent 5.1.2', '100%', '3.10 МБ/с', '120 КБ/с', '488 МБ', 'D U E'],
+      ['192.0.2.155:42000', 'Deluge 2.1.1', '100%', '2.40 МБ/с', '0 Б/с', '391 МБ', 'D H'],
+      ['203.0.113.90:6881', 'libtorrent 2.0.10', '81%', '1.60 МБ/с', '410 КБ/с', '207 МБ', 'D U X'],
+      ['198.51.100.42:50000', 'qBittorrent 4.6.7', '47%', '640 КБ/с', '290 КБ/с', '96 МБ', 'D U P'],
+      ['192.0.2.3:34567', 'BiglyBT 3.7', '12%', '0 Б/с', '0 Б/с', '0 Б', 'd']
+    ];
+    const h = (a, b, c) => 'linear-gradient(180deg, ' + a + ' 0 33.3%, ' + b + ' 33.3% 66.6%, ' + c + ' 66.6%)';
+    const v = (a, b, c) => 'linear-gradient(90deg, ' + a + ' 0 33.3%, ' + b + ' 33.3% 66.6%, ' + c + ' 66.6%)';
+    const F = [
+      ['Нидерланды', h('#AE1C28', '#FFFFFF', '#21468B')],
+      ['Германия', h('#000000', '#DD0000', '#FFCE00')],
+      ['Франция', v('#0055A4', '#FFFFFF', '#EF4135')],
+      ['Польша', 'linear-gradient(180deg, #FFFFFF 0 50%, #DC143C 50%)'],
+      ['Италия', v('#009246', '#FFFFFF', '#CE2B37')],
+      ['Украина', 'linear-gradient(180deg, #0057B7 0 50%, #FFD700 50%)']
+    ];
+    const rows = raw.map((r, i) => ({ ip: r[0], client: r[1], pct: r[2], dl: r[3], ul: r[4], got: r[5], flags: r[6], country: F[i][0], flag: F[i][1], dlColor: r[3] === '0 Б/с' ? '#71717A' : accent }));
+    return { accent, rows };
+  }
+}
+</script>
+</body>
+</html>

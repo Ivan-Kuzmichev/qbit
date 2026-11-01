@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>qBit — Mobile торрент</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:#09090B}
+a{color:#93C5FD}a:hover{color:#BFDBFE}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; overflow: hidden; background: #09090B; color: #FAFAFA; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; display: flex; flex-direction: column">
+
+  <div style="padding: 8px 8px 4px; display: flex; align-items: center; gap: 4px">
+    <a href="Mobile.dc.html" aria-label="Назад" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #D4D4D8">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
+    </a>
+    <span style="font-size: 15px; font-weight: 500; color: #A1A1AA">Торрент</span>
+    <div style="margin-left: auto; display: flex; color: #A1A1AA">
+      <button aria-label="Открыть папку" style="width: 44px; height: 44px; border: 0; background: transparent; color: inherit; display: flex; align-items: center; justify-content: center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h6l2 2h10v11H3z"></path></svg></button>
+      <button aria-label="Удалить" style="width: 44px; height: 44px; border: 0; background: transparent; color: #F87171; display: flex; align-items: center; justify-content: center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"></path></svg></button>
+    </div>
+  </div>
+
+  <div style="flex: 1; overflow: hidden; padding: 4px 16px 0; display: flex; flex-direction: column; gap: 16px">
+    <div style="display: flex; gap: 14px; align-items: center">
+      <div style="width: 72px; height: 72px; flex: none; display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 2px" aria-hidden="true">
+        <sc-for list="{{pieces}}" as="p" hint-placeholder-count="100"><span style="border-radius: 1px; background: {{p.c}}"></span></sc-for>
+      </div>
+      <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+        <h1 style="margin: 0; font-size: 18px; font-weight: 600; line-height: 1.3">Blender 4.3 Splash Assets</h1>
+        <div style="display: flex; flex-wrap: wrap; gap: 5px">
+          <span style="height: 21px; padding: 0 8px; border-radius: 6px; background: {{accent}}; color: #09090B; font-size: 11px; font-weight: 600; display: flex; align-items: center">Скачивается</span>
+          <span style="height: 21px; padding: 0 8px; border-radius: 6px; background: #1C1C20; color: #D4D4D8; font-size: 11px; display: flex; align-items: center">54 пира</span>
+          <span style="height: 21px; padding: 0 8px; border-radius: 6px; background: #1C1C20; color: #D4D4D8; font-size: 11px; display: flex; align-items: center">4.20 ГБ</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding: 14px; border: 1px solid #27272A; border-radius: 14px; background: #0F0F12; display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <div style="flex: 1; height: 14px; background: repeating-linear-gradient(90deg, #27272A 0 3px, transparent 3px 5px)"><div style="height: 100%; width: 62%; background: repeating-linear-gradient(90deg, {{accent}} 0 3px, transparent 3px 5px)"></div></div>
+        <span style="font-size: 22px; font-weight: 600; letter-spacing: -0.02em">62%</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+        <sc-for list="{{stats}}" as="s" hint-placeholder-count="6">
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <span style="font-size: 11px; color: #A1A1AA">{{s.k}}</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500">{{s.v}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column">
+      <div style="display: flex; gap: 2px; border-bottom: 1px solid #1F1F23">
+        <button style="height: 40px; padding: 0 10px; border: 0; border-bottom: 2px solid {{accent}}; background: transparent; color: #FAFAFA; font: inherit; font-weight: 500">Файлы</button>
+        <button style="height: 40px; padding: 0 10px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #A1A1AA; font: inherit">Трекеры</button>
+        <button style="height: 40px; padding: 0 10px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #A1A1AA; font: inherit">Пиры</button>
+        <button style="height: 40px; padding: 0 10px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #A1A1AA; font: inherit">Сведения</button>
+      </div>
+      <sc-for list="{{files}}" as="x" hint-placeholder-count="3">
+        <div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 0 0">
+          <span style="width: 16px; height: 16px; box-sizing: border-box; flex: none; margin-top: 1px; border-radius: 4px; border: 1px solid {{x.cbBorder}}; background: {{x.cbBg}}; color: #09090B; display: flex; align-items: center; justify-content: center"><sc-if value="{{x.on}}" hint-placeholder-val="{{ true }}"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></sc-if></span>
+          <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+            <div style="display: flex; gap: 10px">
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+                <span style="font-size: 14px; color: {{x.nameColor}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{x.name}}</span>
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #A1A1AA">{{x.size}}</span>
+              </div>
+              <button style="height: 30px; padding: 0 8px 0 10px; display: flex; align-items: center; gap: 4px; border: 1px solid #27272A; border-radius: 8px; background: transparent; color: {{x.prioColor}}; font: inherit; font-size: 12px">{{x.prio}}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#A1A1AA" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button>
+            </div>
+            <div style="height: 2px; background: #1F1F23"><div style="height: 100%; width: {{x.pct}}; background: {{accent}}"></div></div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="padding: 10px 16px 30px; border-top: 1px solid #27272A; background: #0C0C0E; display: flex; gap: 8px">
+    <button style="flex: 1; height: 46px; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid #27272A; border-radius: 12px; background: #0F0F12; color: #FAFAFA; font: inherit; font-size: 14px; font-weight: 500">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M9 5v14M15 5v14"></path></svg>Приостановить
+    </button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#60A5FA","options":["#60A5FA","#A78BFA","#22D3EE","#FBBF24"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent ?? '#60A5FA';
+    const pieces = [];
+    for (let k = 0; k < 100; k++) {
+      const v = (k * 37 + (k % 7) * 11) % 100;
+      pieces.push({ c: v < 62 ? accent : (v < 70 ? '#3F3F46' : '#1F1F23') });
+    }
+    return {
+      accent, pieces,
+      stats: [
+        { k: 'Загрузка', v: '12.1 МБ/с' }, { k: 'Отдача', v: '820 КБ/с' }, { k: 'Осталось', v: '8 мин' },
+        { k: 'Скачано', v: '2.60 ГБ' }, { k: 'Отдано', v: '318 МБ' }, { k: 'Ratio', v: '0.12' }
+      ],
+      files: [
+        ['splash_scene.blend', '2.90 ГБ', '58%', 'max'],
+        ['textures/hdri_4k.exr', '1.10 ГБ', '73%', 'normal'],
+        ['textures/hdri_8k.exr', '3.40 ГБ', '0%', 'skip']
+      ].map(f => {
+        const P = { max: ['Макс.', accent], normal: ['Обычный', '#D4D4D8'], skip: ['Не качать', '#A1A1AA'] };
+        const on = f[3] !== 'skip';
+        return { name: f[0], size: f[1], pct: f[2], prio: P[f[3]][0], prioColor: P[f[3]][1], on, cbBg: on ? accent : 'transparent', cbBorder: on ? accent : '#52525B', nameColor: on ? '#FAFAFA' : '#71717A' };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>
