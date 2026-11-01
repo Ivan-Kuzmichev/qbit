@@ -56,6 +56,8 @@ export interface TorrentRowProps {
   /** Offset from the top of the list in px. */
   top: number
   selected: boolean
+  /** The one row in the tab order (roving tabindex). */
+  tabbable: boolean
 }
 
 function Cell({ column, torrent, status }: { column: Column; torrent: Torrent; status: ReturnType<typeof uiStatus> }) {
@@ -104,7 +106,7 @@ function Cell({ column, torrent, status }: { column: Column; torrent: Torrent; s
   }
 }
 
-export const TorrentRow = memo(function TorrentRow({ torrent, columns, template, index, top, selected }: TorrentRowProps) {
+export const TorrentRow = memo(function TorrentRow({ torrent, columns, template, index, top, selected, tabbable }: TorrentRowProps) {
   const status = uiStatus(torrent)
   const { kind, action } = status
   const Icon = action ? ACTION_ICON[action] : null
@@ -114,7 +116,7 @@ export const TorrentRow = memo(function TorrentRow({ torrent, columns, template,
       aria-rowindex={index + 2}
       aria-selected={selected}
       data-hash={torrent.hash}
-      tabIndex={-1}
+      tabIndex={tabbable ? 0 : -1}
       data-selected={selected || undefined}
       className={styles.row}
       style={{ gridTemplateColumns: template, height: ROW_HEIGHT, transform: `translateY(${top}px)` }}

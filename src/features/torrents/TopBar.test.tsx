@@ -78,3 +78,26 @@ describe('TopBar add buttons', () => {
     expect(useDialogs.getState().open).toMatchObject({ kind: 'add', tab: 'magnet' })
   })
 })
+
+describe('TopBar search hotkey', () => {
+  it('"/" focuses the search field', async () => {
+    load([])
+    render(<TopBar />)
+    await userEvent.keyboard('/')
+    expect(screen.getByRole('textbox', { name: 'Поиск торрентов' })).toHaveFocus()
+    expect(screen.getByRole('textbox', { name: 'Поиск торрентов' })).toHaveValue('')
+  })
+
+  it('"/" works from a button too, but not while a dialog is open', async () => {
+    load([])
+    render(<TopBar />)
+    screen.getByRole('button', { name: 'Пауза для всех' }).focus()
+    await userEvent.keyboard('/')
+    expect(screen.getByRole('textbox', { name: 'Поиск торрентов' })).toHaveFocus()
+    ;(document.activeElement as HTMLElement).blur()
+    useDialogs.getState().openAdd('file')
+    await userEvent.keyboard('/')
+    expect(screen.getByRole('textbox', { name: 'Поиск торрентов' })).not.toHaveFocus()
+    useDialogs.getState().close()
+  })
+})

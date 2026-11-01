@@ -7,6 +7,7 @@ import { useDialogs } from '../../store/dialogs'
 import { useTorrents } from '../../store/torrents'
 import { useUi } from '../../store/ui'
 import { runTorrentAction } from '../torrents/actions'
+import { EmptyState } from '../torrents/EmptyState'
 import { selectVisible } from '../torrents/sortTorrents'
 import { uiStatus } from '../torrents/status'
 import { ActionSheet, type ActionSheetItem } from './ActionSheet'
@@ -62,6 +63,7 @@ export function MobileList() {
   const filter = useUi((s) => s.filter)
   const search = useUi((s) => s.search)
   const sort = useUi((s) => s.sort)
+  const loaded = useTorrents((s) => s.rid > 0)
   const [sheet, setSheet] = useState<Sheet | null>(null)
   const closeSheet = useCallback(() => setSheet(null), [])
 
@@ -106,6 +108,7 @@ export function MobileList() {
             <MobileRow key={list[v.index].hash} torrent={list[v.index]} top={v.start} index={v.index} count={list.length} />
           ))}
         </div>
+        {loaded && list.length === 0 && <EmptyState kind={Object.keys(torrents).length === 0 ? 'none' : 'noMatch'} />}
       </div>
       {sheet && <TorrentSheet key={sheet.view} sheet={sheet} onChange={setSheet} onClose={closeSheet} />}
     </div>

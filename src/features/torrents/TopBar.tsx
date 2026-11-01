@@ -1,17 +1,13 @@
 import { Link, Pause, Play, Plus, Search } from 'lucide-react'
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { Button } from '../../components/ui/Button'
 import { t } from '../../i18n/ru'
+import { useHotkeys } from '../../lib/useHotkeys'
 import { useTorrents } from '../../store/torrents'
 import { useDialogs } from '../../store/dialogs'
 import { useUi } from '../../store/ui'
 import { pauseAllLabel, runBulkPause } from './actions'
 import styles from './TopBar.module.css'
-
-function isTyping(el: Element | null): boolean {
-  if (!(el instanceof HTMLElement)) return false
-  return el.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName)
-}
 
 export function TopBar() {
   const search = useUi((s) => s.search)
@@ -19,15 +15,7 @@ export function TopBar() {
   const torrents = useTorrents((s) => s.torrents)
   const input = useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey || isTyping(document.activeElement)) return
-      e.preventDefault()
-      input.current?.focus()
-    }
-    document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-  }, [])
+  useHotkeys([{ keys: ['/'], anywhere: true, run: () => input.current?.focus() }])
 
   const selected = useTorrents((s) => s.selected)
   const all = Object.values(torrents)

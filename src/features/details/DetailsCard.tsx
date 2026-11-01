@@ -48,7 +48,7 @@ export function DetailsCard() {
   const swarm = complete < 0 && incomplete < 0 ? null : Math.max(0, complete) + Math.max(0, incomplete)
 
   return (
-    <section className={styles.card} aria-label={t.details.label}>
+    <section className={styles.card} aria-label={t.details.label} data-details tabIndex={-1}>
       <div className={styles.top}>
         <PieceMap pieces={data.pieces} />
         <div className={styles.main}>

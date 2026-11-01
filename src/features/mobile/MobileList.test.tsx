@@ -280,3 +280,21 @@ describe('MobileLayout', () => {
     expect(screen.getByRole('heading', { name: 'Torrent a' })).toBeInTheDocument()
   })
 })
+
+describe('MobileList empty states', () => {
+  it('no torrents: message and an Add button', () => {
+    load([])
+    useTorrents.setState({ rid: 1 })
+    render(<MobileLayout />)
+    expect(screen.getByText('Торрентов пока нет')).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: 'Добавить' }).length).toBeGreaterThan(0)
+  })
+
+  it('no match: its own message', () => {
+    load([tor('a')])
+    useTorrents.setState({ rid: 1 })
+    useUi.setState({ search: 'qqq' })
+    render(<MobileLayout />)
+    expect(screen.getByText('Ничего не найдено')).toBeInTheDocument()
+  })
+})

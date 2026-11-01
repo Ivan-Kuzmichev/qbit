@@ -106,6 +106,14 @@ export const t = {
     pauseAll: 'Пауза для всех',
     resumeAll: 'Запустить все',
   },
+  empty: {
+    noneTitle: 'Торрентов пока нет',
+    noneHint: 'Добавьте .torrent-файл или magnet-ссылку',
+    add: 'Добавить',
+    noMatchTitle: 'Ничего не найдено',
+    noMatchHint: 'Измените запрос или выберите другой фильтр',
+    reset: 'Сбросить поиск и фильтр',
+  },
   actions: {
     failed: 'Не удалось выполнить действие',
     magnetCopied: 'Magnet скопирован',

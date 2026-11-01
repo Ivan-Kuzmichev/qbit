@@ -14,6 +14,14 @@
   background: var(--row-selected);
   box-shadow: inset 3px 0 0 var(--accent);
 }
+.row:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+.row[data-selected]:focus-visible {
+  box-shadow:
+    inset 3px 0 0 var(--accent),
+    inset 0 0 0 2px var(--accent);
+}
 .actionCell {
   display: flex;
   margin-left: 10px;

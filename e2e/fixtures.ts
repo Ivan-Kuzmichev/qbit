@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import { test as base, expect, type APIRequestContext } from '@playwright/test'
+import { test as base, expect, type APIRequestContext, type Cookie } from '@playwright/test'
 import { BASE_URL, PASSWORD, USERNAME } from './env'
 
 export const TINY_TORRENT = fileURLToPath(new URL('./fixtures/tiny.torrent', import.meta.url))
@@ -21,6 +21,8 @@ export interface Qb {
   files(hash: string): Promise<{ index: number; name: string; priority: number }[]>
   filePrio(hash: string, id: string, priority: number): Promise<void>
   removeAll(): Promise<void>
+  /** The fixture's own session cookies: lets a page start signed in without spending a login attempt. */
+  cookies(): Promise<Cookie[]>
 }
 
 async function ok(res: { ok(): boolean; status(): number; text(): Promise<string> }, what: string) {
@@ -66,6 +68,9 @@ async function makeQb(request: APIRequestContext): Promise<Qb> {
     async filePrio(hash, id, priority) {
       const res = await request.post(`${BASE_URL}/api/v2/torrents/filePrio`, { form: { hash, id, priority: String(priority) } })
       await ok(res, 'torrents/filePrio')
+    },
+    async cookies() {
+      return (await request.storageState()).cookies
     },
     async removeAll() {
       const res = await request.post(`${BASE_URL}/api/v2/torrents/delete`, { form: { hashes: 'all', deleteFiles: 'true' } })

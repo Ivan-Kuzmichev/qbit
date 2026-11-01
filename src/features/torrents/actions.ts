@@ -50,6 +50,14 @@ export function runBulkPause(kind: 'stop' | 'start'): Promise<void> {
   return runTorrentAction(`torrents/${kind}`, selected.length > 0 ? selected : 'all')
 }
 
+/** Space on the list: pauses the torrents, or starts them when every one is already paused. */
+export function toggleTorrentsPause(hashes: readonly string[]): Promise<void> {
+  const { torrents } = useTorrents.getState()
+  const existing = hashes.filter((h) => h in torrents)
+  const resume = pauseAllLabel(existing.map((h) => torrents[h])) === 'start'
+  return runTorrentAction(resume ? 'torrents/start' : 'torrents/stop', existing)
+}
+
 export function pauseAllLabel(torrents: readonly Torrent[]): 'pause' | 'start' {
   return torrents.length > 0 && torrents.every((x) => uiStatus(x).action === 'start') ? 'start' : 'pause'
 }
