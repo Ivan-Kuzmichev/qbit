@@ -3,6 +3,8 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Torrent } from '../../api/types'
+import { toast } from '../../components/ui/Toast'
+import { t } from '../../i18n/ru'
 import { useDialogs } from '../../store/dialogs'
 import { emptySync } from '../../store/mergeMainData'
 import { useTorrents } from '../../store/torrents'
@@ -23,7 +25,7 @@ const file = (index: number, name: string, priority: number) => ({
 })
 
 let fetchMock: ReturnType<typeof stubFetch>
-const post = vi.fn(() => json(''))
+const post = vi.fn((): Response | Promise<Response> => json(''))
 beforeEach(() => {
   location.hash = '#/torrent/a'
   useTorrents.setState({
@@ -78,6 +80,28 @@ describe('MobileDetail', () => {
     const call = fetchMock.mock.calls.find(([u]) => String(u).includes('torrents/filePrio'))!
     expect(String(call[1]?.body)).toBe('hash=a&id=0&priority=0')
     expect(screen.queryByRole('dialog')).toBeNull()
+  })
+
+  it('a failed priority change from the sheet is reverted and toasted', async () => {
+    post.mockImplementationOnce(() => json('', 500))
+    render(<MobileDetail hash="a" />)
+    await screen.findByText('a.bin')
+    const button = screen.getByRole('button', { name: 'Приоритет: a.bin' })
+    await userEvent.click(button)
+    await userEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Не загружать' }))
+    await waitFor(() => expect(toast).toHaveBeenCalledWith(t.details.files.failed))
+    expect(screen.getByRole('button', { name: 'Приоритет: a.bin' })).toHaveTextContent('Обычный')
+  })
+
+  it('applies a sheet choice optimistically before the server answers', async () => {
+    let release: () => void = () => {}
+    post.mockImplementationOnce(() => new Promise<Response>((res) => { release = () => res(json('')) }))
+    render(<MobileDetail hash="a" />)
+    await screen.findByText('a.bin')
+    await userEvent.click(screen.getByRole('button', { name: 'Приоритет: a.bin' }))
+    await userEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Не загружать' }))
+    expect(screen.getByRole('button', { name: 'Приоритет: a.bin' })).not.toHaveTextContent('Обычный')
+    release()
   })
 
   it('switches between the four tabs', async () => {

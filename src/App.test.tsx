@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { App } from './App'
 import { setOnForbidden } from './api/client'
+import { useDialogs } from './store/dialogs'
 import { emptySync } from './store/mergeMainData'
 import { useTorrents } from './store/torrents'
 import { json, stubFetch, text, type Handler } from './test/fetchStub'
@@ -104,6 +105,23 @@ describe('session expiry', () => {
     expect(await screen.findByRole('main')).toBeInTheDocument()
     expect(location.hash).toBe('#/settings')
     await vi.waitFor(() => expect(syncCalls()).toBeGreaterThan(before))
+  })
+})
+
+describe('session expiry and dialogs', () => {
+  it('403 closes an open dialog so it does not come back after re-login', async () => {
+    let expired = false
+    stubFetch({
+      ...ok,
+      'sync/maindata': () => (expired ? text('', 403) : json({ rid: 1, full_update: true })),
+    })
+    render(<App />)
+    await screen.findByRole('main')
+    act(() => useDialogs.getState().openDelete(['abc']))
+    expect(useDialogs.getState().open).not.toBeNull()
+    expired = true
+    expect(await screen.findByRole('form', { name: 'Вход' })).toBeInTheDocument()
+    expect(useDialogs.getState().open).toBeNull()
   })
 })
 

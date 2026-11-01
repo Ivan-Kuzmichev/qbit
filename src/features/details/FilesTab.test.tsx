@@ -91,7 +91,7 @@ describe('FilesTab', () => {
     const onPick = vi.fn()
     render(<FilesTab files={FILES} onSetPriority={vi.fn()} variant="mobile" onPickPriority={onPick} />)
     await userEvent.click(screen.getByRole('button', { name: 'Приоритет: a.txt' }))
-    expect(onPick).toHaveBeenCalledWith(expect.objectContaining({ name: 'a.txt', ids: [3] }))
+    expect(onPick).toHaveBeenCalledWith(expect.objectContaining({ name: 'a.txt', ids: [3] }), expect.any(Function))
     expect(screen.queryByRole('menu')).toBeNull()
   })
 

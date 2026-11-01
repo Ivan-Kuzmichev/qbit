@@ -67,7 +67,7 @@ export async function toggleAltLimits(): Promise<void> {
   try {
     await api.post('transfer/toggleSpeedLimitsMode', {})
   } catch {
-    // the next sync shows the real state; a failed toggle just stays off
+    toast(t.actions.failed)
     return
   }
   await useTorrents.getState().refresh().catch(() => {})

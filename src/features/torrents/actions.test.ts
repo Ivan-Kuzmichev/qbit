@@ -4,7 +4,7 @@ import type { Torrent } from '../../api/types'
 import { emptySync } from '../../store/mergeMainData'
 import { useTorrents } from '../../store/torrents'
 import { json, stubFetch, text } from '../../test/fetchStub'
-import { pauseAllLabel, runBulkPause, runRowAction, runTorrentAction, targetHashes } from './actions'
+import { pauseAllLabel, runBulkPause, runRowAction, runTorrentAction, targetHashes, toggleAltLimits } from './actions'
 
 const toastMock = vi.hoisted(() => vi.fn())
 vi.mock('../../components/ui/Toast', () => ({ toast: toastMock }))
@@ -120,5 +120,22 @@ describe('pauseAllLabel', () => {
     expect(pauseAllLabel([tor('a', 'stoppedDL'), tor('b', 'stoppedUP')])).toBe('start')
     expect(pauseAllLabel([tor('a', 'stoppedDL'), tor('b', 'downloading')])).toBe('pause')
     expect(pauseAllLabel([])).toBe('pause')
+  })
+})
+
+describe('toggleAltLimits', () => {
+  it('posts the toggle and refreshes', async () => {
+    const fn = stubFetch({ 'transfer/toggleSpeedLimitsMode': () => text('') })
+    await toggleAltLimits()
+    expect(fn).toHaveBeenCalledTimes(1)
+    expect(refresh).toHaveBeenCalled()
+    expect(toastMock).not.toHaveBeenCalled()
+  })
+
+  it('toasts when the toggle fails', async () => {
+    stubFetch({ 'transfer/toggleSpeedLimitsMode': () => text('boom', 500) })
+    await toggleAltLimits()
+    expect(toastMock).toHaveBeenCalledWith('Не удалось выполнить действие')
+    expect(refresh).not.toHaveBeenCalled()
   })
 })

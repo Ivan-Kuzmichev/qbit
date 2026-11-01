@@ -17,6 +17,7 @@ import { TopBar } from './features/torrents/TopBar'
 import { TorrentTable } from './features/torrents/TorrentTable'
 import { useRoute } from './lib/router'
 import { useIsMobile } from './lib/useIsMobile'
+import { useDialogs } from './store/dialogs'
 import { emptySync } from './store/mergeMainData'
 import { useTorrents } from './store/torrents'
 
@@ -68,6 +69,7 @@ export function App() {
       useTorrents.getState().stopSync()
       useTorrents.setState({ ...emptySync, speedHistory: [], connection: 'ok' })
       useTorrents.getState().clearSelection()
+      useDialogs.getState().close()
       setPhase({ name: 'login' })
     })
     return () => {

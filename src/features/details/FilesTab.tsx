@@ -15,8 +15,8 @@ export interface FilesTabProps {
   /** Rejects when the request fails; the row is then reverted and a toast shown. */
   onSetPriority(ids: number[], priority: number): Promise<void>
   variant: 'desktop' | 'mobile'
-  /** Mobile only: opens the priority action sheet (Task 18). */
-  onPickPriority?(node: TreeNode): void
+  /** Mobile only: opens the priority action sheet. `apply` is this tab's optimistic, reverting setter. */
+  onPickPriority?(node: TreeNode, apply: (ids: number[], priority: number) => void): void
 }
 
 const PRIORITIES = [0, 1, 6, 7] as const
@@ -96,7 +96,7 @@ export function FilesTab({ files, onSetPriority, variant, onPickPriority }: File
       onToggle={toggle}
       onCheck={(on) => setPriority(node.ids, on ? 1 : 0)}
       onPriority={(p) => setPriority(node.ids, p)}
-      onPick={onPickPriority}
+      onPick={onPickPriority && ((n) => onPickPriority(n, setPriority))}
     />
   )
 
