@@ -7,6 +7,7 @@ import { UpgradeScreen } from './features/auth/UpgradeScreen'
 import { saveVersions } from './features/auth/versions'
 import { ConnectionBanner } from './features/shell/ConnectionBanner'
 import { DesktopLayout } from './features/shell/DesktopLayout'
+import { DetailsCard } from './features/details/DetailsCard'
 import { DropOverlay } from './features/add/DropOverlay'
 import { DialogHost } from './features/torrents/DialogHost'
 import { TopBar } from './features/torrents/TopBar'
@@ -102,6 +103,7 @@ export function App() {
             <DesktopLayout>
               <TopBar />
               <TorrentTable />
+              <DetailsCard />
             </DesktopLayout>
           )}
         </>

@@ -1,0 +1,18 @@
+.map {
+  width: 100px;
+  height: 100px;
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 2px;
+}
+.cell {
+  border-radius: 1px;
+  background: var(--border-subtle);
+}
+.cell[data-state='done'] {
+  background: var(--accent);
+}
+.cell[data-state='active'] {
+  background: var(--neutral);
+}
