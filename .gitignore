@@ -4,3 +4,4 @@ qbit/
 test-results/
 playwright-report/
 .superpowers/
+*.tsbuildinfo

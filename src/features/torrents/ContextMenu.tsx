@@ -94,24 +94,28 @@ export function ContextMenu({ x, y, onClose, onDialog }: ContextMenuProps) {
         root.current?.querySelector<HTMLElement>('[aria-expanded="true"]')?.focus()
       }
     }
+    // Scrolling inside the menu itself (a long submenu) must not dismiss it.
+    function onScroll(e: Event) {
+      if (!(e.target instanceof Node && root.current?.contains(e.target))) onClose()
+    }
     document.addEventListener('mousedown', onDown)
     document.addEventListener('keydown', onKey)
     window.addEventListener('resize', onClose)
     window.addEventListener('blur', onClose)
-    document.addEventListener('scroll', onClose, true)
+    document.addEventListener('scroll', onScroll, true)
     return () => {
       document.removeEventListener('mousedown', onDown)
       document.removeEventListener('keydown', onKey)
       window.removeEventListener('resize', onClose)
       window.removeEventListener('blur', onClose)
-      document.removeEventListener('scroll', onClose, true)
+      document.removeEventListener('scroll', onScroll, true)
     }
   }, [onClose])
 
   // Keyboard and click open a submenu with focus inside it; hovering only shows it.
   const [focusTick, setFocusTick] = useState(0)
   useEffect(() => {
-    if (focusTick > 0) root.current?.querySelector<HTMLElement>('[role="menu"] [role^="menuitem"]')?.focus()
+    if (focusTick > 0) root.current?.querySelector<HTMLElement>('[data-submenu] [role^="menuitem"]')?.focus()
   }, [focusTick])
 
   if (empty) return null
@@ -226,7 +230,7 @@ export function ContextMenu({ x, y, onClose, onDialog }: ContextMenuProps) {
             {e.sub && <ChevronRight size={14} aria-hidden="true" />}
           </button>
           {e.sub && sub === e.sub && (
-            <div role="menu" aria-label={e.label} className={pos.flip ? `${styles.sub} ${styles.flip}` : styles.sub}>
+            <div role="menu" data-submenu aria-label={e.label} className={pos.flip ? `${styles.sub} ${styles.flip}` : styles.sub}>
               {subEntries(e.sub).map((s) => (
                 <button
                   key={s.id}

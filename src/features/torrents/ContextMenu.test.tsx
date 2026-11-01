@@ -263,6 +263,27 @@ describe('context menu', () => {
     rect.mockRestore()
   })
 
+  it('ArrowRight on a parent item focuses the first item of its submenu, ArrowLeft returns', async () => {
+    load([tor('a')], { categories: ['Фильмы'] })
+    render(<TorrentTable />)
+    const menu = open('Torrent a')
+    within(menu).getByRole('menuitem', { name: 'Категория' }).focus()
+    await userEvent.keyboard('{ArrowRight}')
+    expect(document.activeElement).toBe(screen.getByRole('menuitem', { name: 'Без категории' }))
+    await userEvent.keyboard('{ArrowLeft}')
+    expect(document.activeElement).toBe(within(menu).getByRole('menuitem', { name: 'Категория' }))
+  })
+
+  it('scrolling inside a submenu does not close the menu, scrolling the page does', async () => {
+    load([tor('a')], { categories: ['Фильмы'] })
+    render(<TorrentTable />)
+    await userEvent.click(within(open('Torrent a')).getByRole('menuitem', { name: 'Категория' }))
+    fireEvent.scroll(screen.getByRole('menu', { name: 'Категория' }))
+    expect(screen.getByRole('menu', { name: 'Действия с торрентом' })).toBeInTheDocument()
+    fireEvent.scroll(document)
+    expect(screen.queryByRole('menu')).toBeNull()
+  })
+
   it('closes on Escape and on an outside click', async () => {
     load([tor('a')])
     render(<TorrentTable />)
