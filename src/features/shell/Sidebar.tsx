@@ -4,7 +4,7 @@ import {
 } from 'lucide-react'
 import { useMemo, useState, type ReactNode } from 'react'
 import { Logo } from '../../components/ui/Logo'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import { useRoute } from '../../lib/router'
 import { useTorrents } from '../../store/torrents'
 import { useUi } from '../../store/ui'
@@ -38,8 +38,9 @@ function Item(props: { active: boolean; icon: ReactNode; label: string; count: n
   )
 }
 
-function Group(props: { title: string; children: ReactNode }) {
-  const [open, setOpen] = useState(true)
+function Group(props: { title: string; hasActive: boolean; children: ReactNode }) {
+  // Collapsed by default, unless the current filter (kept across a re-login) would be hidden inside.
+  const [open, setOpen] = useState(props.hasActive)
   return (
     <div className={styles.group}>
       <button type="button" className={styles.groupHead} aria-expanded={open} onClick={() => setOpen(!open)}>
@@ -88,7 +89,7 @@ export function Sidebar() {
         })}
 
         {categoryNames.length > 0 && (
-          <Group title={t.sidebar.categories}>
+          <Group title={t.sidebar.categories} hasActive={filter.type === 'category'}>
             {categoryNames.map((name) => {
               const f: Filter = { type: 'category', value: name }
               return <Item key={name} active={isActive(f)} icon={<Folder size={15} aria-hidden="true" />} label={name} count={count(f)} onClick={() => pick(f)} />
@@ -96,7 +97,7 @@ export function Sidebar() {
           </Group>
         )}
         {tags.length > 0 && (
-          <Group title={t.sidebar.tags}>
+          <Group title={t.sidebar.tags} hasActive={filter.type === 'tag'}>
             {tags.map((name) => {
               const f: Filter = { type: 'tag', value: name }
               return <Item key={name} active={isActive(f)} icon={<Tag size={15} aria-hidden="true" />} label={name} count={count(f)} onClick={() => pick(f)} />

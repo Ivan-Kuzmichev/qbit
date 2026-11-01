@@ -69,23 +69,39 @@ describe('Sidebar filters', () => {
     expect(screen.queryByText('Категории')).toBeNull()
     expect(screen.queryByText('Теги')).toBeNull()
   })
-  it('categories and tags show counts, filter, and collapse', async () => {
+  it('categories and tags start collapsed, then show counts, filter, and collapse again', async () => {
     load([tor('downloading', { category: 'Movies', tags: 'hd' }), tor('stoppedDL')], {
       categories: ['Movies', 'Empty'],
       tags: ['hd'],
     })
     render(<Sidebar />)
+    const head = screen.getByRole('button', { name: 'Категории' })
+    const tagsHead = screen.getByRole('button', { name: 'Теги' })
+    expect(head).toHaveAttribute('aria-expanded', 'false')
+    expect(tagsHead).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.queryByRole('button', { name: /^Movies/ })).toBeNull()
+    expect(screen.queryByRole('button', { name: /^hd/ })).toBeNull()
+
+    await userEvent.click(head)
+    await userEvent.click(tagsHead)
     const movies = screen.getByRole('button', { name: /^Movies/ })
     expect(within(movies).getByText('1')).toBeInTheDocument()
     await userEvent.click(movies)
     expect(useUi.getState().filter).toEqual({ type: 'category', value: 'Movies' })
     await userEvent.click(screen.getByRole('button', { name: /^hd/ }))
     expect(useUi.getState().filter).toEqual({ type: 'tag', value: 'hd' })
-    const head = screen.getByRole('button', { name: 'Категории' })
     expect(head).toHaveAttribute('aria-expanded', 'true')
     await userEvent.click(head)
     expect(head).toHaveAttribute('aria-expanded', 'false')
     expect(screen.queryByRole('button', { name: /^Movies/ })).toBeNull()
+  })
+  it('opens only the group holding the current filter', () => {
+    useUi.setState({ filter: { type: 'category', value: 'Movies' } })
+    load([tor('downloading', { category: 'Movies', tags: 'hd' })], { categories: ['Movies'], tags: ['hd'] })
+    render(<Sidebar />)
+    expect(screen.getByRole('button', { name: 'Категории' })).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('button', { name: 'Теги' })).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.getByRole('button', { name: /^Movies/ })).toHaveAttribute('aria-current')
   })
   it('Settings item navigates and is marked current on #/settings', async () => {
     load([])
