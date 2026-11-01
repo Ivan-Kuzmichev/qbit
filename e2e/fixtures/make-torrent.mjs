@@ -38,3 +38,19 @@ const multi = {
   },
 }
 writeFileSync(new URL('./multi.torrent', import.meta.url), enc(multi))
+
+// Hybrid (v1 + v2) twin of multi.torrent. qBittorrent files hybrids under the v2 hash,
+// so this checks that the add dialog still finds the torrent after a partial selection.
+const root = (d) => createHash('sha256').update(d).digest()
+const hybrid = {
+  announce: 'http://127.0.0.1:1/announce',
+  info: {
+    'file tree': { 'a.bin': { '': { length: a.length, 'pieces root': root(a) } }, 'b.bin': { '': { length: b.length, 'pieces root': root(b) } } },
+    files: multi.info.files,
+    'meta version': 2,
+    name: 'qbit-e2e-hybrid',
+    'piece length': 16384,
+    pieces: multi.info.pieces,
+  },
+}
+writeFileSync(new URL('./hybrid.torrent', import.meta.url), enc(hybrid))

@@ -37,7 +37,7 @@ test.describe('stage 1: login, sync, table', () => {
 
     await signIn(page)
 
-    const table = page.getByRole('table')
+    const table = page.getByRole('grid')
     await expect(table).toBeVisible()
     await expect(table.getByRole('row', { name: new RegExp(TINY_NAME) })).toHaveCount(0)
 

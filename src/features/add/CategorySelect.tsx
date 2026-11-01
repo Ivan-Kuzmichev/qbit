@@ -1,6 +1,7 @@
 import { ChevronDown } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
 import { t } from '../../i18n/ru'
+import { categoryColor } from '../../lib/categoryColor'
 import styles from './CategorySelect.module.css'
 
 export interface CategorySelectProps {
@@ -58,6 +59,7 @@ export function CategorySelect({ value, categories, onChange, onCreate }: Catego
         aria-labelledby={`${labelId} ${valueId}`}
         onClick={() => setOpen((o) => !o)}
       >
+        {value && <span className={styles.dot} style={{ background: categoryColor(value) }} aria-hidden="true" />}
         <span id={valueId} className={styles.value}>
           {value || t.add.noCategory}
         </span>
@@ -71,6 +73,7 @@ export function CategorySelect({ value, categories, onChange, onCreate }: Catego
             </li>
             {all.map((c) => (
               <li key={c} role="option" aria-selected={c === value} tabIndex={0} className={styles.option} onClick={() => pick(c)} onKeyDown={(e) => e.key === 'Enter' && pick(c)}>
+                <span className={styles.dot} style={{ background: categoryColor(c) }} aria-hidden="true" />
                 {c}
               </li>
             ))}

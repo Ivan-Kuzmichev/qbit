@@ -9,7 +9,7 @@ import { json, stubFetch, text } from '../../test/fetchStub'
 import { DialogHost } from '../torrents/DialogHost'
 import { AddDialog } from './AddDialog'
 import { DropOverlay } from './DropOverlay'
-import { multiInfo, singleInfo, torrentBytes } from './torrentFixtures'
+import { multiInfo, sha1hex, singleInfo, torrentBytes } from './torrentFixtures'
 
 function torrentFile(name: string, info: object = multiInfo): File {
   return new File([torrentBytes(info as never).bytes as BlobPart], name, { type: 'application/x-bittorrent' })
@@ -172,6 +172,52 @@ describe('AddDialog', () => {
     await userEvent.click(within(card).getByRole('button', { name: 'Убрать файл' }))
     expect(screen.queryByText('one.torrent')).toBeNull()
     expect(screen.getByRole('button', { name: 'Добавить' })).toBeDisabled()
+  })
+})
+
+describe('AddDialog selection rules', () => {
+  it('filePrio indices skip padding files', async () => {
+    const pieces = new Uint8Array(20).fill(7)
+    const info = {
+      files: [
+        { length: 10, path: ['a'] },
+        { length: 5, path: ['.pad', '5'], attr: 'p' },
+        { length: 20, path: ['b'] },
+        { length: 5, path: ['.pad', '6'], attr: 'p' },
+        { length: 30, path: ['c'] },
+      ],
+      name: 'padded',
+      'piece length': 16384,
+      pieces,
+    }
+    const { bytes, infoBytes } = torrentBytes(info as never)
+    const hash = sha1hex(infoBytes)
+    const f = routes({
+      'torrents/info': () => json([{ hash }]),
+      'torrents/filePrio': () => text(''),
+      'torrents/start': () => text(''),
+    })
+    render(<AddDialog tab="file" files={[new File([bytes as BlobPart], 'p.torrent')]} onClose={() => {}} />)
+    await screen.findByText('выбрано 3 из 3')
+    await userEvent.click(screen.getByRole('checkbox', { name: /padded\/b/ }))
+    await userEvent.click(screen.getByRole('button', { name: 'Добавить' }))
+    await waitFor(() => expect(f.mock.calls.some((c) => String(c[0]).includes('filePrio'))).toBe(true))
+    const call = f.mock.calls.find((c) => String(c[0]).includes('filePrio'))!
+    expect(new URLSearchParams(String(call[1]!.body)).get('id')).toBe('1')
+  })
+
+  it('with several torrents the hidden selections are not sent: each is added whole', async () => {
+    const f = routes()
+    render(<AddDialog tab="file" files={[torrentFile('m.torrent')]} onClose={() => {}} />)
+    await screen.findByText('выбрано 3 из 3')
+    await userEvent.click(screen.getByRole('checkbox', { name: /a\.txt/ }))
+    await userEvent.upload(screen.getByTestId('file-input'), torrentFile('two.torrent', singleInfo))
+    await screen.findByText('two.torrent')
+    expect(screen.queryByText(/выбрано/)).toBeNull()
+    await userEvent.click(screen.getByRole('button', { name: 'Добавить' }))
+    await waitFor(() => expect(added(f)).toHaveLength(2))
+    for (const c of added(f)) expect((c[1]!.body as FormData).get('stopped')).toBe('false')
+    expect(f.mock.calls.some((c) => String(c[0]).includes('filePrio'))).toBe(false)
   })
 })
 

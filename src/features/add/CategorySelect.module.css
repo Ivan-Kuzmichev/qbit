@@ -23,6 +23,17 @@
   text-align: left;
   cursor: pointer;
 }
+.dot {
+  display: inline-block;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border-radius: 2px;
+}
+.trigger .dot {
+  margin-right: 0;
+}
 .value {
   flex: 1;
   min-width: 0;

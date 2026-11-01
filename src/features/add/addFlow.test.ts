@@ -169,6 +169,19 @@ describe('addTorrents', () => {
   })
 })
 
+describe('addTorrents with candidate ids', () => {
+  it('polls all ids, uses the hash qBittorrent reports for filePrio and start', async () => {
+    const v2 = 'b'.repeat(40)
+    const { deps, calls } = setup({ info: () => [{ hash: v2 }] })
+    await addTorrents(req({ torrents: [{ ...file('h.torrent', [true, false]), infohash: HASH, ids: [HASH, v2] }] }), deps)
+    const poll = calls.find((c) => c.path === 'torrents/info')!
+    expect(poll.form).toEqual({})
+    expect(deps.api.get).toHaveBeenCalledWith('torrents/info', { hashes: `${HASH.toLowerCase()}|${v2}` })
+    expect(calls.find((c) => c.path === 'torrents/filePrio')!.form.hash).toBe(v2)
+    expect(calls.at(-1)).toEqual({ path: 'torrents/start', form: { hashes: v2 } })
+  })
+})
+
 describe('reportAddResult', () => {
   it('toasts each failure with its name', async () => {
     const toasts: string[] = []

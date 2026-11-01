@@ -35,10 +35,38 @@ describe('parseTorrent', () => {
     expect(p.files.map((f) => f.path).sort()).toEqual(['v2only/dir/y.bin', 'v2only/x.bin'])
   })
 
-  it('hybrid: SHA-1', () => {
+  it('hybrid: infohash is SHA-1, ids carry both candidates (qBittorrent may use the v2 one)', () => {
     const hybrid = { ...singleInfo, 'file tree': v2Info['file tree'], 'meta version': 2 }
     const { bytes, infoBytes } = torrentBytes(hybrid)
-    expect(parseTorrent(bytes).infohash).toBe(sha1hex(infoBytes))
+    const p = parseTorrent(bytes)
+    expect(p.infohash).toBe(sha1hex(infoBytes))
+    expect(p.ids).toEqual([sha1hex(infoBytes), sha256hex(infoBytes).slice(0, 40)])
+  })
+
+  it('ids: one for v1, one for v2-only', () => {
+    const v1 = torrentBytes(singleInfo)
+    expect(parseTorrent(v1.bytes).ids).toEqual([sha1hex(v1.infoBytes)])
+    const v2 = torrentBytes(v2Info)
+    expect(parseTorrent(v2.bytes).ids).toEqual([sha256hex(v2.infoBytes).slice(0, 40)])
+  })
+
+  it('v2 file names are UTF-8 and a single Cyrillic file collapses to its name', () => {
+    const one = { 'file tree': { 'Фильм.mkv': { '': { length: 5 } } }, 'meta version': 2, name: 'Фильм.mkv', 'piece length': 16384 }
+    expect(parseTorrent(torrentBytes(one).bytes).files).toEqual([{ path: 'Фильм.mkv', size: 5 }])
+    const many = { 'file tree': { 'Папка': { 'Файл.txt': { '': { length: 1 } } } }, 'meta version': 2, name: 'Раздача', 'piece length': 16384 }
+    expect(parseTorrent(torrentBytes(many).bytes).files[0].path).toBe('Раздача/Папка/Файл.txt')
+  })
+
+  it('v2 files keep byte order, including integer-like names and __proto__', () => {
+    const leaf = (n: number) => ({ '': { length: n } })
+    const tree = new Map<string, unknown>([['10', leaf(1)], ['9', leaf(2)], ['__proto__', leaf(3)]])
+    const info = { 'file tree': tree, 'meta version': 2, name: 'd', 'piece length': 16384 }
+    expect(parseTorrent(torrentBytes(info as never).bytes).files.map((f) => f.path)).toEqual(['d/10', 'd/9', 'd/__proto__'])
+  })
+
+  it('recognises libtorrent padding names without attr', () => {
+    const info = { files: [{ length: 5, path: ['a'] }, { length: 3, path: ['.pad', '_____padding_file_0_'] }], name: 'n', 'piece length': 16384, pieces: singleInfo.pieces }
+    expect(parseTorrent(torrentBytes(info as never).bytes).files.map((f) => !!f.pad)).toEqual([false, true])
   })
 
   it('marks padding files', () => {

@@ -1,4 +1,5 @@
-export type BValue = number | Uint8Array | BValue[] | { [key: string]: BValue }
+/** Dicts are Maps: insertion order is the file's byte order, and keys like `__proto__` or `10` are harmless. */
+export type BValue = number | Uint8Array | BValue[] | Map<string, BValue>
 
 export class BencodeError extends Error {
   constructor(message: string) {
@@ -15,7 +16,6 @@ const I = 0x69
 const L = 0x6c
 const MINUS = 0x2d
 
-/** Dict keys are read as Latin-1 so that any byte sequence round-trips. */
 function latin1(b: Uint8Array): string {
   let s = ''
   for (const c of b) s += String.fromCharCode(c)
@@ -25,7 +25,7 @@ function latin1(b: Uint8Array): string {
 class Reader {
   pos = 0
   /** Byte range of each value in the top-level dict, by key. */
-  spans: Record<string, [number, number]> = {}
+  spans = new Map<string, [number, number]>()
   constructor(private b: Uint8Array) {}
 
   private digits(stop: number, allowSign: boolean): number {
@@ -66,15 +66,15 @@ class Reader {
     }
     if (c === D) {
       this.pos++
-      const dict: { [key: string]: BValue } = {}
+      const dict = new Map<string, BValue>()
       while (this.b[this.pos] !== E) {
         if (this.pos >= this.b.length) throw new BencodeError('Truncated dict')
         const c0 = this.b[this.pos]
         if (c0 < 0x30 || c0 > 0x39) throw new BencodeError('Dict key must be a string')
-        const key = latin1(this.string())
+        const key = new TextDecoder('utf-8').decode(this.string())
         const start = this.pos
-        dict[key] = this.value(depth + 1)
-        if (depth === 0) this.spans[key] = [start, this.pos]
+        dict.set(key, this.value(depth + 1))
+        if (depth === 0) this.spans.set(key, [start, this.pos])
       }
       this.pos++
       return dict
@@ -84,7 +84,7 @@ class Reader {
   }
 }
 
-export function decodeWithSpans(bytes: Uint8Array): { value: BValue; spans: Record<string, [number, number]> } {
+export function decodeWithSpans(bytes: Uint8Array): { value: BValue; spans: Map<string, [number, number]> } {
   const r = new Reader(bytes)
   try {
     const value = r.value(0)

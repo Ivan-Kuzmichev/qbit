@@ -1,7 +1,7 @@
 // Test helper: builds .torrent bytes. Not shipped (only imported from tests).
 import { createHash } from 'node:crypto'
 
-type V = number | string | Uint8Array | V[] | { [k: string]: V }
+type V = number | string | Uint8Array | V[] | Map<string, V> | { [k: string]: V }
 
 const te = new TextEncoder()
 
@@ -12,7 +12,8 @@ export function enc(v: V): Uint8Array {
   // isView, not instanceof: under jsdom TextEncoder returns an array from another realm
   if (ArrayBuffer.isView(v)) return concat([te.encode(`${v.length}:`), v as Uint8Array])
   if (Array.isArray(v)) return concat([te.encode('l'), ...v.map(enc), te.encode('e')])
-  return concat([te.encode('d'), ...Object.entries(v).flatMap(([k, x]) => [enc(k), enc(x)]), te.encode('e')])
+  const entries = v instanceof Map ? [...v.entries()] : Object.entries(v)
+  return concat([te.encode('d'), ...entries.flatMap(([k, x]) => [enc(k), enc(x)]), te.encode('e')])
 }
 
 export function concat(parts: Uint8Array[]): Uint8Array {

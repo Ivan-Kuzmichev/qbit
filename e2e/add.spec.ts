@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test'
 import { PASSWORD, USERNAME } from './env'
-import { expect, MULTI_NAME, MULTI_TORRENT, test, TINY_NAME, TINY_TORRENT } from './fixtures'
+import { expect, HYBRID_NAME, HYBRID_TORRENT, MULTI_NAME, MULTI_TORRENT, test, TINY_NAME, TINY_TORRENT } from './fixtures'
 
 async function signIn(page: Page) {
   await page.goto('/')
@@ -59,6 +59,35 @@ test.describe('add torrent dialog', () => {
       .toEqual([
         [`${MULTI_NAME}/a.bin`, 1],
         [`${MULTI_NAME}/b.bin`, 0],
+      ])
+  })
+
+  test('a hybrid torrent with an unchecked file is found and gets priority 0', async ({ page, qb }, info) => {
+    await signIn(page)
+    const dialog = await openAdd(page, HYBRID_TORRENT)
+    await expect(dialog.getByText('выбрано 2 из 2')).toBeVisible()
+    await dialog.getByRole('checkbox', { name: /b\.bin/ }).uncheck()
+    await dialog.getByRole('checkbox', { name: 'Запустить сразу' }).uncheck()
+    await dialog.getByRole('button', { name: 'Добавить', exact: true }).click()
+    await expect(dialog).toBeHidden()
+
+    let hash = ''
+    await expect
+      .poll(
+        async () => {
+          const found = Object.entries((await qb.maindata()).torrents ?? {}).find(([, x]) => x.name === HYBRID_NAME)
+          hash = found?.[0] ?? ''
+          return found?.[1].state
+        },
+        { timeout: 40_000 },
+      )
+      .toBe('stoppedDL')
+    info.annotations.push({ type: 'qBittorrent hash of the hybrid', description: hash })
+    await expect
+      .poll(async () => (await qb.files(hash)).map((f) => [f.name, f.priority]), { timeout: 15_000 })
+      .toEqual([
+        [`${HYBRID_NAME}/a.bin`, 1],
+        [`${HYBRID_NAME}/b.bin`, 0],
       ])
   })
 })

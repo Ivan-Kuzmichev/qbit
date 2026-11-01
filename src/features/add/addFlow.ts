@@ -19,7 +19,9 @@ export interface AddTorrentInput {
   name: string
   data: Blob
   infohash: string
-  /** One flag per file of the torrent, in order; null or all true means "everything". */
+  /** Other ids qBittorrent may file it under (hybrid torrents); `infohash` is used when absent. */
+  ids?: string[]
+  /** One flag per downloadable file of the torrent (padding files excluded), in order; null or all true means "everything". */
   selected: boolean[] | null
 }
 
@@ -71,13 +73,13 @@ async function post(deps: AddDeps, form: FormData): Promise<void> {
 }
 
 /** Waits for the torrent to show up; returns its hash as qBittorrent spells it. */
-async function waitFor(deps: AddDeps, infohash: string): Promise<string> {
-  const want = infohash.toLowerCase()
+async function waitFor(deps: AddDeps, ids: string[]): Promise<string> {
+  const want = ids.map((i) => i.toLowerCase())
   const started = deps.now()
   for (;;) {
     try {
-      const list = await deps.api.get<{ hash: string }[]>('torrents/info', { hashes: want })
-      const hit = list.find((x) => x.hash.toLowerCase() === want)
+      const list = await deps.api.get<{ hash: string }[]>('torrents/info', { hashes: want.join('|') })
+      const hit = list.find((x) => want.includes(x.hash.toLowerCase()))
       if (hit) return hit.hash
     } catch {
       throw new Failure(t.add.network)
@@ -96,7 +98,7 @@ async function addOne(item: AddTorrentInput, o: AddOptions, deps: AddDeps): Prom
   await post(deps, form)
   if (!partial) return
 
-  const hash = await waitFor(deps, item.infohash)
+  const hash = await waitFor(deps, item.ids?.length ? item.ids : [item.infohash])
   try {
     await deps.api.post('torrents/filePrio', { hash, id: unchecked.join('|'), priority: 0 })
     if (o.start) await deps.api.post('torrents/start', { hashes: hash })

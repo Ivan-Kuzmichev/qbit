@@ -6,6 +6,8 @@ import { BASE_URL, PASSWORD, USERNAME } from './env'
 export const TINY_TORRENT = fileURLToPath(new URL('./fixtures/tiny.torrent', import.meta.url))
 export const TINY_NAME = 'qbit-e2e-tiny.bin'
 export const MULTI_TORRENT = fileURLToPath(new URL('./fixtures/multi.torrent', import.meta.url))
+export const HYBRID_TORRENT = fileURLToPath(new URL('./fixtures/hybrid.torrent', import.meta.url))
+export const HYBRID_NAME = 'qbit-e2e-hybrid'
 export const MULTI_NAME = 'qbit-e2e-multi'
 
 export interface Qb {

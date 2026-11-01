@@ -30,7 +30,7 @@ interface Entry {
   /** null while reading, or when `failed`. */
   parsed: ParsedTorrent | null
   failed: boolean
-  /** One flag per file of the torrent, padding files included. */
+  /** One flag per downloadable file (padding files excluded: qBittorrent does not index them). */
   selected: boolean[]
 }
 
@@ -87,7 +87,7 @@ export function AddDialog({ tab: initialTab, files, onClose }: AddDialogProps) {
         .arrayBuffer()
         .then((buf) => parseTorrent(new Uint8Array(buf)))
         .then(
-          (parsed) => ({ parsed, failed: false, selected: parsed.files.map(() => true) }),
+          (parsed) => ({ parsed, failed: false, selected: parsed.files.filter((f) => !f.pad).map(() => true) }),
           () => ({ parsed: null, failed: true, selected: [] as boolean[] }),
         )
         .then((patch) => setEntries((cur) => cur.map((e) => (e.id === row.id ? { ...e, ...patch } : e))))
@@ -105,7 +105,7 @@ export function AddDialog({ tab: initialTab, files, onClose }: AddDialogProps) {
   const valid = entries.filter((e) => e.parsed)
   // The per-file list is for one torrent; with several, each is added whole.
   const single = valid.length === 1 ? valid[0] : null
-  const shownFiles = single ? single.parsed!.files.map((f, i) => ({ ...f, i })).filter((f) => !f.pad) : []
+  const shownFiles = single ? single.parsed!.files.filter((f) => !f.pad).map((f, i) => ({ ...f, i })) : []
   const pickedCount = single ? shownFiles.filter((f) => single.selected[f.i]).length : 0
   const magnetLines = magnets.split('\n').map((l) => l.trim()).filter(Boolean)
 
@@ -139,7 +139,7 @@ export function AddDialog({ tab: initialTab, files, onClose }: AddDialogProps) {
       tab === 'magnet'
         ? { torrents: [], magnets: magnetLines, options }
         : {
-            torrents: valid.map((e) => ({ name: e.file.name, data: e.file, infohash: e.parsed!.infohash, selected: e.selected })),
+            torrents: valid.map((e) => ({ name: e.file.name, data: e.file, infohash: e.parsed!.infohash, ids: e.parsed!.ids, selected: single ? e.selected : null })),
             magnets: [],
             options,
           }
