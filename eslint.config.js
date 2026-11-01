@@ -14,7 +14,12 @@ export default tseslint.config(
     rules: reactHooks.configs.recommended.rules,
   },
   {
-    files: ['scripts/**/*.mjs', '*.config.{js,ts}'],
+    files: ['scripts/**/*.mjs', 'e2e/**/*.{ts,mjs}', '*.config.{js,ts}'],
     languageOptions: { globals: globals.node },
+  },
+  {
+    // Playwright fixtures take a `use` callback that is not a React hook
+    files: ['e2e/**/*.ts'],
+    rules: { 'react-hooks/rules-of-hooks': 'off' },
   },
 )

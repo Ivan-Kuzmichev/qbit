@@ -1,0 +1,15 @@
+name: qbit-e2e
+services:
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:5.1.2
+    container_name: qbit-e2e-qbittorrent
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+      # Internal and external ports must match: qBittorrent validates the Host header.
+      - WEBUI_PORT=18080
+    ports:
+      - '18080:18080'
+    volumes:
+      - ../qbit:/qbit:ro
