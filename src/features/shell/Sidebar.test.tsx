@@ -151,3 +151,23 @@ describe('Sparkline', () => {
     expect(poly(container)!.getAttribute('points')).not.toMatch(/NaN|Infinity/)
   })
 })
+
+describe('SpeedCard opens the limits dialog', () => {
+  it('a click on the speed area opens the global tab; the switch does not', async () => {
+    const { useDialogs } = await import('../../store/dialogs')
+    useDialogs.setState({ open: null })
+    stubFetch({ 'transfer/toggleSpeedLimitsMode': () => text(''), 'sync/maindata': () => text('', 500) })
+    load([], { server: { dl_info_speed: 1000 } })
+    render(<Sidebar />)
+    await userEvent.click(screen.getByRole('switch', { name: 'Альт. лимиты' }))
+    expect(useDialogs.getState().open).toBeNull()
+    await userEvent.click(screen.getByRole('button', { name: /Скорость и лимиты/ }))
+    expect(useDialogs.getState().open).toMatchObject({ kind: 'limits', tab: 'global' })
+  })
+
+  it('does not nest the switch inside another button', () => {
+    load([], {})
+    render(<Sidebar />)
+    expect(screen.getByRole('switch', { name: 'Альт. лимиты' }).closest('button:not([role="switch"])')).toBeNull()
+  })
+})

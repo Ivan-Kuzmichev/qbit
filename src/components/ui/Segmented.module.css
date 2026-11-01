@@ -15,6 +15,10 @@
   font-weight: 500;
   cursor: pointer;
 }
+.item:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
 .item[aria-checked='true'] {
   background: var(--chip);
   color: var(--text);

@@ -1,0 +1,152 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.subtitle {
+  margin-top: -14px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tabs > div {
+  display: flex;
+}
+.tabs button {
+  flex: 1;
+  padding: 0 8px;
+}
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.label {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-2);
+  font-size: 12.5px;
+}
+.down {
+  color: var(--accent);
+}
+.up {
+  color: var(--seed);
+}
+.field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 120px;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+}
+.field:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+.field[data-invalid] {
+  border-color: var(--danger);
+}
+.input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  text-align: right;
+}
+.unit {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.presets {
+  display: flex;
+  gap: 6px;
+}
+.preset {
+  flex: 1;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  cursor: pointer;
+}
+.preset:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.preset[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--hover);
+  color: var(--accent);
+}
+.error {
+  margin: 0;
+  color: var(--danger-text);
+  font-size: 12px;
+}
+.hint {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.hint svg {
+  flex: none;
+}
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+@media (max-width: 767px) {
+  .subtitle {
+    margin-top: -12px;
+    font-size: 14px;
+  }
+  .label {
+    font-size: 14px;
+  }
+  .field {
+    width: 140px;
+    height: 44px;
+  }
+  .input {
+    font-size: 16px;
+  }
+  .preset {
+    min-height: 44px;
+    font-size: 13px;
+  }
+  .error,
+  .hint {
+    font-size: 14px;
+  }
+}

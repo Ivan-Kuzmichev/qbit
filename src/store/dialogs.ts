@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-export type LimitsTab = 'torrent' | 'global'
+export type LimitsTab = 'torrent' | 'global' | 'alt'
 export type AddTab = 'file' | 'magnet'
 
 export type OpenDialog =
