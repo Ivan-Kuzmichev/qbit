@@ -141,24 +141,49 @@ export interface Properties {
 /** Only fields the UI uses. */
 export interface Preferences {
   save_path: string
+  temp_path_enabled: boolean
+  temp_path: string
+  add_stopped_enabled: boolean
+  /** 0 never, 1 delete the .torrent once added */
+  auto_delete_mode: number
+  max_ratio_enabled: boolean
+  max_ratio: number
+  max_seeding_time_enabled: boolean
+  /** minutes */
+  max_seeding_time: number
+  listen_port: number
+  upnp: boolean
+  max_connec: number
+  max_connec_per_torrent: number
+  max_uploads: number
+  max_uploads_per_torrent: number
+  /** bytes/s, 0 = no limit */
   dl_limit: number
   up_limit: number
   alt_dl_limit: number
   alt_up_limit: number
   scheduler_enabled: boolean
+  schedule_from_hour: number
+  schedule_from_min: number
+  schedule_to_hour: number
+  schedule_to_min: number
+  scheduler_days: number
+  dht: boolean
+  pex: boolean
+  lsd: boolean
+  encryption: number
+  anonymous_mode: boolean
   queueing_enabled: boolean
   max_active_downloads: number
   max_active_uploads: number
   max_active_torrents: number
-  listen_port: number
-  upnp: boolean
-  max_connec: number
-  max_connec_per_torrent: number
-  dht: boolean
-  pex: boolean
-  lsd: boolean
-  max_ratio_enabled: boolean
-  max_ratio: number
+  web_ui_username: string
+  /** Never returned by GET; accepted by setPreferences. */
+  web_ui_password?: string
+  bypass_local_auth: boolean
+  bypass_auth_subnet_whitelist_enabled: boolean
+  bypass_auth_subnet_whitelist: string
+  resolve_peer_countries: boolean
   web_ui_port: number
   locale: string
 }

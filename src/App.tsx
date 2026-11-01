@@ -9,10 +9,12 @@ import { ConnectionBanner } from './features/shell/ConnectionBanner'
 import { DesktopLayout } from './features/shell/DesktopLayout'
 import { DetailsCard } from './features/details/DetailsCard'
 import { DropOverlay } from './features/add/DropOverlay'
+import { SettingsPage } from './features/settings/SettingsPage'
 import { DialogHost } from './features/torrents/DialogHost'
 import { TopBar } from './features/torrents/TopBar'
 import { TorrentTable } from './features/torrents/TorrentTable'
 import { t } from './i18n/ru'
+import { useRoute } from './lib/router'
 import { useIsMobile } from './lib/useIsMobile'
 import { emptySync } from './store/mergeMainData'
 import { useTorrents } from './store/torrents'
@@ -42,6 +44,8 @@ async function bootstrap(): Promise<Phase> {
 
 export function App() {
   const isMobile = useIsMobile()
+  const { path } = useRoute()
+  const onSettings = /^\/settings(\/|$)/.test(path)
   const [phase, setPhase] = useState<Phase>({ name: 'boot' })
   /** Bumped to run the startup check again (retry, or after a successful login). */
   const [round, setRound] = useState(0)
@@ -101,9 +105,15 @@ export function App() {
             <main>{t.app.name}</main>
           ) : (
             <DesktopLayout>
-              <TopBar />
-              <TorrentTable />
-              <DetailsCard />
+              {onSettings ? (
+                <SettingsPage />
+              ) : (
+                <>
+                  <TopBar />
+                  <TorrentTable />
+                  <DetailsCard />
+                </>
+              )}
             </DesktopLayout>
           )}
         </>

@@ -26,6 +26,11 @@ export function setOnForbidden(cb: (() => void) | null): void {
   onForbidden = cb
 }
 
+/** Reports that the session is over (e.g. after logout) the same way a 403 does. */
+export function signalSessionEnded(): void {
+  onForbidden?.()
+}
+
 function toSearch(params: Params): URLSearchParams {
   const sp = new URLSearchParams()
   for (const [k, v] of Object.entries(params)) {

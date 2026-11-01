@@ -115,3 +115,18 @@ describe('connection banner', () => {
     expect(screen.getByRole('status')).toHaveTextContent('Нет соединения, повторяем…')
   })
 })
+
+describe('settings route', () => {
+  it('renders the settings page; "Выйти" returns to login', async () => {
+    location.hash = '#/settings/webui'
+    const user = userEvent.setup()
+    stubFetch({
+      ...ok,
+      'app/preferences': () => json({ web_ui_username: 'admin' }),
+      'auth/logout': () => text(''),
+    })
+    render(<App />)
+    await user.click(await screen.findByRole('button', { name: 'Выйти' }))
+    expect(await screen.findByRole('form', { name: 'Вход' })).toBeInTheDocument()
+  })
+})
