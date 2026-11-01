@@ -1,4 +1,5 @@
-const BASE = '/api/v2/'
+/** Relative, so the UI works behind a reverse proxy under a subpath. */
+const BASE = 'api/v2/'
 
 export class ApiError extends Error {
   status: number
@@ -41,10 +42,24 @@ async function send(path: string, init: RequestInit): Promise<Response> {
   }
 }
 
+/** Reading the body can fail when the connection drops mid-response. */
+async function readText(res: Response): Promise<string> {
+  try {
+    return await res.text()
+  } catch (e) {
+    throw new NetworkError(e instanceof Error ? e.message : undefined)
+  }
+}
+
 async function parse<T>(res: Response): Promise<T> {
   const type = res.headers.get('Content-Type') ?? ''
-  if (type.includes('json')) return (await res.json()) as T
-  return (await res.text()) as T
+  const body = await readText(res)
+  if (!type.includes('json') || body === '') return body as T
+  try {
+    return JSON.parse(body) as T
+  } catch {
+    throw new NetworkError('Invalid JSON in response')
+  }
 }
 
 async function request<T>(path: string, init: RequestInit): Promise<T> {
@@ -78,7 +93,7 @@ export async function login(username: string, password: string): Promise<'ok' | 
   if (res.status === 403) return 'banned'
   if (res.status === 401) return 'bad'
   if (!res.ok) throw new ApiError(res.status)
-  const body = (await res.text()).trim()
+  const body = (await readText(res)).trim()
   return body === 'Fails.' ? 'bad' : 'ok'
 }
 

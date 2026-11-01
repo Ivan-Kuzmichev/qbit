@@ -39,11 +39,11 @@ describe('login', () => {
     expect(await login('admin', 'pw')).toBe('banned')
     expect(cb).not.toHaveBeenCalled()
   })
-  it('sends urlencoded body to /api/v2/auth/login', async () => {
+  it('sends urlencoded body to api/v2/auth/login', async () => {
     fetchMock.mockResolvedValue(text('Ok.'))
     await login('ad min', 'p&w=')
     const [url, init] = fetchMock.mock.calls[0]
-    expect(url).toBe('/api/v2/auth/login')
+    expect(url).toBe('api/v2/auth/login')
     expect(init.method).toBe('POST')
     expect(init.headers['Content-Type']).toBe('application/x-www-form-urlencoded')
     expect(init.body).toBe('username=ad+min&password=p%26w%3D')
@@ -54,11 +54,38 @@ describe('login', () => {
   })
 })
 
+describe('body read failures', () => {
+  const broken = (type: string) => {
+    const res = new Response('x', { headers: { 'Content-Type': type } })
+    vi.spyOn(res, 'json').mockRejectedValue(new TypeError('terminated'))
+    vi.spyOn(res, 'text').mockRejectedValue(new TypeError('terminated'))
+    return res
+  }
+  it('json body rejection -> NetworkError', async () => {
+    fetchMock.mockResolvedValue(broken('application/json'))
+    await expect(api.get('sync/maindata')).rejects.toBeInstanceOf(NetworkError)
+  })
+  it('text body rejection -> NetworkError', async () => {
+    fetchMock.mockResolvedValue(broken('text/plain'))
+    await expect(api.get('app/version')).rejects.toBeInstanceOf(NetworkError)
+  })
+  it('login body rejection -> NetworkError', async () => {
+    fetchMock.mockResolvedValue(broken('text/plain'))
+    await expect(login('a', 'b')).rejects.toBeInstanceOf(NetworkError)
+  })
+  it('empty body served as application/json does not throw', async () => {
+    fetchMock.mockResolvedValue(
+      new Response('', { headers: { 'Content-Type': 'application/json' } }),
+    )
+    await expect(api.post('torrents/stop', {})).resolves.toBe('')
+  })
+})
+
 describe('logout', () => {
   it('posts to auth/logout', async () => {
     fetchMock.mockResolvedValue(text(''))
     await logout()
-    expect(fetchMock.mock.calls[0][0]).toBe('/api/v2/auth/logout')
+    expect(fetchMock.mock.calls[0][0]).toBe('api/v2/auth/logout')
     expect(fetchMock.mock.calls[0][1].method).toBe('POST')
   })
 })
@@ -70,7 +97,7 @@ describe('api', () => {
     )
     const r = await api.get<{ a: number }>('sync/maindata', { rid: 5 })
     expect(r).toEqual({ a: 1 })
-    expect(fetchMock.mock.calls[0][0]).toBe('/api/v2/sync/maindata?rid=5')
+    expect(fetchMock.mock.calls[0][0]).toBe('api/v2/sync/maindata?rid=5')
   })
   it('get returns text otherwise', async () => {
     fetchMock.mockResolvedValue(text('v5.0.0'))
@@ -97,7 +124,7 @@ describe('api', () => {
     fetchMock.mockResolvedValue(text(''))
     await api.post('torrents/stop', { hashes: ['a', 'b'], deleteFiles: true, n: 0 })
     const [url, init] = fetchMock.mock.calls[0]
-    expect(url).toBe('/api/v2/torrents/stop')
+    expect(url).toBe('api/v2/torrents/stop')
     expect(init.headers['Content-Type']).toBe('application/x-www-form-urlencoded')
     expect(new URLSearchParams(init.body).get('hashes')).toBe('a|b')
     expect(new URLSearchParams(init.body).get('deleteFiles')).toBe('true')
@@ -106,7 +133,7 @@ describe('api', () => {
   it('get params with array use a|b', async () => {
     fetchMock.mockResolvedValue(text(''))
     await api.get('torrents/info', { hashes: ['a', 'b'] })
-    expect(fetchMock.mock.calls[0][0]).toBe('/api/v2/torrents/info?hashes=a%7Cb')
+    expect(fetchMock.mock.calls[0][0]).toBe('api/v2/torrents/info?hashes=a%7Cb')
   })
   it('post FormData is passed through without Content-Type', async () => {
     fetchMock.mockResolvedValue(text(''))
