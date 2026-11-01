@@ -112,6 +112,7 @@ export function DetailsCard() {
       <div className={styles.body} role="tabpanel" data-tab={tab}>
         {tab === 'files' && data.files && (
           <FilesTab
+            key={hash}
             files={data.files}
             variant="desktop"
             onSetPriority={async (ids, priority) => {

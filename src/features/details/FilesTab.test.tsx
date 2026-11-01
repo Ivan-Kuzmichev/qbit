@@ -102,4 +102,16 @@ describe('FilesTab', () => {
     expect(n).toBeGreaterThan(0)
     expect(n).toBeLessThan(200)
   })
+
+  it('opens the priority menu in document.body on the virtualized path', async () => {
+    const onSet = vi.fn().mockResolvedValue(undefined)
+    const many = Array.from({ length: 1200 }, (_, i) => f(i, `file${i}.bin`))
+    render(<FilesTab files={many} onSetPriority={onSet} variant="desktop" />)
+    await userEvent.click(screen.getByRole('button', { name: 'Приоритет: file0.bin' }))
+    const menu = screen.getByRole('menu')
+    expect(menu.parentElement).toBe(document.body)
+    expect(menu.style.position).toBe('fixed')
+    await userEvent.click(within(menu).getByRole('menuitem', { name: 'Высокий' }))
+    expect(onSet).toHaveBeenCalledWith([0], 6)
+  })
 })

@@ -165,7 +165,7 @@ function Row({ node, depth, variant, open, style, onToggle, onCheck, onPriority,
           </div>
           {variant === 'desktop' && <span className={styles.size}>{formatBytes(node.size)}</span>}
           {variant === 'desktop' ? (
-            <Menu items={items} label={label} triggerClassName={prioClass}>
+            <Menu items={items} label={label} triggerClassName={prioClass} portal>
               {prio}
             </Menu>
           ) : (

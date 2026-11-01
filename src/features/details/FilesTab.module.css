@@ -34,7 +34,6 @@
 }
 .check {
   flex: none;
-  min-height: 16px;
   gap: 0;
 }
 .cell {
