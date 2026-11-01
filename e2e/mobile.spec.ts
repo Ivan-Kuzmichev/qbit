@@ -272,9 +272,9 @@ test.describe('mobile: settings', () => {
       await audit(page, 'setting sheet')
       await sheet(page).getByRole('button', { name: 'Отмена' }).click()
 
-      for (const name of ['Соединение', 'BitTorrent', 'WebUI', 'Внешний вид']) {
+      for (const name of ['Соединение', 'BitTorrent', 'WebUI', 'Уведомления', 'Внешний вид']) {
         await page.getByRole('button', { name: new RegExp(name) }).click()
-        await expect(page.getByRole('heading', { name })).toBeVisible()
+        await expect(page.getByRole('heading', { name, exact: true })).toBeVisible()
         await audit(page, `settings: ${name}`)
         await page.getByRole('button', { name: 'Назад' }).click()
       }

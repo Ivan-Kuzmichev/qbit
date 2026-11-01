@@ -1,7 +1,7 @@
 import type { Preferences } from '../../api/types'
 import { t } from '../../i18n/ru'
 
-export type RowKind = 'toggle' | 'text' | 'number' | 'limit' | 'select' | 'password' | 'schedule' | 'accent'
+export type RowKind = 'toggle' | 'text' | 'number' | 'limit' | 'select' | 'password' | 'schedule' | 'accent' | 'telegram'
 
 export interface Row {
   /** Preference key; 'accent' for the local-only accent row. */
@@ -227,6 +227,26 @@ export const sections: Section[] = [
     title: s.sections.webui,
     cards: [
       {
+        title: C.altWebui.title,
+        desc: C.altWebui.desc,
+        rows: [
+          {
+            key: 'alternative_webui_enabled',
+            kind: 'toggle',
+            label: R.alternative_webui_enabled.label,
+            hint: R.alternative_webui_enabled.hint,
+          },
+          {
+            key: 'alternative_webui_path',
+            kind: 'text',
+            label: R.alternative_webui_path.label,
+            hint: R.alternative_webui_path.hint,
+            enabledBy: 'alternative_webui_enabled',
+            visibleIf: switchedBy('alternative_webui_enabled'),
+          },
+        ],
+      },
+      {
         title: C.access.title,
         desc: C.access.desc,
         rows: [
@@ -254,6 +274,17 @@ export const sections: Section[] = [
         title: C.peers.title,
         desc: C.peers.desc,
         rows: [{ key: 'resolve_peer_countries', kind: 'toggle', label: R.resolve_peer_countries.label }],
+      },
+    ],
+  },
+  {
+    id: 'notifications',
+    title: s.sections.notifications,
+    cards: [
+      {
+        title: C.telegram.title,
+        desc: C.telegram.desc,
+        rows: [{ key: 'autorun_program', kind: 'telegram', label: C.telegram.title }],
       },
     ],
   },

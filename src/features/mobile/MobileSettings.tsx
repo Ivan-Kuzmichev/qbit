@@ -83,7 +83,7 @@ const GROUPS: { title: string; items: Item[] }[] = [
 ]
 
 /** Sections that open as a full-screen list from "Ещё". */
-const MORE = ['connection', 'bittorrent', 'webui', 'appearance'] as const
+const MORE = ['connection', 'bittorrent', 'webui', 'notifications', 'appearance'] as const
 
 function Chevron() {
   return <ChevronRight size={14} strokeWidth={2} aria-hidden="true" />

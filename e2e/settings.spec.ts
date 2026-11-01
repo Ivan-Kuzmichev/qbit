@@ -33,3 +33,42 @@ test.describe('settings page', () => {
     }
   })
 })
+
+test.describe('alternative WebUI switch', () => {
+  test.skip(({ isMobile }) => isMobile, 'same schema and save path on mobile')
+
+  test('turning it off saves and hands the page over to the standard interface', async ({ page, qb }) => {
+    await signIn(page)
+    try {
+      await page.getByRole('button', { name: 'Настройки' }).click()
+      await page.getByRole('button', { name: 'WebUI', exact: true }).click()
+      await page.getByRole('switch', { name: 'Использовать альтернативный WebUI' }).click()
+      await page.getByRole('button', { name: 'Сохранить' }).click()
+      await expect.poll(async () => (await qb.prefs()).alternative_webui_enabled).toBe(false)
+      await expect(page.locator('#root')).toHaveCount(0, { timeout: 10_000 })
+    } finally {
+      await qb.setPrefs({ alternative_webui_enabled: true, alternative_webui_path: '/qbit' })
+    }
+  })
+})
+
+test.describe('Telegram notifications', () => {
+  test.skip(({ isMobile }) => isMobile, 'same schema and save path on mobile')
+
+  test('saves a command qBittorrent keeps and turns on', async ({ page, qb }) => {
+    const token = '123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11'
+    await signIn(page)
+    try {
+      await page.getByRole('button', { name: 'Настройки' }).click()
+      await page.getByRole('button', { name: 'Уведомления' }).click()
+      await page.getByRole('switch', { name: 'Уведомлять о скачанных торрентах' }).click()
+      await page.getByLabel('Токен бота').fill(token)
+      await page.getByLabel('Chat ID').fill('42')
+      await page.getByRole('button', { name: 'Сохранить' }).click()
+      await expect.poll(async () => (await qb.prefs()).autorun_enabled).toBe(true)
+      expect((await qb.prefs()).autorun_program).toContain(`/bot${token}/sendMessage -d chat_id=42 `)
+    } finally {
+      await qb.setPrefs({ autorun_enabled: false, autorun_program: '' })
+    }
+  })
+})

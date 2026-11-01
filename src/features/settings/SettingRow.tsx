@@ -5,6 +5,7 @@ import { t } from '../../i18n/ru'
 import { parseDecimal, parseLimitKb } from '../../lib/parseNumber'
 import { useUi } from '../../store/ui'
 import { ScheduleEditor } from './ScheduleEditor'
+import { TelegramControl } from './TelegramControl'
 import { ACCENT_PRESETS, type Row } from './schema'
 import styles from './SettingRow.module.css'
 
@@ -132,6 +133,8 @@ function Control(props: SettingRowProps) {
       return <ScheduleEditor draft={draft} set={set} />
     case 'accent':
       return <AccentPicker />
+    case 'telegram':
+      return <TelegramControl draft={draft} set={set} setInvalid={props.setInvalid} />
   }
 }
 
@@ -160,7 +163,7 @@ export function SettingRow(props: SettingRowProps) {
   const { row, draft } = props
   if (row.visibleIf && !row.visibleIf(draft)) return null
   // Controls with a label of their own (switches, fields) get it through aria-label.
-  const hidden = row.kind === 'accent'
+  const hidden = row.kind === 'accent' || row.kind === 'telegram'
   return (
     <div className={styles.row}>
       {!hidden && (

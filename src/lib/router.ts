@@ -51,6 +51,11 @@ export function navigate(path: string): void {
 }
 
 /** At most one guard at a time; pass null to remove it. */
+/** Asks qBittorrent for the page again, e.g. after switching to another WebUI. */
+export function reloadPage(): void {
+  window.location.reload()
+}
+
 export function setNavigationGuard(next: NavigationGuard | null): void {
   if (next && !guard) {
     lastPath = currentPath()

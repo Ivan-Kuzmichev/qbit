@@ -41,6 +41,7 @@
 }
 .frame:focus-within {
   border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
 }
 .frame[data-invalid] {
   border-color: var(--danger);
@@ -51,6 +52,10 @@
 }
 .narrow {
   width: 160px;
+}
+/* the frame draws the focus ring */
+.input:focus-visible {
+  box-shadow: none;
 }
 .input {
   flex: 1;
@@ -142,4 +147,33 @@
     width: 44px;
     height: 44px;
   }
+}
+.stack {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.stackRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.stackField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.full {
+  width: 100%;
+  box-sizing: border-box;
+}
+.stack p {
+  margin: 0;
+}
+.command {
+  font-family: var(--font-mono);
+  word-break: break-all;
 }

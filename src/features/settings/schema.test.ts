@@ -6,7 +6,7 @@ const keys = rows.map((r) => r.key)
 
 describe('settings schema', () => {
   it('has the sections from the spec in order', () => {
-    expect(sections.map((s) => s.id)).toEqual(['downloads', 'connection', 'speed', 'bittorrent', 'webui', 'appearance'])
+    expect(sections.map((s) => s.id)).toEqual(['downloads', 'connection', 'speed', 'bittorrent', 'webui', 'notifications', 'appearance'])
   })
   it('covers every qBittorrent preference the page edits', () => {
     const expected = [

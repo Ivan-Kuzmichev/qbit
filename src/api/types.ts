@@ -184,6 +184,10 @@ export interface Preferences {
   bypass_auth_subnet_whitelist_enabled: boolean
   bypass_auth_subnet_whitelist: string
   resolve_peer_countries: boolean
+  alternative_webui_enabled: boolean
+  alternative_webui_path: string
+  autorun_enabled: boolean
+  autorun_program: string
   web_ui_port: number
   locale: string
 }

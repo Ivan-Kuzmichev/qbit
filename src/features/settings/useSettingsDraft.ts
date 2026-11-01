@@ -3,7 +3,7 @@ import { api } from '../../api/client'
 import type { Preferences } from '../../api/types'
 import { toast } from '../../components/ui/Toast'
 import { t } from '../../i18n/ru'
-import { setNavigationGuard } from '../../lib/router'
+import { reloadPage, setNavigationGuard } from '../../lib/router'
 import { diffPrefs } from './diffPrefs'
 import { sections } from './schema'
 
@@ -12,6 +12,9 @@ export type SettingsStatus = 'loading' | 'error' | 'ready'
 const SCHEDULE_KEYS = ['schedule_from_hour', 'schedule_from_min', 'schedule_to_hour', 'schedule_to_min'] as const satisfies readonly (keyof Preferences)[]
 
 const IN_SETTINGS = /^\/settings(\/|$)/
+
+/** Long enough for the save toast to be read and the unsaved-changes prompt to be removed. */
+const RELOAD_DELAY_MS = 800
 
 const ROWS = sections.flatMap((s) => s.cards.flatMap((c) => c.rows))
 
@@ -102,6 +105,8 @@ export function useSettingsDraft() {
     setVersion((v) => v + 1)
     setSaving(false)
     toast(t.settings.saved)
+    // qBittorrent now serves its own UI: this page would otherwise stay until the next manual reload.
+    if (diff.alternative_webui_enabled === false) setTimeout(reloadPage, RELOAD_DELAY_MS)
   }, [orig, draft, canSave])
 
   // Leaving the settings area with unsaved changes: ask first (in-app) or let the browser ask (tab close).
