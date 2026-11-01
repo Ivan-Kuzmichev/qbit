@@ -58,4 +58,23 @@ export const t = {
     errorText: 'Ошибка',
     missingFiles: 'Файлы не найдены',
   },
+  sidebar: {
+    filters: 'Фильтры',
+    all: 'Все',
+    downloading: 'Загрузка',
+    seeding: 'Раздача',
+    done: 'Завершено',
+    paused: 'Пауза',
+    queued: 'В очереди',
+    error: 'Ошибка',
+    categories: 'Категории',
+    tags: 'Теги',
+    settings: 'Настройки',
+  },
+  speed: {
+    download: 'Скачивание',
+    limit: 'лимит',
+    noLimit: 'без лимита',
+    altLimits: 'Альт. лимиты',
+  },
 }

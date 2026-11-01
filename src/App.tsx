@@ -6,7 +6,9 @@ import { LoginScreen } from './features/auth/LoginScreen'
 import { UpgradeScreen } from './features/auth/UpgradeScreen'
 import { saveVersions } from './features/auth/versions'
 import { ConnectionBanner } from './features/shell/ConnectionBanner'
+import { DesktopLayout } from './features/shell/DesktopLayout'
 import { t } from './i18n/ru'
+import { useIsMobile } from './lib/useIsMobile'
 import { emptySync } from './store/mergeMainData'
 import { useTorrents } from './store/torrents'
 
@@ -34,6 +36,7 @@ async function bootstrap(): Promise<Phase> {
 }
 
 export function App() {
+  const isMobile = useIsMobile()
   const [phase, setPhase] = useState<Phase>({ name: 'boot' })
   /** Bumped to run the startup check again (retry, or after a successful login). */
   const [round, setRound] = useState(0)
@@ -87,7 +90,11 @@ export function App() {
       view = (
         <>
           <ConnectionBanner />
-          <main>{t.app.name}</main>
+          {isMobile ? (
+            <main>{t.app.name}</main>
+          ) : (
+            <DesktopLayout>{t.app.name}</DesktopLayout>
+          )}
         </>
       )
       break

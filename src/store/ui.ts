@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { ALL_FILTER, type Filter } from '../features/torrents/filters'
 
 const ACCENT_KEY = 'qbit.accent'
 const DEFAULT_ACCENT = '#60A5FA'
@@ -20,8 +21,8 @@ function applyAccent(c: string): void {
 interface UiState {
   accent: string
   setAccent(c: string): void
-  filter: string
-  setFilter(f: string): void
+  filter: Filter
+  setFilter(f: Filter): void
   search: string
   setSearch(s: string): void
   sort: { key: string; dir: SortDir }
@@ -42,7 +43,7 @@ export const useUi = create<UiState>()((set) => ({
     applyAccent(c)
     set({ accent: c })
   },
-  filter: 'all',
+  filter: ALL_FILTER,
   setFilter: (filter) => set({ filter }),
   search: '',
   setSearch: (search) => set({ search }),

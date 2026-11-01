@@ -1,0 +1,17 @@
+.layout {
+  display: flex;
+  height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 12.5px;
+}
+.content {
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 14px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow: hidden;
+}
