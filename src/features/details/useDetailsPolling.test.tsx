@@ -96,7 +96,7 @@ describe('useDetailsPolling', () => {
     expect(count(f, 'torrents/trackers')).toBe(1)
     await flush(3000)
     expect(count(f, 'torrents/trackers')).toBe(2)
-    expect(count(f, 'torrents/files')).toBe(0)
+    expect(count(f, 'torrents/files')).toBe(1) // the one-off read only
     unmount()
   })
 
@@ -110,7 +110,32 @@ describe('useDetailsPolling', () => {
     const before = count(f, 'sync/torrentPeers')
     await flush(6000)
     expect(count(f, 'sync/torrentPeers')).toBe(before)
-    expect(count(f, 'torrents/files')).toBe(0)
+    expect(count(f, 'torrents/files')).toBe(1) // the one-off read only
+    unmount()
+  })
+
+  it('reads the file list once on a non-Files tab, without polling it', async () => {
+    const f = routes()
+    const { result, unmount } = renderHook(() => useDetailsPolling('a', 'peers'))
+    await flush(0)
+    expect(result.current.files).toHaveLength(1)
+    await flush(6000)
+    expect(count(f, 'torrents/files')).toBe(1)
+    unmount()
+  })
+
+  it('does not refetch pieces when only the tab changes', async () => {
+    const f = routes()
+    const { rerender, unmount } = renderHook(({ tab }: { tab: DetailsTab }) => useDetailsPolling('a', tab), {
+      initialProps: { tab: 'files' as DetailsTab },
+    })
+    await flush(0)
+    rerender({ tab: 'peers' })
+    await flush(0)
+    rerender({ tab: 'info' })
+    await flush(0)
+    expect(count(f, 'torrents/pieceStates')).toBe(1)
+    expect(count(f, 'torrents/properties')).toBe(1)
     unmount()
   })
 

@@ -124,6 +124,18 @@ describe('DetailsCard', () => {
     expect(toastMock).toHaveBeenCalledWith('Не удалось выполнить действие')
   })
 
+  it('shows the file count on open without polling files again on another tab', async () => {
+    stubFetch({
+      'torrents/properties': () => json({}),
+      'torrents/pieceStates': () => json([]),
+      'torrents/files': () => json([{ index: 0 }, { index: 1 }, { index: 2 }]),
+    })
+    load([tor('a')], ['a'])
+    render(<DetailsCard />)
+    await userEvent.click(await screen.findByRole('tab', { name: 'Сведения' }))
+    expect(await screen.findByText('3 файла')).toBeInTheDocument()
+  })
+
   it('switches tabs', async () => {
     load([tor('a')], ['a'])
     render(<DetailsCard />)

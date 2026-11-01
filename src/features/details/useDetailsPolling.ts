@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { api, ApiError } from '../../api/client'
 import type { Peer, Properties, TorrentFile, Tracker } from '../../api/types'
 import { createPoller } from '../../lib/poller'
@@ -75,16 +75,32 @@ function poll(ms: number, load: (alive: () => boolean) => Promise<void>): () => 
 export function useDetailsPolling(hash: string | null, tab: DetailsTab): DetailsData {
   const [store, setStore] = useState<Store>(() => emptyStore(''))
 
+  const tabRef = useRef(tab)
+  useEffect(() => {
+    tabRef.current = tab
+  }, [tab])
+  const patchFor = useCallback(
+    (h: string) => (fn: (s: Store) => Partial<Store>) =>
+      setStore((prev) => {
+        const base = prev.hash === h ? prev : emptyStore(h)
+        return { ...base, ...fn(base) }
+      }),
+    [],
+  )
+
+  // Hash-level data: independent of the tab, so a tab switch never restarts these.
   useEffect(() => {
     if (!hash) return
-    const patch = (fn: (s: Store) => Partial<Store>) =>
-      setStore((prev) => {
-        const base = prev.hash === hash ? prev : emptyStore(hash)
-        return { ...base, ...fn(base) }
-      })
-    const stops: (() => void)[] = []
-
-    stops.push(
+    const patch = patchFor(hash)
+    let live = true
+    // The file count is shown in the header on every tab: read the list once. The Files tab polls it itself.
+    if (tabRef.current !== 'files') {
+      api
+        .get<TorrentFile[]>('torrents/files', { hash })
+        .then((files) => live && patch(() => ({ files })))
+        .catch(() => {})
+    }
+    const stops = [
       poll(FAST_MS, async (alive) => {
         const properties = await api.get<Properties>('torrents/properties', { hash })
         if (alive()) patch(() => ({ properties }))
@@ -93,41 +109,50 @@ export function useDetailsPolling(hash: string | null, tab: DetailsTab): Details
         const pieces = await api.get<number[]>('torrents/pieceStates', { hash })
         if (alive()) patch(() => ({ pieces }))
       }),
-    )
-    if (tab === 'files') {
-      stops.push(
-        poll(FAST_MS, async (alive) => {
-          const files = await api.get<TorrentFile[]>('torrents/files', { hash })
-          if (alive()) patch(() => ({ files }))
-        }),
-      )
+    ]
+    return () => {
+      live = false
+      stops.forEach((stop) => stop())
     }
-    if (tab === 'trackers') {
-      stops.push(
-        poll(TRACKERS_MS, async (alive) => {
-          const trackers = await api.get<Tracker[]>('torrents/trackers', { hash })
-          if (alive()) patch(() => ({ trackers }))
-        }),
-      )
-    }
-    if (tab === 'peers') {
-      let rid = 0
-      stops.push(
-        poll(FAST_MS, async (alive) => {
-          const resp = await api.get<PeersResponse>('sync/torrentPeers', { hash, rid })
-          if (!alive()) return
-          rid = resp.rid
-          patch((s) => {
-            const peerMap = resp.full_update ? {} : { ...s.peerMap }
-            Object.assign(peerMap, resp.peers)
-            for (const key of resp.peers_removed ?? []) delete peerMap[key]
-            return { peerMap, showFlags: resp.show_flags ?? s.showFlags }
-          })
-        }),
-      )
-    }
-    return () => stops.forEach((stop) => stop())
-  }, [hash, tab === 'files', tab === 'trackers', tab === 'peers']) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [hash, patchFor])
+
+  const filesOpen = tab === 'files'
+  useEffect(() => {
+    if (!hash || !filesOpen) return
+    const patch = patchFor(hash)
+    return poll(FAST_MS, async (alive) => {
+      const files = await api.get<TorrentFile[]>('torrents/files', { hash })
+      if (alive()) patch(() => ({ files }))
+    })
+  }, [hash, filesOpen, patchFor])
+
+  const trackersOpen = tab === 'trackers'
+  useEffect(() => {
+    if (!hash || !trackersOpen) return
+    const patch = patchFor(hash)
+    return poll(TRACKERS_MS, async (alive) => {
+      const trackers = await api.get<Tracker[]>('torrents/trackers', { hash })
+      if (alive()) patch(() => ({ trackers }))
+    })
+  }, [hash, trackersOpen, patchFor])
+
+  const peersOpen = tab === 'peers'
+  useEffect(() => {
+    if (!hash || !peersOpen) return
+    const patch = patchFor(hash)
+    let rid = 0
+    return poll(FAST_MS, async (alive) => {
+      const resp = await api.get<PeersResponse>('sync/torrentPeers', { hash, rid })
+      if (!alive()) return
+      rid = resp.rid
+      patch((s) => {
+        const peerMap = resp.full_update ? {} : { ...s.peerMap }
+        Object.assign(peerMap, resp.peers)
+        for (const key of resp.peers_removed ?? []) delete peerMap[key]
+        return { peerMap, showFlags: resp.show_flags ?? s.showFlags }
+      })
+    })
+  }, [hash, peersOpen, patchFor])
 
   const current = store.hash === hash ? store : EMPTY
   const peers = useMemo(() => Object.values(current.peerMap), [current.peerMap])
