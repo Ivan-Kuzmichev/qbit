@@ -23,8 +23,12 @@ function isTyping(el: Element | null): boolean {
 
 const isIdle = (el: Element | null) => !el || el === document.body || el === document.documentElement || el.getAttribute('role') === 'row'
 
-/** A dialog is open (ours, or any modal in the page): only Escape works then, and the dialog handles that itself. */
-const dialogOpen = () => useDialogs.getState().open !== null || document.querySelector('[role="dialog"][aria-modal="true"]') !== null
+/**
+ * A dialog is open (ours, or any modal in the page) or a menu popup is showing: only Escape works then,
+ * and the dialog or menu handles that itself.
+ */
+const dialogOpen = () =>
+  useDialogs.getState().open !== null || document.querySelector('[role="dialog"][aria-modal="true"], [role="menu"]') !== null
 
 /** Page-level keyboard shortcuts. Handlers are read at event time, so they may change on every render. */
 export function useHotkeys(bindings: readonly Hotkey[]): void {

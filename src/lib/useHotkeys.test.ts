@@ -68,6 +68,16 @@ describe('useHotkeys', () => {
     expect(run).not.toHaveBeenCalled()
   })
 
+  it('an "anywhere" key does not steal focus while a menu popup is open', () => {
+    const run = vi.fn()
+    renderHook(() => useHotkeys([{ keys: ['/'], run, anywhere: true }]))
+    document.body.innerHTML = '<div role="menu"><button role="menuitem" id="i">x</button></div>'
+    const item = document.getElementById('i')!
+    item.focus()
+    fireEvent.keyDown(item, { key: '/' })
+    expect(run).not.toHaveBeenCalled()
+  })
+
   it('does nothing while a dialog is open', () => {
     const run = setup()
     useDialogs.getState().openDelete(['a'])

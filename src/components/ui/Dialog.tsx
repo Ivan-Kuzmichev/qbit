@@ -26,6 +26,9 @@ export interface DialogProps {
   footerKind?: 'line' | 'plain' | 'sheet'
 }
 
+/** Mounted dialogs, oldest first; only the last one handles Escape and Tab. */
+const openDialogs: object[] = []
+
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
@@ -68,7 +71,10 @@ export function Dialog({ title, onClose, children, width, minHeight, icon, descr
     const first = body.current?.querySelector<HTMLElement>(FOCUSABLE) ?? focusables()[0] ?? el
     first.focus()
 
+    const token = {}
     function onKey(e: KeyboardEvent) {
+      // only the topmost dialog reacts to the keyboard
+      if (openDialogs[openDialogs.length - 1] !== token) return
       if (e.key === 'Escape') {
         // something inside (an open menu) already used this Escape
         if (e.defaultPrevented) return
@@ -95,8 +101,10 @@ export function Dialog({ title, onClose, children, width, minHeight, icon, descr
         }
       }
     }
+    openDialogs.push(token)
     document.addEventListener('keydown', onKey)
     return () => {
+      openDialogs.splice(openDialogs.indexOf(token), 1)
       document.removeEventListener('keydown', onKey)
       if (opener?.isConnected) opener.focus()
     }
@@ -108,7 +116,7 @@ export function Dialog({ title, onClose, children, width, minHeight, icon, descr
       data-testid="dialog-backdrop"
       data-anchor={anchorTop ? 'top' : undefined}
       onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onClose()
+        if (e.button === 0 && e.target === e.currentTarget) onClose()
       }}
     >
       <div

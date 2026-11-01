@@ -69,6 +69,29 @@ describe('Dialog', () => {
     expect(onClose).toHaveBeenCalledTimes(1)
   })
 
+  it('a right-button press on the backdrop does not close it', () => {
+    const onClose = vi.fn()
+    render(<Dialog title="T" onClose={onClose}>x</Dialog>)
+    fireEvent.mouseDown(screen.getByTestId('dialog-backdrop'), { button: 2 })
+    expect(onClose).not.toHaveBeenCalled()
+    fireEvent.mouseDown(screen.getByTestId('dialog-backdrop'), { button: 0 })
+    expect(onClose).toHaveBeenCalledTimes(1)
+  })
+
+  it('with two stacked dialogs one Escape closes only the top one', () => {
+    const lower = vi.fn()
+    const upper = vi.fn()
+    render(
+      <>
+        <Dialog title="Lower" onClose={lower}>a</Dialog>
+        <Dialog title="Upper" onClose={upper}>b</Dialog>
+      </>,
+    )
+    fireEvent.keyDown(document.body, { key: 'Escape' })
+    expect(upper).toHaveBeenCalledTimes(1)
+    expect(lower).not.toHaveBeenCalled()
+  })
+
   it('puts the first focus on the first control of the body, not on the close button', async () => {
     const user = userEvent.setup()
     render(<Harness />)
