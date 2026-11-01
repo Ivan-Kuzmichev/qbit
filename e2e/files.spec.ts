@@ -37,7 +37,7 @@ async function signIn(page: Page) {
 }
 
 test.describe('files tab', () => {
-  test.skip(({ isMobile }) => isMobile, 'the mobile detail screen arrives with Task 18')
+  test.skip(({ isMobile }) => isMobile, 'desktop details card; the mobile screen is covered by mobile.spec.ts')
 
   test('unchecking a file and picking a priority reach qBittorrent', async ({ page, qb }) => {
     await qb.addTorrent(MULTI_TORRENT)

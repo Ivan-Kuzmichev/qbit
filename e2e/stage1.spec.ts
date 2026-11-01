@@ -33,7 +33,7 @@ test.describe('stage 1: login, sync, table', () => {
   })
 
   test('login shows the torrent table; an added torrent appears without reload', async ({ page, isMobile, qb }) => {
-    test.skip(isMobile, 'mobile list arrives in a later stage')
+    test.skip(isMobile, 'desktop table; the mobile list is covered by mobile.spec.ts')
 
     await signIn(page)
 

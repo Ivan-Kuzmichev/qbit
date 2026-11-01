@@ -1,0 +1,33 @@
+.rows {
+  margin: 0 -18px;
+}
+.footer {
+  display: flex;
+  gap: 8px;
+  margin: 16px -20px -20px;
+  padding: 12px 20px max(14px, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border-subtle);
+}
+.cancel,
+.done {
+  height: 48px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.cancel {
+  padding: 0 18px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-weight: 500;
+}
+.done {
+  flex: 1;
+  border: 0;
+  background: var(--accent);
+  color: var(--bg);
+}
+.done:disabled {
+  opacity: 0.5;
+}

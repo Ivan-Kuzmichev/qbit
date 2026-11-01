@@ -95,6 +95,12 @@ describe('FilesTab', () => {
     expect(screen.queryByRole('menu')).toBeNull()
   })
 
+  it('mobile variant shows the short priority labels', () => {
+    render(<FilesTab files={[f(0, 'a.txt', 1024, 7), f(1, 'b.txt', 1024, 0)]} onSetPriority={vi.fn()} variant="mobile" />)
+    expect(screen.getByRole('button', { name: 'Приоритет: a.txt' })).toHaveTextContent('Макс.')
+    expect(screen.getByRole('button', { name: 'Приоритет: b.txt' })).toHaveTextContent('Не качать')
+  })
+
   it('virtualizes long lists', () => {
     const many = Array.from({ length: 1200 }, (_, i) => f(i, `file${i}.bin`))
     render(<FilesTab files={many} onSetPriority={vi.fn()} variant="desktop" />)

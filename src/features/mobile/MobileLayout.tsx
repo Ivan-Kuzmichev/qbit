@@ -1,4 +1,4 @@
-import { ChevronLeft, Gauge, Link, Plus, Search, SlidersHorizontal } from 'lucide-react'
+import { Gauge, Link, Plus, Search, SlidersHorizontal } from 'lucide-react'
 import { useEffect, useMemo } from 'react'
 import { Logo } from '../../components/ui/Logo'
 import { t } from '../../i18n/ru'
@@ -7,11 +7,12 @@ import { useRoute } from '../../lib/router'
 import { useDialogs } from '../../store/dialogs'
 import { useTorrents } from '../../store/torrents'
 import { useUi } from '../../store/ui'
-import { SettingsPage } from '../settings/SettingsPage'
 import { toggleAltLimits } from '../torrents/actions'
 import { ALL_FILTER, countByFilter, filterKey, type Filter } from '../torrents/filters'
 import styles from './MobileLayout.module.css'
+import { MobileDetail } from './MobileDetail'
 import { MobileList } from './MobileList'
+import { MobileSettings } from './MobileSettings'
 
 type StatusFilter = Extract<Filter, { type: 'status' }>['value']
 
@@ -99,21 +100,6 @@ function Footer() {
   )
 }
 
-/** Stand-in for screens Task 18 adds: a way back and the desktop content meanwhile. */
-function Subscreen({ children }: { children: React.ReactNode }) {
-  const { navigate } = useRoute()
-  return (
-    <>
-      <div className={styles.subhead}>
-        <button type="button" className={styles.square} aria-label={t.mobile.back} onClick={() => navigate('/')}>
-          <ChevronLeft size={18} aria-hidden="true" />
-        </button>
-      </div>
-      <div className={styles.sub}>{children}</div>
-    </>
-  )
-}
-
 export function MobileLayout() {
   const { path } = useRoute()
   // the filter can name a category or tag that has gone; chips only offer statuses
@@ -124,10 +110,11 @@ export function MobileLayout() {
   }, [filter, setFilter])
 
   let body
-  if (/^\/torrent\/[^/]+/.test(path)) {
-    body = <Subscreen><p className={styles.note}>{t.mobile.torrentSoon}</p></Subscreen>
+  const torrent = /^\/torrent\/([^/]+)/.exec(path)
+  if (torrent) {
+    body = <MobileDetail hash={torrent[1]} />
   } else if (/^\/settings(\/|$)/.test(path)) {
-    body = <Subscreen><SettingsPage /></Subscreen>
+    body = <MobileSettings />
   } else {
     body = (
       <>

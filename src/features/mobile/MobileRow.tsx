@@ -8,8 +8,8 @@ import { uiStatus } from '../torrents/status'
 import { STATUS_VIEW } from '../torrents/TorrentRow'
 import styles from './MobileRow.module.css'
 
-/** Padding 13+13, name 17, bar 14, status 15, gaps 12, border 1, rounded up to a whole step. */
-export const MOBILE_ROW_HEIGHT = 88
+/** Measured in the browser (e2e/mobile.spec.ts checks it): padding 13+13, name, bar, status, gaps and the 1px border. */
+export const MOBILE_ROW_HEIGHT = 87
 
 function meta(tor: Torrent, kind: ReturnType<typeof uiStatus>['kind']): string {
   const sp = shownSpeed(tor)

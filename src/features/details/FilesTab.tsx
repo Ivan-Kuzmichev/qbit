@@ -23,7 +23,8 @@ const PRIORITIES = [0, 1, 6, 7] as const
 const VIRTUALIZE_ABOVE = 500
 const ROW_HEIGHT = { desktop: 42, mobile: 76 }
 
-const labelOf = (p: number | 'mixed') => (p === 'mixed' ? t.details.files.mixed : (t.details.files.priorities[p] ?? String(p)))
+const labelOf = (p: number | 'mixed', variant: 'desktop' | 'mobile') =>
+  p === 'mixed' ? t.details.files.mixed : ((variant === 'mobile' ? t.details.files.prioritiesShort : t.details.files.priorities)[p] ?? String(p))
 
 export function FilesTab({ files, onSetPriority, variant, onPickPriority }: FilesTabProps) {
   const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(new Set())
@@ -132,7 +133,7 @@ function Row({ node, depth, variant, open, style, onToggle, onCheck, onPriority,
   const label = `${t.details.files.priority}: ${node.name}`
   const prio = (
     <>
-      <span>{labelOf(node.priority)}</span>
+      <span>{labelOf(node.priority, variant)}</span>
       <ChevronDown size={12} strokeWidth={2} aria-hidden="true" />
     </>
   )

@@ -1,22 +1,16 @@
 import { FileText, Folder, Upload, X } from 'lucide-react'
-import { useEffect, useId, useRef, useState } from 'react'
-import { api } from '../../api/client'
-import type { Preferences } from '../../api/types'
 import { Button } from '../../components/ui/Button'
 import { Checkbox } from '../../components/ui/Checkbox'
 import { Dialog } from '../../components/ui/Dialog'
 import { Field } from '../../components/ui/Field'
 import { Segmented } from '../../components/ui/Segmented'
-import { toast } from '../../components/ui/Toast'
 import { t } from '../../i18n/ru'
 import { formatBytes, plural } from '../../lib/format'
 import type { AddTab } from '../../store/dialogs'
-import { useTorrents } from '../../store/torrents'
-import { addTorrents, reportAddResult, type AddOptions } from './addFlow'
 import styles from './AddDialog.module.css'
 import { CategorySelect } from './CategorySelect'
-import { parseTorrent, type ParsedTorrent } from './parseTorrent'
 import { TagInput } from './TagInput'
+import { useAddForm } from './useAddForm'
 
 export interface AddDialogProps {
   tab: AddTab
@@ -24,133 +18,18 @@ export interface AddDialogProps {
   onClose(): void
 }
 
-interface Entry {
-  id: number
-  file: File
-  /** null while reading, or when `failed`. */
-  parsed: ParsedTorrent | null
-  failed: boolean
-  /** One flag per downloadable file (padding files excluded: qBittorrent does not index them). */
-  selected: boolean[]
-}
-
 const tabs: { id: AddTab; label: string }[] = [
   { id: 'file', label: t.add.tabFile },
   { id: 'magnet', label: t.add.tabMagnet },
 ]
 
-let nextId = 1
-
 export function AddDialog({ tab: initialTab, files, onClose }: AddDialogProps) {
-  const [tab, setTab] = useState<AddTab>(initialTab)
-  const [entries, setEntries] = useState<Entry[]>([])
-  const [magnets, setMagnets] = useState('')
-  const [savepath, setSavepath] = useState('')
-  const [defaultPath, setDefaultPath] = useState('')
-  const [category, setCategory] = useState('')
-  const [tags, setTags] = useState<string[]>([])
-  const [start, setStart] = useState(true)
-  const [sequential, setSequential] = useState(false)
-  const [firstLast, setFirstLast] = useState(false)
-  const [skipChecking, setSkipChecking] = useState(false)
-
-  const categories = useTorrents((s) => s.categories)
-  const knownTags = useTorrents((s) => s.tags)
-  const free = useTorrents((s) => s.server.free_space_on_disk)
-  const magnetId = useId()
-  const picker = useRef<HTMLInputElement>(null)
-  const seen = useRef(new Set<File>())
-  /** Once the user edits the folder, a late settings response must not overwrite it. */
-  const pathTouched = useRef(false)
-
-  useEffect(() => {
-    api
-      .get<Preferences>('app/preferences')
-      .then((p) => {
-        if (typeof p.save_path !== 'string') return
-        setDefaultPath(p.save_path)
-        if (!pathTouched.current) setSavepath(p.save_path)
-      })
-      .catch(() => {
-        // the field stays empty and qBittorrent's own default applies
-      })
-  }, [])
-
-  function ingest(list: readonly File[]) {
-    const fresh = list.filter((f) => !seen.current.has(f))
-    if (fresh.length === 0) return
-    fresh.forEach((f) => seen.current.add(f))
-    const rows = fresh.map<Entry>((file) => ({ id: nextId++, file, parsed: null, failed: false, selected: [] }))
-    setEntries((cur) => [...cur, ...rows])
-    for (const row of rows) {
-      void row.file
-        .arrayBuffer()
-        .then((buf) => parseTorrent(new Uint8Array(buf)))
-        .then(
-          (parsed) => ({ parsed, failed: false, selected: parsed.files.filter((f) => !f.pad).map(() => true) }),
-          () => ({ parsed: null, failed: true, selected: [] as boolean[] }),
-        )
-        .then((patch) => setEntries((cur) => cur.map((e) => (e.id === row.id ? { ...e, ...patch } : e))))
-    }
-  }
-
-  // Files dropped while the dialog is already open: show the file tab (adjusted during render, not in an effect).
-  const [seenFiles, setSeenFiles] = useState(files)
-  if (files !== seenFiles) {
-    setSeenFiles(files)
-    if (files.length > 0) setTab('file')
-  }
-  useEffect(() => ingest(files), [files])
-
-  const valid = entries.filter((e) => e.parsed)
-  // The per-file list is for one torrent; with several, each is added whole.
-  const single = valid.length === 1 ? valid[0] : null
-  const shownFiles = single ? single.parsed!.files.filter((f) => !f.pad).map((f, i) => ({ ...f, i })) : []
-  const pickedCount = single ? shownFiles.filter((f) => single.selected[f.i]).length : 0
-  const magnetLines = magnets.split('\n').map((l) => l.trim()).filter(Boolean)
-
-  const canSubmit = tab === 'magnet' ? magnetLines.length > 0 : valid.length > 0 && (!single || pickedCount > 0)
-
-  function toggleFile(entryId: number, index: number, on: boolean) {
-    setEntries((cur) => cur.map((e) => (e.id === entryId ? { ...e, selected: e.selected.map((s, i) => (i === index ? on : s)) } : e)))
-  }
-
-  function changeCategory(name: string) {
-    pathTouched.current = true
-    setCategory(name)
-    setSavepath(categories[name]?.savePath || defaultPath)
-  }
-
-  async function createCategory(name: string): Promise<boolean> {
-    try {
-      await api.post('torrents/createCategory', { category: name, savePath: '' })
-    } catch {
-      toast(t.add.categoryFailed)
-      return false
-    }
-    void useTorrents.getState().refresh().catch(() => {})
-    return true
-  }
-
-  function submit() {
-    if (!canSubmit) return
-    const options: AddOptions = { savepath: savepath.trim(), category, tags, start, sequential, firstLast, skipChecking }
-    const req =
-      tab === 'magnet'
-        ? { torrents: [], magnets: magnetLines, options }
-        : {
-            torrents: valid.map((e) => ({ name: e.file.name, data: e.file, infohash: e.parsed!.infohash, ids: e.parsed!.ids, selected: single ? e.selected : null })),
-            magnets: [],
-            options,
-          }
-    onClose()
-    void addTorrents(req, { api, sleep: (ms) => new Promise((r) => setTimeout(r, ms)), now: () => Date.now() })
-      .then(reportAddResult)
-      .then(() => useTorrents.getState().refresh())
-      .catch(() => {
-        // the next poll shows the new torrents anyway
-      })
-  }
+  const {
+    tab, setTab, entries, setEntries, magnets, setMagnets, savepath, editSavepath, category, tags, setTags,
+    start, setStart, sequential, setSequential, firstLast, setFirstLast, skipChecking, setSkipChecking,
+    categories, knownTags, free, magnetId, picker,
+    ingest, single, shownFiles, pickedCount, canSubmit, toggleFile, changeCategory, createCategory, submit,
+  } = useAddForm({ tab: initialTab, files, onClose })
 
   return (
     <Dialog title={t.add.title} onClose={onClose} width={620}>
@@ -236,10 +115,7 @@ export function AddDialog({ tab: initialTab, files, onClose }: AddDialogProps) {
             height={36}
             leading={<Folder size={14} strokeWidth={2} aria-hidden="true" />}
             value={savepath}
-            onChange={(e) => {
-              pathTouched.current = true
-              setSavepath(e.target.value)
-            }}
+            onChange={(e) => editSavepath(e.target.value)}
             autoComplete="off"
             spellCheck={false}
           />

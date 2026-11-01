@@ -1,10 +1,9 @@
-import { logout, signalSessionEnded } from '../../api/client'
 import { Button } from '../../components/ui/Button'
 import { Dialog } from '../../components/ui/Dialog'
-import { toast } from '../../components/ui/Toast'
 import { t } from '../../i18n/ru'
 import { useRoute } from '../../lib/router'
 import { loadVersions } from '../auth/versions'
+import { logOut } from './logout'
 import { sections } from './schema'
 import { SettingRow } from './SettingRow'
 import { useSettingsDraft } from './useSettingsDraft'
@@ -17,15 +16,6 @@ function SessionCard({ confirmLeave }: { confirmLeave(action: () => void): void 
     ...(known ? [`${t.app.qbittorrent} ${known.app}`, `${t.app.webApi} ${known.api}`] : []),
   ].join(' · ')
 
-  async function onLogout() {
-    try {
-      await logout()
-      signalSessionEnded()
-    } catch {
-      toast(t.settings.logoutFailed)
-    }
-  }
-
   return (
     <section className={styles.card}>
       <header className={styles.cardHead}>
@@ -33,7 +23,7 @@ function SessionCard({ confirmLeave }: { confirmLeave(action: () => void): void 
         <span className={styles.cardDesc}>{t.settings.sessionDesc}</span>
       </header>
       <div className={styles.session}>
-        <Button onClick={() => confirmLeave(() => void onLogout())}>{t.settings.logout}</Button>
+        <Button onClick={() => confirmLeave(() => void logOut())}>{t.settings.logout}</Button>
         <span className={styles.version}>{version}</span>
       </div>
     </section>

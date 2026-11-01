@@ -130,6 +130,11 @@
   .input {
     font-size: 16px;
   }
+  /* the whole 44px frame, borders included, takes the tap */
+  .frame .input {
+    height: calc(100% + 2px);
+    margin: -1px 0;
+  }
   .wide {
     max-width: none;
   }

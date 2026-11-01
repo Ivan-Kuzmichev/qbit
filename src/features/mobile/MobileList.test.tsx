@@ -271,11 +271,12 @@ describe('MobileLayout', () => {
     expect(window.location.hash).toBe('#/settings')
   })
 
-  it('renders a placeholder for #/torrent/<hash>', () => {
+  it('renders the torrent screen for #/torrent/<hash>', () => {
     load([tor('a')])
     window.location.hash = '#/torrent/a'
     render(<MobileLayout />)
     expect(screen.queryByRole('link', { name: /Torrent a/ })).toBeNull()
     expect(screen.getByRole('button', { name: 'Назад' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Torrent a' })).toBeInTheDocument()
   })
 })

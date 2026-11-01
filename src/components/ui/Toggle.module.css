@@ -31,11 +31,31 @@
   transform: translateX(16px);
 }
 @media (max-width: 767px) {
+  /* 44px tap zone; the 44x26 track is drawn by ::before so the look stays as designed */
   .toggle {
     width: 44px;
+    height: 44px;
+    background: transparent;
+  }
+  .toggle::before {
+    content: '';
+    position: absolute;
+    top: 9px;
+    left: 0;
+    right: 0;
     height: 26px;
+    border-radius: 999px;
+    background: var(--neutral);
+  }
+  .toggle[aria-checked='true'] {
+    background: transparent;
+  }
+  .toggle[aria-checked='true']::before {
+    background: var(--accent);
   }
   .knob {
+    top: 11px;
+    left: 3px;
     width: 22px;
     height: 22px;
   }

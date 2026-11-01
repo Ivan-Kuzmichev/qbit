@@ -1,5 +1,7 @@
+import { useIsMobile } from '../../lib/useIsMobile'
 import { useDialogs } from '../../store/dialogs'
 import { AddDialog } from '../add/AddDialog'
+import { MobileAddSheet } from '../mobile/MobileAddSheet'
 import { SpeedLimitsDialog } from '../limits/SpeedLimitsDialog'
 import { DeleteDialog } from './DeleteDialog'
 import { MoveDialog } from './MoveDialog'
@@ -8,6 +10,7 @@ import { MoveDialog } from './MoveDialog'
 export function DialogHost() {
   const open = useDialogs((s) => s.open)
   const close = useDialogs((s) => s.close)
+  const mobile = useIsMobile()
   if (!open) return null
   switch (open.kind) {
     case 'delete':
@@ -15,7 +18,11 @@ export function DialogHost() {
     case 'move':
       return <MoveDialog hashes={open.hashes} onClose={close} />
     case 'add':
-      return <AddDialog tab={open.tab} files={open.files} onClose={close} />
+      return mobile ? (
+        <MobileAddSheet tab={open.tab} files={open.files} onClose={close} />
+      ) : (
+        <AddDialog tab={open.tab} files={open.files} onClose={close} />
+      )
     case 'limits':
       return <SpeedLimitsDialog tab={open.tab} hashes={open.hashes} onClose={close} />
     default:

@@ -11,7 +11,7 @@ async function signIn(page: Page) {
 }
 
 test.describe('settings page', () => {
-  test.skip(({ isMobile }) => isMobile, 'mobile settings arrive in a later stage')
+  test.skip(({ isMobile }) => isMobile, 'desktop page; mobile settings are covered by mobile.spec.ts')
 
   test('enabling ratio from the off state needs a value and then persists', async ({ page, qb }) => {
     await qb.setPrefs({ max_ratio_enabled: false })

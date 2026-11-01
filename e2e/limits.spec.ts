@@ -11,7 +11,7 @@ async function signIn(page: Page) {
 }
 
 test.describe('speed limits dialog', () => {
-  test.skip(({ isMobile }) => isMobile, 'mobile entry points arrive in a later stage')
+  test.skip(({ isMobile }) => isMobile, 'desktop dialog; the mobile sheet is covered by mobile.spec.ts')
 
   test('alt_dl_limit is in bytes/s: 5 MB/s shows up as 5242880 in server_state', async ({ page, qb }) => {
     await qb.setPrefs({ alt_dl_limit: 0, alt_up_limit: 0 })

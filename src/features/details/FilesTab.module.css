@@ -124,10 +124,10 @@
   font-size: 12px;
 }
 .mobile .twistBtn {
-  padding: 14px 2px;
+  padding: 16px 2px;
 }
 @media (max-width: 767px) {
   .twistBtn {
-    padding: 14px 2px;
+    padding: 16px 2px;
   }
 }

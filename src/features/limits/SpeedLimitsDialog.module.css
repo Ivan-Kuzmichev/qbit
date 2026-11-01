@@ -139,6 +139,9 @@
     height: 44px;
   }
   .input {
+    align-self: stretch;
+    height: calc(100% + 2px);
+    margin: -1px 0;
     font-size: 16px;
   }
   .preset {

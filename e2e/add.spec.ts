@@ -18,7 +18,7 @@ async function openAdd(page: Page, file: string) {
 }
 
 test.describe('add torrent dialog', () => {
-  test.skip(({ isMobile }) => isMobile, 'mobile entry points arrive in a later stage')
+  test.skip(({ isMobile }) => isMobile, 'desktop dialog; the mobile sheet is covered by mobile.spec.ts')
 
   test('a file added with "start now" off lands stopped', async ({ page, qb }) => {
     await signIn(page)
