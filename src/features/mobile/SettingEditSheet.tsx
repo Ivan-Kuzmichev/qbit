@@ -44,19 +44,25 @@ export function SettingEditSheet({ title, rows, draft, set, setInvalid, onClose 
   }
 
   return (
-    <Dialog title={title} onClose={cancel}>
+    <Dialog
+      title={title}
+      onClose={cancel}
+      footerKind="sheet"
+      footer={
+        <>
+          <button type="button" className={styles.cancel} onClick={cancel}>
+            {t.dialogs.cancel}
+          </button>
+          <button type="button" className={styles.done} disabled={bad.size > 0} onClick={onClose}>
+            {t.mobile.done}
+          </button>
+        </>
+      }
+    >
       <div className={styles.rows}>
         {rows.map((row) => (
           <SettingRow key={row.key} row={row} draft={draft} set={set} setInvalid={track} />
         ))}
-      </div>
-      <div className={styles.footer}>
-        <button type="button" className={styles.cancel} onClick={cancel}>
-          {t.dialogs.cancel}
-        </button>
-        <button type="button" className={styles.done} disabled={bad.size > 0} onClick={onClose}>
-          {t.mobile.done}
-        </button>
       </div>
     </Dialog>
   )

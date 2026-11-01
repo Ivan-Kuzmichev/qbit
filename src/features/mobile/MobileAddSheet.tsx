@@ -35,7 +35,21 @@ export function MobileAddSheet({ tab: initialTab, files, onClose }: MobileAddShe
   ]
 
   return (
-    <Dialog title={t.add.title} onClose={onClose}>
+    <Dialog
+      title={t.add.title}
+      onClose={onClose}
+      footerKind="sheet"
+      footer={
+        <>
+          <button type="button" className={styles.cancel} onClick={onClose}>
+            {t.dialogs.cancel}
+          </button>
+          <button type="button" className={styles.submit} disabled={!canSubmit} onClick={submit}>
+            {t.add.submit}
+          </button>
+        </>
+      }
+    >
       <div className={styles.form}>
         <Segmented<AddTab> options={tabs} value={tab} onChange={setTab} aria-label={t.add.tabLabel} />
 
@@ -135,14 +149,6 @@ export function MobileAddSheet({ tab: initialTab, files, onClose }: MobileAddShe
         </div>
       </div>
 
-      <div className={styles.footer}>
-        <button type="button" className={styles.cancel} onClick={onClose}>
-          {t.dialogs.cancel}
-        </button>
-        <button type="button" className={styles.submit} disabled={!canSubmit} onClick={submit}>
-          {t.add.submit}
-        </button>
-      </div>
     </Dialog>
   )
 }

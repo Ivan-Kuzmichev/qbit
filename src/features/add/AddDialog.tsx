@@ -32,7 +32,23 @@ export function AddDialog({ tab: initialTab, files, onClose }: AddDialogProps) {
   } = useAddForm({ tab: initialTab, files, onClose })
 
   return (
-    <Dialog title={t.add.title} onClose={onClose} width={620} anchorTop>
+    <Dialog
+      title={t.add.title}
+      onClose={onClose}
+      width={620}
+      anchorTop
+      footer={
+        <>
+          <span className={styles.free}>{typeof free === 'number' && free >= 0 ? `${t.add.free} ${formatBytes(free)}` : ''}</span>
+          <Button size="sm" onClick={onClose}>
+            {t.dialogs.cancel}
+          </Button>
+          <Button size="sm" variant="primary" disabled={!canSubmit} onClick={submit}>
+            {t.add.submit}
+          </Button>
+        </>
+      }
+    >
       <div className={styles.form}>
         <div className={styles.seg}>
           <Segmented<AddTab> options={tabs} value={tab} onChange={(id) => setTab(id)} aria-label={t.add.tabLabel} />
@@ -163,15 +179,6 @@ export function AddDialog({ tab: initialTab, files, onClose }: AddDialogProps) {
         )}
       </div>
 
-      <div className={styles.footer}>
-        <span className={styles.free}>{typeof free === 'number' && free >= 0 ? `${t.add.free} ${formatBytes(free)}` : ''}</span>
-        <Button size="sm" onClick={onClose}>
-          {t.dialogs.cancel}
-        </Button>
-        <Button size="sm" variant="primary" disabled={!canSubmit} onClick={submit}>
-          {t.add.submit}
-        </Button>
-      </div>
     </Dialog>
   )
 }

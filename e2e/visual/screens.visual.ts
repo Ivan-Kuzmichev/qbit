@@ -3,7 +3,7 @@ import { expect, test, type Locator, type Page } from '@playwright/test'
 import { HASH, mockApi, sampleTorrent, type MockOptions } from './mockData'
 
 /**
- * `npm run visual`: renders every screen with the mockups' sample data, saves a screenshot and
+ * `npm run visual`: builds the app, serves the bundle, renders every screen with the mockups' sample data, saves a screenshot and
  * compares computed styles and boxes with the values read from the inline styles of design/*.dc.html.
  * Where the spec overrides a mockup the expected value is the spec's, and a comment says so.
  * Output: test-results/visual/ (screenshots and measurements/*.md).
@@ -331,7 +331,7 @@ test('desktop delete', async ({ page }) => {
   await m('size', cls(option, 'size'), { fontFamily: MONO, fontSize: '11px', color: MUTED, text: '2.60 ГБ' })
   await m('cancel', dlg.getByRole('button', { name: 'Отмена' }), { h: 36, paddingLeft: '14px', borderRadius: '9px', fontSize: '12.5px', fontWeight: '500', color: TEXT })
   await m('confirm', dlg.getByRole('button', { name: 'Удалить' }), { h: 36, paddingLeft: '16px', borderRadius: '9px', fontSize: '12.5px', fontWeight: '600', backgroundColor: DANGER_BG, color: hex('#FFFFFF') })
-  await m('actions', cls(dlg, 'actions'), { columnGap: '8px' })
+  await m('footer', cls(dlg, 'footer'), { columnGap: '8px', padding: '16px 20px', borderTopWidth: '0px' })
   const confirm = (await dlg.getByRole('button', { name: 'Удалить' }).boundingBox())!
   const below = Math.round(box.y + box.height - (confirm.y + confirm.height))
   rows.push({ screen: S, element: 'confirm to the bottom edge', prop: 'gap', want: 17, got: below, ok: below === 17 })
@@ -358,8 +358,8 @@ test('desktop limits', async ({ page }) => {
   await m('segmented', seg, { padding: '3px', columnGap: '4px', borderRadius: '9px', backgroundColor: HOVER })
   await m('segment, active', seg.getByRole('radio').nth(0), { h: 30, borderRadius: '7px', backgroundColor: BORDER, color: TEXT, fontWeight: '500', fontSize: '12.5px' })
   await m('segment, idle', seg.getByRole('radio').nth(1), { h: 30, backgroundColor: NONE, color: MUTED, fontWeight: '400' })
+  await m('form', cls(dlg, 'form'), { rowGap: '18px' })
   const group = dlg.getByRole('group').nth(1)
-  await m('blocks', group, { marginTop: '18px' })
   await m('limit block', group, { rowGap: '10px' })
   await m('limit label', cls(group, 'label'), { color: TEXT2, fontSize: '12.5px', columnGap: '8px' })
   await m('arrow, up', cls(group, 'up'), { color: SEED })
@@ -372,7 +372,7 @@ test('desktop limits', async ({ page }) => {
   await m('preset, active', group.locator('[data-preset="10"]'), { backgroundColor: HOVER, color: ACCENT, borderTopColor: ACCENT })
   const hint = cls(dlg, 'hint')
   await m('hint', hint, { padding: '10px 12px', columnGap: '10px', borderRadius: '10px', backgroundColor: SURFACE, borderTopColor: BORDER, color: MUTED, fontSize: '12px', lineHeight: '17.4px' })
-  await m('footer', cls(dlg, 'actions'), { padding: '14px 20px', columnGap: '8px', borderTopColor: SUBTLE, justifyContent: 'flex-end' })
+  await m('footer', cls(dlg, 'footer'), { padding: '14px 20px', columnGap: '8px', borderTopColor: SUBTLE, justifyContent: 'flex-end' })
   await m('cancel', dlg.getByRole('button', { name: 'Отмена' }), { h: 36, paddingLeft: '14px', borderRadius: '9px', fontWeight: '500', fontSize: '12.5px' })
   await m('apply', dlg.getByRole('button', { name: 'Применить' }), { h: 36, paddingLeft: '16px', borderRadius: '9px', backgroundColor: ACCENT, color: BG, fontWeight: '600', fontSize: '12.5px' })
   verdict(S)
@@ -444,12 +444,18 @@ test('desktop settings', async ({ page }) => {
   const m = (el: string, at: Locator, want: Want) => measure(S, el, at, want)
   await open(page, DESKTOP, '#/settings')
   await expect(page.getByRole('switch').first()).toBeVisible()
-  await page.getByRole('switch', { name: 'Добавлять на паузе' }).click()
+  const paused = page.getByRole('switch', { name: 'Добавлять на паузе' })
+  await expect(paused).toHaveAttribute('aria-checked', 'false')
+  await m('toggle, off', paused, { w: 36, h: 20, backgroundColor: NEUTRAL })
+  await m('toggle knob, off', cls(paused, 'knob'), { w: 16, h: 16, backgroundColor: TEXT2 })
+  await paused.click()
+  await expect(paused).toHaveAttribute('aria-checked', 'true')
   await shot(page, 'desktop-settings')
 
   const side = page.locator('aside')
-  const speedCards = await cls(side, 'card').count()
-  rows.push({ screen: S, element: 'no speed card', prop: 'count', want: 0, got: speedCards, ok: speedCards === 0 })
+  // spec over mockup: the sidebar keeps the speed card and its switch on settings; the mockup draws none
+  await m('speed card stays', cls(side, 'card'), { padding: '14px', borderRadius: '12px', backgroundColor: CARD })
+  await m('alt switch stays', page.getByRole('switch', { name: 'Альт. лимиты' }), { w: 36, h: 20 })
   await m('settings item, active', side.getByRole('button', { name: 'Настройки' }), { h: 38, backgroundColor: HOVER, color: TEXT, fontSize: '13px' })
   await m('filter, idle', side.getByRole('navigation').getByRole('button').first(), { backgroundColor: NONE, color: TEXT2 })
   await m('title', page.getByRole('heading', { level: 1 }), { x: 260, fontSize: '18px', fontWeight: '600', letterSpacing: '-0.18px' })
@@ -479,7 +485,6 @@ test('desktop settings', async ({ page }) => {
   const toggle = page.getByRole('switch', { name: 'Добавлять на паузе' })
   await m('toggle', toggle, { w: 36, h: 20, backgroundColor: ACCENT })
   await m('toggle knob', cls(toggle, 'knob'), { w: 16, h: 16, backgroundColor: BG })
-  await m('toggle, off', page.getByRole('switch').filter({ hasNot: page.locator('[aria-checked="true"]') }).nth(0).locator('xpath=self::*'), { w: 36 })
   await nav.getByRole('button', { name: 'Скорость' }).click()
   const limit = page.getByRole('textbox', { name: /отдач/i }).first()
   await m('number field', limit.locator('xpath=..'), { w: 160, h: 34 })
@@ -599,6 +604,7 @@ test('mobile torrent', async ({ page }) => {
   const row = page.locator('[data-kind="file"]').filter({ hasText: 'splash_scene.blend' })
   await m('file row', row, { columnGap: '12px', paddingTop: '12px', alignItems: 'flex-start' })
   await m('file checkbox', cls(row, 'box'), { w: 16, h: 16, borderRadius: '4px', backgroundColor: ACCENT })
+  await m('file checkbox tap zone', cls(row, 'check'), { h: 44 })
   await m('file name', cls(row, 'name'), { fontSize: '14px' })
   await m('file size', cls(row, 'size'), { fontFamily: MONO, fontSize: '11px', color: MUTED, text: '2.90 ГБ' })
   await m('file text', cls(row, 'text'), { rowGap: '3px' })

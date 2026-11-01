@@ -1,11 +1,7 @@
 .form {
   display: flex;
-  flex: 1 0 auto;
   flex-direction: column;
-}
-/* not a gap: the footer sits right under the content when the dialog has no slack */
-.form > * + *:not(.actions) {
-  margin-top: 18px;
+  gap: 18px;
 }
 .tabs > div {
   display: flex;
@@ -117,18 +113,7 @@
 .hint svg {
   flex: none;
 }
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin: auto calc(-1 * var(--dialog-pad)) -20px;
-  padding: 14px var(--dialog-pad);
-  border-top: 1px solid var(--border-subtle);
-}
 @media (max-width: 767px) {
-  .actions {
-    padding-bottom: max(14px, env(safe-area-inset-bottom));
-  }
   .label {
     font-size: 14px;
   }

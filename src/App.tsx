@@ -105,7 +105,7 @@ export function App() {
           {isMobile ? (
             <MobileLayout />
           ) : (
-            <DesktopLayout>
+            <DesktopLayout bare={onSettings}>
               {onSettings ? (
                 <SettingsPage />
               ) : (

@@ -63,6 +63,7 @@ export function SpeedLimitsDialog({ tab: initialTab, hashes, onClose }: SpeedLim
   const [loadFailed, setLoadFailed] = useState(false)
   const [saving, setSaving] = useState(false)
   const uid = useId()
+  const formId = `${uid}-form`
 
   useEffect(() => {
     let alive = true
@@ -145,8 +146,18 @@ export function SpeedLimitsDialog({ tab: initialTab, hashes, onClose }: SpeedLim
       width={420}
       minHeight={430}
       description={tab === 'torrent' ? subtitle : undefined}
+      footer={
+        <>
+          <Button size="sm" onClick={onClose}>
+            {t.dialogs.cancel}
+          </Button>
+          <Button size="sm" variant="primary" type="submit" form={formId} disabled={!canApply}>
+            {t.limits.apply}
+          </Button>
+        </>
+      }
     >
-      <form onSubmit={submit} className={styles.form}>
+      <form id={formId} onSubmit={submit} className={styles.form}>
         <div className={styles.tabs}>
           <Segmented<LimitsTab>
             aria-label={t.limits.tabsLabel}
@@ -222,14 +233,6 @@ export function SpeedLimitsDialog({ tab: initialTab, hashes, onClose }: SpeedLim
             <span>{h}</span>
           </p>
         ))}
-        <div className={styles.actions}>
-          <Button size="sm" onClick={onClose}>
-            {t.dialogs.cancel}
-          </Button>
-          <Button size="sm" variant="primary" type="submit" disabled={!canApply}>
-            {t.limits.apply}
-          </Button>
-        </div>
       </form>
     </Dialog>
   )

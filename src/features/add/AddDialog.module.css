@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding-bottom: 18px;
 }
 .seg > * {
   display: flex;
@@ -181,14 +182,6 @@
   font-size: 11px;
   color: var(--muted);
 }
-.footer {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 18px calc(-1 * var(--dialog-pad)) -20px;
-  padding: 14px var(--dialog-pad);
-  border-top: 1px solid var(--border-subtle);
-}
 .free {
   flex: 1;
   font-family: var(--font-mono);
@@ -213,8 +206,5 @@
   .remove {
     width: 44px;
     height: 44px;
-  }
-  .footer {
-    padding-bottom: max(14px, env(safe-area-inset-bottom));
   }
 }

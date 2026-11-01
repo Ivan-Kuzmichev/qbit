@@ -2,7 +2,7 @@ import { defineConfig, devices } from '@playwright/test'
 
 const PORT = 5199
 
-/** The visual pass needs no qBittorrent: it runs the dev server and mocks /api/v2/* per page. */
+/** The visual pass needs no qBittorrent: it serves the production build and mocks /api/v2/* per page. */
 export default defineConfig({
   testDir: '.',
   testMatch: '*.visual.ts',
@@ -10,10 +10,12 @@ export default defineConfig({
   workers: 1,
   reporter: 'list',
   webServer: {
-    command: `npx vite --port ${PORT} --strictPort`,
+    // the built bundle, not the dev server: CSS order in the bundle is part of what is measured
+    command: `npx vite build && npx vite preview --port ${PORT} --strictPort`,
     cwd: '../..',
     url: `http://localhost:${PORT}/`,
     reuseExistingServer: false,
+    timeout: 120_000,
   },
   use: {
     ...devices['Desktop Chrome'],

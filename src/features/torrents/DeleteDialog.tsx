@@ -37,6 +37,15 @@ export function DeleteDialog({ hashes, onClose }: DeleteDialogProps) {
       icon={<Trash2 size={18} aria-hidden="true" />}
       description={one && targets[0] ? `«${targets[0].name}» ${t.dialogs.deleteBodyOne}` : t.dialogs.deleteBodyMany}
       hideClose
+      footerKind="plain"
+      footer={
+        <>
+          <Button size="sm" onClick={onClose}>{t.dialogs.cancel}</Button>
+          <Button size="sm" variant="danger" disabled={targets.length === 0} onClick={confirm}>
+            {t.dialogs.deleteConfirm}
+          </Button>
+        </>
+      }
     >
       <label className={styles.option}>
         <input type="checkbox" className={styles.input} checked={deleteFiles} onChange={(e) => setDeleteFiles(e.target.checked)} />
@@ -44,12 +53,6 @@ export function DeleteDialog({ hashes, onClose }: DeleteDialogProps) {
         <span className={styles.label}>{t.dialogs.deleteFiles}</span>
         <span className={styles.size}>{formatBytes(completed)}</span>
       </label>
-      <div className={styles.actions}>
-        <Button size="sm" onClick={onClose}>{t.dialogs.cancel}</Button>
-        <Button size="sm" variant="danger" disabled={targets.length === 0} onClick={confirm}>
-          {t.dialogs.deleteConfirm}
-        </Button>
-      </div>
     </Dialog>
   )
 }

@@ -42,13 +42,6 @@
   font-size: 11px;
   color: var(--muted);
 }
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin: auto calc(-1 * var(--dialog-pad)) -20px;
-  padding: 16px var(--dialog-pad);
-}
 @media (max-width: 767px) {
   .option {
     min-height: 44px;
@@ -59,8 +52,5 @@
     width: 100%;
     height: 100%;
     cursor: pointer;
-  }
-  .actions {
-    padding-bottom: max(16px, env(safe-area-inset-bottom));
   }
 }

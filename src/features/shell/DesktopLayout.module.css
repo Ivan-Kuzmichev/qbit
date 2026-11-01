@@ -15,3 +15,6 @@
   gap: 14px;
   overflow: hidden;
 }
+.bare {
+  padding: 0;
+}

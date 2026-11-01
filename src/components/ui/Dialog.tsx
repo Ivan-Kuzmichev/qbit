@@ -20,6 +20,10 @@ export interface DialogProps {
   hideClose?: boolean
   /** Hangs from a fixed line on desktop instead of the centre: a dialog whose height changes does not jump. */
   anchorTop?: boolean
+  /** Pinned under the scrolling content. */
+  footer?: ReactNode
+  /** `line`: a rule above it. `plain`: no rule, a little more air. `sheet`: a rule and room for the thumb. */
+  footerKind?: 'line' | 'plain' | 'sheet'
 }
 
 const FOCUSABLE =
@@ -46,7 +50,7 @@ function findOpener(): HTMLElement | null {
   return lastPressed?.isConnected ? lastPressed : null
 }
 
-export function Dialog({ title, onClose, children, width, minHeight, icon, description, hideClose, anchorTop }: DialogProps) {
+export function Dialog({ title, onClose, children, width, minHeight, icon, description, hideClose, anchorTop, footer, footerKind = 'line' }: DialogProps) {
   const titleId = useId()
   const descriptionId = useId()
   const root = useRef<HTMLDivElement>(null)
@@ -140,9 +144,14 @@ export function Dialog({ title, onClose, children, width, minHeight, icon, descr
             </IconButton>
           )}
         </header>
-        <div ref={body} className={styles.body}>
+        <div ref={body} className={styles.body} data-has-footer={footer ? true : undefined}>
           {children}
         </div>
+        {footer && (
+          <div className={styles.footer} data-kind={footerKind}>
+            {footer}
+          </div>
+        )}
       </div>
     </div>
   )
