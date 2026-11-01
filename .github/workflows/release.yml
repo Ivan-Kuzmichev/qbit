@@ -42,9 +42,22 @@ jobs:
       - name: GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release create "$GITHUB_REF_NAME" qbit.zip --title "$GITHUB_REF_NAME" --notes-file CHANGES.md
+        run: |
+          flags=()
+          if [[ "$GITHUB_REF_NAME" == *-* ]]; then flags+=(--prerelease); fi
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" qbit.zip --clobber
+            gh release edit "$GITHUB_REF_NAME" --notes-file CHANGES.md "${flags[@]}"
+          else
+            gh release create "$GITHUB_REF_NAME" qbit.zip --title "$GITHUB_REF_NAME" --notes-file CHANGES.md "${flags[@]}"
+          fi
+
+      - name: Stable tag flag
+        run: |
+          if [[ "$GITHUB_REF_NAME" == *-* ]]; then echo "STABLE=false" >> "$GITHUB_ENV"; else echo "STABLE=true" >> "$GITHUB_ENV"; fi
 
       - name: Publish latest-release branch
+        if: env.STABLE == 'true'
         env:
           REPO: ${{ github.repository }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -74,6 +87,7 @@ jobs:
           context: .
           file: Dockerfile.mod
           push: true
+          labels: org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
           tags: |
-            ${{ env.IMAGE }}:latest
             ${{ env.IMAGE }}:${{ env.APP_VERSION }}
+            ${{ env.STABLE == 'true' && format('{0}:latest', env.IMAGE) || '' }}

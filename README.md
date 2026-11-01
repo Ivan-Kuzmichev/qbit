@@ -87,3 +87,5 @@ npm run visual   # визуальные тесты
 ## Релизы
 
 Тег `v*` запускает `.github/workflows/release.yml`: сборка, `qbit.zip` и GitHub Release с changelog (git-cliff по Conventional Commits), ветка `latest-release` (один коммит, force-push) и образ `ghcr.io/<owner>/qbit-mod` с тегами `latest` и `X.Y.Z`.
+
+Теги с дефисом (`v1.0.0-rc.1`) считаются пре-релизами: `latest-release` и Docker-тег `latest` они не обновляют. После первого релиза нужно один раз сделать пакет GHCR публичным: Packages, Package settings, Change visibility, Public.
