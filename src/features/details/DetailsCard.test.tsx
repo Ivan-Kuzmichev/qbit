@@ -47,6 +47,25 @@ afterEach(() => {
   toastMock.mockClear()
 })
 
+describe('DetailsCard files tab', () => {
+  it('posts filePrio with the file index', async () => {
+    const prio = vi.fn(() => json(''))
+    fetchMock = stubFetch({
+      'torrents/properties': () => json({}),
+      'torrents/pieceStates': () => json([]),
+      'torrents/files': () =>
+        json([{ index: 4, name: 'x.bin', size: 10, progress: 0, priority: 1, piece_range: [0, 0], availability: 1 }]),
+      'torrents/filePrio': prio,
+    })
+    load([tor('a')], ['a'])
+    render(<DetailsCard />)
+    await userEvent.click(await screen.findByRole('checkbox', { name: 'x.bin' }))
+    await vi.waitFor(() => expect(prio).toHaveBeenCalled())
+    const calls = fetchMock.mock.calls.filter(([u]) => String(u).includes('torrents/filePrio'))
+    expect(String(calls[0][1]?.body)).toBe('hash=a&id=4&priority=0')
+  })
+})
+
 describe('DetailsCard', () => {
   it('is hidden without selection', () => {
     load([tor('a')], [])
@@ -128,7 +147,7 @@ describe('DetailsCard', () => {
     stubFetch({
       'torrents/properties': () => json({}),
       'torrents/pieceStates': () => json([]),
-      'torrents/files': () => json([{ index: 0 }, { index: 1 }, { index: 2 }]),
+      'torrents/files': () => json([0, 1, 2].map((index) => ({ index, name: `f${index}`, size: 1, progress: 0, priority: 1 }))),
     })
     load([tor('a')], ['a'])
     render(<DetailsCard />)

@@ -1,4 +1,5 @@
-// Regenerates e2e/fixtures/tiny.torrent (one 16 KiB file) and multi.torrent (two 16 KiB files); no reachable tracker.
+// Regenerates e2e/fixtures/tiny.torrent (one 16 KiB file), multi.torrent (two 16 KiB files), hybrid.torrent and
+// padded.torrent ([a, BEP 47 pad, b]); no reachable tracker.
 // Usage: node e2e/fixtures/make-torrent.mjs
 import { createHash } from 'node:crypto'
 import { writeFileSync } from 'node:fs'
@@ -54,3 +55,23 @@ const hybrid = {
   },
 }
 writeFileSync(new URL('./hybrid.torrent', import.meta.url), enc(hybrid))
+
+// BEP 47 padding: a (10000 B) + pad (6384 B, up to the piece boundary) + b (one piece). The pad is the middle
+// entry in the metainfo, so non-pad indices must run 0 and 1 in torrents/files.
+const pa = Buffer.alloc(10000, 'qbit-e2e-pa')
+const pad = Buffer.alloc(6384)
+const pb = Buffer.alloc(16384, 'qbit-e2e-pb')
+const padded = {
+  announce: 'http://127.0.0.1:1/announce',
+  info: {
+    files: [
+      { length: pa.length, path: ['a.bin'] },
+      { attr: 'p', length: pad.length, path: ['.pad', String(pad.length)] },
+      { length: pb.length, path: ['b.bin'] },
+    ],
+    name: 'qbit-e2e-padded',
+    'piece length': 16384,
+    pieces: Buffer.concat([Buffer.concat([pa, pad]), pb].map((d) => createHash('sha1').update(d).digest())),
+  },
+}
+writeFileSync(new URL('./padded.torrent', import.meta.url), enc(padded))

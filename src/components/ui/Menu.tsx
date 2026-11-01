@@ -13,10 +13,12 @@ export interface MenuProps {
   items: readonly MenuItem[]
   /** Accessible name of the trigger button. */
   label: string
+  /** Extra class for the trigger, to restyle it as a field-like button. */
+  triggerClassName?: string
   children: ReactNode
 }
 
-export function Menu({ items, label, children }: MenuProps) {
+export function Menu({ items, label, triggerClassName, children }: MenuProps) {
   const [open, setOpen] = useState(false)
   const root = useRef<HTMLDivElement>(null)
   const trigger = useRef<HTMLButtonElement>(null)
@@ -53,7 +55,7 @@ export function Menu({ items, label, children }: MenuProps) {
       <button
         ref={trigger}
         type="button"
-        className={styles.trigger}
+        className={triggerClassName ? `${styles.trigger} ${triggerClassName}` : styles.trigger}
         aria-label={label}
         aria-haspopup="menu"
         aria-expanded={open}

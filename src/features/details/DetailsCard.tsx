@@ -1,5 +1,6 @@
 import { ChevronDown, ChevronUp, Folder, Trash2 } from 'lucide-react'
 import { useState } from 'react'
+import { api } from '../../api/client'
 import { Button } from '../../components/ui/Button'
 import { Chip } from '../../components/ui/Chip'
 import { IconButton } from '../../components/ui/IconButton'
@@ -12,6 +13,7 @@ import { useTorrents } from '../../store/torrents'
 import { runTorrentAction } from '../torrents/actions'
 import { uiStatus } from '../torrents/status'
 import styles from './DetailsCard.module.css'
+import { FilesTab } from './FilesTab'
 import { PieceMap } from './PieceMap'
 import { useDetailsPolling, type DetailsTab } from './useDetailsPolling'
 
@@ -106,8 +108,18 @@ export function DetailsCard() {
       <div className={styles.tabs}>
         <Tabs<DetailsTab> tabs={TABS} value={tab} onChange={setTab} aria-label={t.details.tabsLabel} />
       </div>
-      {/* Tasks 14 and 15 fill the tab bodies from `data`. */}
-      <div className={styles.body} role="tabpanel" data-tab={tab} />
+      {/* Task 15 fills the remaining tab bodies from `data`. */}
+      <div className={styles.body} role="tabpanel" data-tab={tab}>
+        {tab === 'files' && data.files && (
+          <FilesTab
+            files={data.files}
+            variant="desktop"
+            onSetPriority={async (ids, priority) => {
+              await api.post('torrents/filePrio', { hash, id: ids.join('|'), priority })
+            }}
+          />
+        )}
+      </div>
     </section>
   )
 }

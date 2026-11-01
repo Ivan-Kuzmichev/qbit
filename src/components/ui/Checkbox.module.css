@@ -25,7 +25,8 @@
   background: var(--bg);
   color: var(--bg);
 }
-.input:checked + .box {
+.input:checked + .box,
+.input:indeterminate + .box {
   border-color: var(--accent);
   background: var(--accent);
 }

@@ -8,6 +8,8 @@ export const TINY_NAME = 'qbit-e2e-tiny.bin'
 export const MULTI_TORRENT = fileURLToPath(new URL('./fixtures/multi.torrent', import.meta.url))
 export const HYBRID_TORRENT = fileURLToPath(new URL('./fixtures/hybrid.torrent', import.meta.url))
 export const HYBRID_NAME = 'qbit-e2e-hybrid'
+export const PADDED_TORRENT = fileURLToPath(new URL('./fixtures/padded.torrent', import.meta.url))
+export const PADDED_NAME = 'qbit-e2e-padded'
 export const MULTI_NAME = 'qbit-e2e-multi'
 
 export interface Qb {
@@ -16,7 +18,8 @@ export interface Qb {
   prefs(): Promise<Record<string, unknown>>
   setPrefs(prefs: Record<string, unknown>): Promise<void>
   maindata(rid?: number): Promise<{ torrents?: Record<string, Record<string, unknown>>; server_state?: Record<string, unknown> }>
-  files(hash: string): Promise<{ name: string; priority: number }[]>
+  files(hash: string): Promise<{ index: number; name: string; priority: number }[]>
+  filePrio(hash: string, id: string, priority: number): Promise<void>
   removeAll(): Promise<void>
 }
 
@@ -59,6 +62,10 @@ async function makeQb(request: APIRequestContext): Promise<Qb> {
       const res = await request.get(`${BASE_URL}/api/v2/torrents/files?hash=${hash}`)
       await ok(res, 'torrents/files')
       return res.json()
+    },
+    async filePrio(hash, id, priority) {
+      const res = await request.post(`${BASE_URL}/api/v2/torrents/filePrio`, { form: { hash, id, priority: String(priority) } })
+      await ok(res, 'torrents/filePrio')
     },
     async removeAll() {
       const res = await request.post(`${BASE_URL}/api/v2/torrents/delete`, { form: { hashes: 'all', deleteFiles: 'true' } })
