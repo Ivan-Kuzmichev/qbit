@@ -7,6 +7,7 @@ import { UpgradeScreen } from './features/auth/UpgradeScreen'
 import { saveVersions } from './features/auth/versions'
 import { ConnectionBanner } from './features/shell/ConnectionBanner'
 import { DesktopLayout } from './features/shell/DesktopLayout'
+import { DialogHost } from './features/torrents/DialogHost'
 import { TopBar } from './features/torrents/TopBar'
 import { TorrentTable } from './features/torrents/TorrentTable'
 import { t } from './i18n/ru'
@@ -92,6 +93,7 @@ export function App() {
       view = (
         <>
           <ConnectionBanner />
+          <DialogHost />
           {isMobile ? (
             <main>{t.app.name}</main>
           ) : (

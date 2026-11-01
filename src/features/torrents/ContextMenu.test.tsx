@@ -4,11 +4,14 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Torrent } from '../../api/types'
 import { emptySync } from '../../store/mergeMainData'
+import { useDialogs } from '../../store/dialogs'
 import { useTorrents } from '../../store/torrents'
 import { useUi } from '../../store/ui'
 import { stubFetch, text } from '../../test/fetchStub'
 import { TorrentTable } from './TorrentTable'
 
+const toastMock = vi.hoisted(() => vi.fn())
+vi.mock('../../components/ui/Toast', () => ({ toast: toastMock }))
 const copyMock = vi.hoisted(() => vi.fn().mockResolvedValue(true))
 vi.mock('../../lib/copyText', () => ({ copyText: copyMock }))
 
@@ -45,6 +48,7 @@ beforeEach(() => {
   localStorage.clear()
   useUi.setState({ filter: { type: 'status', value: 'all' }, search: '', sort: { key: 'added_on', dir: 'asc' } })
   copyMock.mockClear()
+  toastMock.mockClear()
 })
 afterEach(() => {
   useTorrents.setState({ ...emptySync, speedHistory: [] })
@@ -238,6 +242,24 @@ describe('context menu', () => {
     render(<TorrentTable />)
     await userEvent.click(within(open('Torrent a')).getByRole('menuitem', { name: 'Скопировать magnet' }))
     expect(copyMock).toHaveBeenCalledWith('magnet:?xt=urn:btih:a\nmagnet:?xt=urn:btih:b')
+  })
+
+  it('does not claim success when no target has a magnet link', async () => {
+    load([tor('a', { magnet_uri: '' })])
+    useTorrents.setState({ selected: new Set(['a']), anchor: 'a' })
+    render(<TorrentTable />)
+    await userEvent.click(within(open('Torrent a')).getByRole('menuitem', { name: 'Скопировать magnet' }))
+    expect(copyMock).not.toHaveBeenCalled()
+    expect(toastMock).toHaveBeenCalledWith('Не удалось скопировать magnet')
+    expect(toastMock).not.toHaveBeenCalledWith('Magnet скопирован')
+  })
+
+  it('opens the delete dialog in the useDialogs store by default', async () => {
+    load([tor('a')])
+    render(<TorrentTable />)
+    await userEvent.click(within(open('Torrent a')).getByRole('menuitem', { name: 'Удалить…' }))
+    expect(useDialogs.getState().open).toEqual({ kind: 'delete', hashes: ['a'] })
+    useDialogs.getState().close()
   })
 
   it('dialog items hand the target hashes to onDialog', async () => {

@@ -16,9 +16,15 @@ export async function runTorrentAction(path: string, hashes: readonly string[] |
   if (hashes !== 'all' && hashes.length === 0) return
   try {
     await api.post(path, { hashes: hashes === 'all' ? 'all' : hashes.join('|'), ...extra })
-    await useTorrents.getState().refresh()
   } catch {
     toast(t.actions.failed)
+    return
+  }
+  // The action went through; a failed refresh is not its failure, and the next poll recovers.
+  try {
+    await useTorrents.getState().refresh()
+  } catch {
+    // ignored on purpose
   }
 }
 
@@ -39,7 +45,8 @@ export function runRowAction(torrent: Pick<Torrent, 'hash'>, action: Exclude<Row
 
 /** Top bar button: the selection if there is one, otherwise every torrent. */
 export function runBulkPause(kind: 'stop' | 'start'): Promise<void> {
-  const selected = targetHashes(useTorrents.getState())
+  const { torrents } = useTorrents.getState()
+  const selected = targetHashes(useTorrents.getState()).filter((h) => h in torrents)
   return runTorrentAction(`torrents/${kind}`, selected.length > 0 ? selected : 'all')
 }
 

@@ -161,9 +161,12 @@ export function ContextMenu({ x, y, onClose, onDialog }: ContextMenuProps) {
       label: t.menu.copyMagnet,
       onSelect: () => {
         onClose()
-        void copyText(targets.map((x) => x.magnet_uri).filter(Boolean).join('\n')).then((ok) =>
-          toast(ok ? t.actions.magnetCopied : t.actions.magnetFailed),
-        )
+        const links = targets.map((x) => x.magnet_uri).filter(Boolean)
+        if (links.length === 0) {
+          toast(t.actions.magnetFailed)
+          return
+        }
+        void copyText(links.join('\n')).then((ok) => toast(ok ? t.actions.magnetCopied : t.actions.magnetFailed))
       },
     },
     { id: 'remove', label: t.menu.remove, onSelect: dialog('delete'), danger: true, separatorBefore: true },

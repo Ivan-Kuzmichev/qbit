@@ -1,6 +1,7 @@
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent } from 'react'
 import { t } from '../../i18n/ru'
+import { useDialogs } from '../../store/dialogs'
 import { useTorrents } from '../../store/torrents'
 import { useUi } from '../../store/ui'
 import { gridTemplate, visibleColumns } from './columns'
@@ -30,7 +31,15 @@ function useResetStaleFilter() {
 const hashOf = (e: MouseEvent): string | null =>
   (e.target as HTMLElement).closest<HTMLElement>('[role="row"][data-hash]')?.dataset.hash ?? null
 
-export function TorrentTable({ onDialog }: Pick<ContextMenuProps, 'onDialog'> = {}) {
+/** Opens the dialog in the shared host; Limits and Move/Delete all start from the context menu. */
+const openFromMenu: NonNullable<ContextMenuProps['onDialog']> = (kind, hashes) => {
+  const d = useDialogs.getState()
+  if (kind === 'delete') d.openDelete(hashes)
+  else if (kind === 'move') d.openMove(hashes)
+  else d.openLimits('torrent', hashes)
+}
+
+export function TorrentTable({ onDialog = openFromMenu }: Pick<ContextMenuProps, 'onDialog'> = {}) {
   useResetStaleFilter()
   const [menu, setMenu] = useState<{ x: number; y: number } | null>(null)
   const closeMenu = useCallback(() => setMenu(null), [])

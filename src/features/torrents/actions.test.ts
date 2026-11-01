@@ -83,10 +83,35 @@ describe('runBulkPause', () => {
   })
 
   it('sends the selected hashes when there is a selection', async () => {
-    useTorrents.setState({ selected: new Set(['a', 'b']) })
+    useTorrents.setState({ torrents: { a: tor('a', 'stoppedDL'), b: tor('b', 'stoppedDL') }, selected: new Set(['a', 'b']) })
     const f = stubFetch({ 'torrents/start': () => text('') })
     await runBulkPause('start')
     expect(body(f).get('hashes')).toBe('a|b')
+  })
+})
+
+describe('runBulkPause with a stale selection', () => {
+  it('sends only the selected hashes that still exist', async () => {
+    useTorrents.setState({ torrents: { a: tor('a', 'downloading') }, selected: new Set(['a', 'gone']) })
+    const f = stubFetch({ 'torrents/stop': () => text('') })
+    await runBulkPause('stop')
+    expect(body(f).get('hashes')).toBe('a')
+  })
+
+  it('falls back to all when no selected hash exists any more', async () => {
+    useTorrents.setState({ torrents: { a: tor('a', 'downloading') }, selected: new Set(['gone']) })
+    const f = stubFetch({ 'torrents/stop': () => text('') })
+    await runBulkPause('stop')
+    expect(body(f).get('hashes')).toBe('all')
+  })
+})
+
+describe('runTorrentAction when refresh fails', () => {
+  it('does not report a successful action as failed', async () => {
+    refresh.mockRejectedValueOnce(new Error('network'))
+    stubFetch({ 'torrents/stop': () => text('') })
+    await runTorrentAction('torrents/stop', ['a'])
+    expect(toastMock).not.toHaveBeenCalled()
   })
 })
 
