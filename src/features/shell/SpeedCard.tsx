@@ -1,6 +1,7 @@
+import { Gauge } from 'lucide-react'
 import { Toggle } from '../../components/ui/Toggle'
 import { t } from '../../i18n/ru'
-import { formatBytes, formatSpeed } from '../../lib/format'
+import { formatBytes, formatLimitSpeed, formatSpeed } from '../../lib/format'
 import { useDialogs } from '../../store/dialogs'
 import { useTorrents } from '../../store/torrents'
 import { toggleAltLimits } from '../torrents/actions'
@@ -12,7 +13,7 @@ export function SpeedCard() {
   const history = useTorrents((s) => s.speedHistory)
   const [value, unit] = formatBytes(server.dl_info_speed ?? 0).split(' ')
   const limit = server.dl_rate_limit ?? 0
-  const limitText = limit > 0 ? `${t.speed.limit} ${formatSpeed(limit)}` : t.speed.noLimit
+  const limitText = limit > 0 ? `${t.speed.limit} ${formatLimitSpeed(limit)}` : t.speed.noLimit
   // The visible text is a mix of fragments; spell the values out for assistive tech.
   const label = `${t.speed.openLimits}: ${t.speed.download} ${formatSpeed(server.dl_info_speed ?? 0)}, ${t.speed.upload} ${formatSpeed(server.up_info_speed ?? 0)}, ${limitText}`
 
@@ -31,6 +32,7 @@ export function SpeedCard() {
         </span>
       </button>
       <div className={styles.alt}>
+        <Gauge size={14} strokeWidth={2} aria-hidden="true" />
         <span>{t.speed.altLimits}</span>
         <Toggle
           checked={Boolean(server.use_alt_speed_limits)}

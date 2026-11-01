@@ -94,7 +94,6 @@ export function MobileDetail({ hash }: { hash: string }) {
             <h1 className={styles.name}>{torrent.name}</h1>
             <div className={styles.chips}>
               <Chip tone="solid">{t.status[status.kind]}</Chip>
-              {data.files && <Chip>{plural(data.files.length, t.details.fileForms)}</Chip>}
               <Chip>{plural(num(torrent.num_seeds) + num(torrent.num_leechs), t.plural.peers)}</Chip>
               <Chip>{formatBytes(num(torrent.size))}</Chip>
             </div>

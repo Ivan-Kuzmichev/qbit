@@ -138,7 +138,8 @@ function Row({ node, depth, variant, open, style, onToggle, onCheck, onPriority,
     </>
   )
   const items = PRIORITIES.map((p) => ({ id: String(p), label: t.details.files.priorities[p], onSelect: () => onPriority(p) }))
-  const prioClass = `${styles.prio} ${off ? styles.prioOff : ''}`
+  const high = node.priority === 6 || node.priority === 7
+  const prioClass = `${styles.prio} ${off ? styles.prioOff : ''} ${high ? styles.prioHigh : ''}`
 
   return (
     <div className={`${styles.row} ${styles[variant]}`} style={{ ...style, paddingLeft: depth * 16 }} data-kind={node.kind}>

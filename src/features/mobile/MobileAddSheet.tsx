@@ -68,7 +68,7 @@ export function MobileAddSheet({ tab: initialTab, files, onClose }: MobileAddShe
                         <span className={styles.cardName}>{e.file.name}</span>
                         {e.parsed && (
                           <span className={styles.cardMeta}>
-                            {formatBytes(e.parsed.size)} · {count} {plural(count, t.add.fileCount)}
+                            {formatBytes(e.parsed.size)} · {plural(count, t.add.fileCount)}
                           </span>
                         )}
                         {e.failed && (
@@ -111,6 +111,7 @@ export function MobileAddSheet({ tab: initialTab, files, onClose }: MobileAddShe
 
         <Field
           label={t.add.savePath}
+          mono
           leading={<Folder size={15} strokeWidth={2} aria-hidden="true" />}
           value={savepath}
           onChange={(e) => editSavepath(e.target.value)}

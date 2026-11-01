@@ -10,6 +10,16 @@ export interface DialogProps {
   children: ReactNode
   /** Max width in px on desktop; defaults to 480. */
   width?: number
+  /** Min height in px on desktop: the dialog does not jump when its content changes. */
+  minHeight?: number
+  /** Beside the title, in the danger colour. */
+  icon?: ReactNode
+  /** Under the title. */
+  description?: ReactNode
+  /** Without the X, for a dialog whose actions already include a way out. */
+  hideClose?: boolean
+  /** Hangs from a fixed line on desktop instead of the centre: a dialog whose height changes does not jump. */
+  anchorTop?: boolean
 }
 
 const FOCUSABLE =
@@ -36,8 +46,9 @@ function findOpener(): HTMLElement | null {
   return lastPressed?.isConnected ? lastPressed : null
 }
 
-export function Dialog({ title, onClose, children, width }: DialogProps) {
+export function Dialog({ title, onClose, children, width, minHeight, icon, description, hideClose, anchorTop }: DialogProps) {
   const titleId = useId()
+  const descriptionId = useId()
   const root = useRef<HTMLDivElement>(null)
   const body = useRef<HTMLDivElement>(null)
   const onCloseRef = useRef(onClose)
@@ -91,6 +102,7 @@ export function Dialog({ title, onClose, children, width }: DialogProps) {
     <div
       className={styles.backdrop}
       data-testid="dialog-backdrop"
+      data-anchor={anchorTop ? 'top' : undefined}
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose()
       }}
@@ -101,16 +113,32 @@ export function Dialog({ title, onClose, children, width }: DialogProps) {
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
+        aria-describedby={description ? descriptionId : undefined}
         tabIndex={-1}
-        style={width ? ({ '--dialog-w': `${width}px` } as React.CSSProperties) : undefined}
+        style={
+          {
+            ...(width ? { '--dialog-w': `${width}px` } : {}),
+            ...(minHeight ? { '--dialog-min-h': `${minHeight}px` } : {}),
+          } as React.CSSProperties
+        }
       >
-        <header className={styles.header}>
-          <h2 id={titleId} className={styles.title}>
-            {title}
-          </h2>
-          <IconButton aria-label={t.app.close} onClick={onClose}>
-            <X size={16} aria-hidden="true" />
-          </IconButton>
+        <header className={`${styles.header} ${icon ? styles.withIcon : ''}`}>
+          {icon && <div className={styles.icon}>{icon}</div>}
+          <div className={styles.heading}>
+            <h2 id={titleId} className={styles.title}>
+              {title}
+            </h2>
+            {description && (
+              <span id={descriptionId} className={styles.description} title={typeof description === 'string' && !icon ? description : undefined}>
+                {description}
+              </span>
+            )}
+          </div>
+          {!hideClose && (
+            <IconButton aria-label={t.app.close} onClick={onClose}>
+              <X size={16} aria-hidden="true" />
+            </IconButton>
+          )}
         </header>
         <div ref={body} className={styles.body}>
           {children}

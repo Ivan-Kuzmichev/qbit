@@ -9,9 +9,11 @@ export interface FieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
   leading?: ReactNode
   /** Field height in px on desktop; mobile is never below 44px. */
   height?: 36 | 38 | 40
+  /** Monospace value, for paths. */
+  mono?: boolean
 }
 
-export function Field({ label, trailing, leading, height = 38, className, id, ...rest }: FieldProps) {
+export function Field({ label, trailing, leading, height = 38, mono, className, id, ...rest }: FieldProps) {
   const auto = useId()
   const inputId = id ?? auto
   return (
@@ -19,9 +21,9 @@ export function Field({ label, trailing, leading, height = 38, className, id, ..
       <label className={styles.label} htmlFor={inputId}>
         {label}
       </label>
-      <div className={styles.frame} style={{ '--field-h': `${height}px` } as React.CSSProperties}>
+      <div className={styles.frame} data-height={height} style={{ '--field-h': `${height}px` } as React.CSSProperties}>
         {leading && <span className={styles.leading}>{leading}</span>}
-        <input id={inputId} className={styles.input} {...rest} />
+        <input id={inputId} className={`${styles.input} ${mono ? styles.mono : ''}`} {...rest} />
         {trailing}
       </div>
     </div>

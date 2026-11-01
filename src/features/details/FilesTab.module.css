@@ -13,10 +13,14 @@
 }
 .row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 8px;
   box-sizing: border-box;
   padding-top: 10px;
+}
+/* without folders nothing needs the column of the twists */
+.list:not(:has([data-kind='folder'])) .twist {
+  display: none;
 }
 .twist {
   flex: none;
@@ -33,8 +37,10 @@
   cursor: pointer;
 }
 .check {
+  --checkbox-size: 15px;
   flex: none;
   gap: 0;
+  margin-right: 4px;
 }
 .cell {
   flex: 1;
@@ -89,6 +95,9 @@
 .prio svg {
   color: var(--muted);
 }
+.prioHigh.prioHigh {
+  color: var(--accent);
+}
 .prioOff.prioOff {
   color: var(--muted);
 }
@@ -101,8 +110,13 @@
   background: var(--accent);
 }
 .mobile {
+  align-items: flex-start;
   gap: 12px;
   padding-top: 12px;
+}
+.mobile .check {
+  --checkbox-size: 16px;
+  margin-right: 0;
 }
 .mobile .size {
   font-size: 11px;

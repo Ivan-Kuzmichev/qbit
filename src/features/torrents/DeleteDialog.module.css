@@ -1,33 +1,8 @@
-.head {
-  display: flex;
-  gap: 14px;
-}
-.icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--danger) 12%, transparent);
-  color: var(--danger);
-}
-.text {
-  flex: 1;
-  min-width: 0;
-  margin: 0;
-  color: var(--muted);
-  font-size: 12.5px;
-  line-height: 1.5;
-  overflow-wrap: anywhere;
-}
 .option {
   position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 18px;
   padding: 12px;
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -47,7 +22,7 @@
   box-sizing: border-box;
   width: 16px;
   height: 16px;
-  border: 1px solid var(--dim);
+  border: 1px solid var(--control-border);
   border-radius: 4px;
 }
 .input:checked + .box {
@@ -71,7 +46,8 @@
   display: flex;
   justify-content: flex-end;
   gap: 8px;
-  margin-top: 20px;
+  margin: auto calc(-1 * var(--dialog-pad)) -20px;
+  padding: 16px var(--dialog-pad);
 }
 @media (max-width: 767px) {
   .option {
@@ -84,7 +60,7 @@
     height: 100%;
     cursor: pointer;
   }
-  .text {
-    font-size: 14px;
+  .actions {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
   }
 }

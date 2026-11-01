@@ -6,6 +6,21 @@
 .add {
   gap: 6px;
 }
+.addOnTabs.addOnTabs {
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 400;
+}
+.desktop .grid {
+  padding: 0 18px;
+}
+.desktop .empty {
+  padding: 14px 18px;
+}
 .empty {
   margin: 0;
   padding: 14px 0 6px;

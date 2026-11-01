@@ -101,7 +101,7 @@ function Control(props: SettingRowProps) {
       return (
         <span className={`${styles.frame} ${styles.wide}`}>
           <input
-            className={styles.input}
+            className={`${styles.input} ${styles.mono}`}
             aria-label={row.label}
             type={row.kind === 'password' ? 'password' : 'text'}
             autoComplete={row.kind === 'password' ? 'new-password' : 'off'}

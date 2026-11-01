@@ -27,7 +27,7 @@ export function Checkbox({ checked, onChange, label, className, ...rest }: Check
         {...rest}
       />
       <span className={styles.box} aria-hidden="true">
-        {mixed ? <Minus size={12} strokeWidth={3} /> : checked && <Check size={12} strokeWidth={3} />}
+        {mixed ? <Minus size={10} strokeWidth={4} /> : checked && <Check size={10} strokeWidth={4} />}
       </span>
       {label !== null && label !== undefined && <span>{label}</span>}
     </label>

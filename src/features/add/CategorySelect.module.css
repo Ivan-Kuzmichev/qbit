@@ -107,9 +107,25 @@
   cursor: default;
 }
 @media (max-width: 767px) {
+  /* one line: the label on the left inside the button, the value on the right */
+  .label {
+    position: absolute;
+    top: 22px;
+    left: 13px;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
   .trigger {
+    justify-content: flex-end;
     min-height: 44px;
-    font-size: 16px;
+    padding-left: 80px;
+    border-radius: 10px;
+  }
+  .trigger > svg {
+    transform: rotate(-90deg);
+  }
+  .value {
+    flex: 0 1 auto;
   }
   .option {
     padding: 12px 10px;

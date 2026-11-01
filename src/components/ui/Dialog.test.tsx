@@ -97,4 +97,16 @@ describe('Dialog', () => {
     fireEvent.keyDown(input, { key: 'Escape' })
     expect(onClose).not.toHaveBeenCalled()
   })
+
+  it('shows an icon and a description, and can go without the close button', () => {
+    render(
+      <Dialog title="Удалить?" onClose={() => {}} icon={<svg data-testid="icon" />} description="Это нельзя отменить." hideClose>
+        <button>Отмена</button>
+      </Dialog>,
+    )
+    const dialog = screen.getByRole('dialog', { name: 'Удалить?' })
+    expect(dialog).toHaveAccessibleDescription('Это нельзя отменить.')
+    expect(screen.getByTestId('icon')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Закрыть' })).toBeNull()
+  })
 })

@@ -5,7 +5,7 @@ import { Button } from '../../components/ui/Button'
 import { Dialog } from '../../components/ui/Dialog'
 import { Toggle } from '../../components/ui/Toggle'
 import { t } from '../../i18n/ru'
-import { formatSpeed } from '../../lib/format'
+import { formatLimitSpeed } from '../../lib/format'
 import { useRoute } from '../../lib/router'
 import { loadVersions } from '../auth/versions'
 import { logOut } from '../settings/logout'
@@ -20,7 +20,7 @@ const allRows: Row[] = sections.flatMap((s) => s.cards.flatMap((c) => c.rows))
 const rowOf = (key: string): Row => allRows.find((r) => r.key === key)!
 
 const pad = (n: number) => String(n).padStart(2, '0')
-const limit = (bytes: number) => (bytes > 0 ? formatSpeed(bytes) : '∞')
+const limit = (bytes: number) => (bytes > 0 ? formatLimitSpeed(bytes) : '∞')
 const ratio = (n: number) => (Number.isInteger(n) ? n.toFixed(1) : String(Math.round(n * 100) / 100))
 const minutes = (n: number) => (n >= 60 && n % 60 === 0 ? `${n / 60} ${t.eta.hours}` : `${n} ${t.eta.minutes}`)
 

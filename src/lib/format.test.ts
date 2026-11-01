@@ -1,7 +1,16 @@
 import { describe, expect, it } from 'vitest'
-import { formatBytes, formatEta, formatSpeed, plural } from './format'
+import { formatBytes, formatEta, formatLimitSpeed, formatSpeed, plural } from './format'
 
 const P: [string, string, string] = ['пир', 'пира', 'пиров']
+
+describe('formatLimitSpeed', () => {
+  it('drops the zeros of a whole value and nothing else', () => {
+    expect(formatLimitSpeed(5 * 1024 * 1024)).toBe('5 МБ/с')
+    expect(formatLimitSpeed(50 * 1024 * 1024)).toBe('50 МБ/с')
+    expect(formatLimitSpeed(1.5 * 1024 * 1024)).toBe('1.50 МБ/с')
+    expect(formatLimitSpeed(500 * 1024)).toBe('500 КБ/с')
+  })
+})
 
 describe('format', () => {
   it('formatBytes', () => {

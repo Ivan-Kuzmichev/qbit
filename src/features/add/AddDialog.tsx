@@ -32,7 +32,7 @@ export function AddDialog({ tab: initialTab, files, onClose }: AddDialogProps) {
   } = useAddForm({ tab: initialTab, files, onClose })
 
   return (
-    <Dialog title={t.add.title} onClose={onClose} width={620}>
+    <Dialog title={t.add.title} onClose={onClose} width={620} anchorTop>
       <div className={styles.form}>
         <div className={styles.seg}>
           <Segmented<AddTab> options={tabs} value={tab} onChange={(id) => setTab(id)} aria-label={t.add.tabLabel} />
@@ -72,7 +72,7 @@ export function AddDialog({ tab: initialTab, files, onClose }: AddDialogProps) {
                       <span className={styles.cardName}>{e.file.name}</span>
                       {e.parsed && (
                         <span className={styles.cardMeta}>
-                          {formatBytes(e.parsed.size)} · {e.parsed.files.filter((f) => !f.pad).length} {plural(e.parsed.files.filter((f) => !f.pad).length, t.add.fileCount)}
+                          {formatBytes(e.parsed.size)} · {plural(e.parsed.files.filter((f) => !f.pad).length, t.add.fileCount)}
                         </span>
                       )}
                       {e.failed && (
@@ -113,6 +113,7 @@ export function AddDialog({ tab: initialTab, files, onClose }: AddDialogProps) {
             className={styles.wide}
             label={t.add.savePath}
             height={36}
+            mono
             leading={<Folder size={14} strokeWidth={2} aria-hidden="true" />}
             value={savepath}
             onChange={(e) => editSavepath(e.target.value)}

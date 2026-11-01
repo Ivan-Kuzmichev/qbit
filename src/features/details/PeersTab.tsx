@@ -1,4 +1,5 @@
 import { memo } from 'react'
+import { createPortal } from 'react-dom'
 import type { Peer } from '../../api/types'
 import { t } from '../../i18n/ru'
 import { formatBytes, formatSpeed } from '../../lib/format'
@@ -11,17 +12,23 @@ export interface PeersTabProps {
   /** Peers in the swarm (`num_complete + num_incomplete`); `null` when the tracker reports none. */
   swarm: number | null
   variant: 'desktop' | 'mobile'
+  /** Where the summary goes instead of a line of its own: the tab bar, once it is mounted. */
+  toolbarTarget?: HTMLElement | null
 }
 
 const percent = (p: number) => `${Math.floor(Math.min(1, Math.max(0, Number.isFinite(p) ? p : 0)) * 100)}%`
 const address = (p: Peer) => (p.ip.includes(':') ? `[${p.ip}]:${p.port}` : `${p.ip}:${p.port}`)
 
-export function PeersTab({ peers, swarm, variant }: PeersTabProps) {
+export function PeersTab({ peers, swarm, variant, toolbarTarget }: PeersTabProps) {
   if (peers === null) return <div className={`${styles.root} ${styles[variant]}`} />
   const summary = `${peers.length} ${t.details.peers.connected}${swarm !== null ? ` · ${swarm} ${t.details.peers.inSwarm}` : ''}`
   return (
     <div className={`${styles.root} ${styles[variant]}`}>
-      <div className={styles.summary}>{summary}</div>
+      {toolbarTarget === undefined ? (
+        <div className={styles.summary}>{summary}</div>
+      ) : (
+        toolbarTarget && createPortal(<div className={`${styles.summary} ${styles.summaryOnTabs}`}>{summary}</div>, toolbarTarget)
+      )}
       {peers.length === 0 && <p className={styles.empty}>{t.details.peers.empty}</p>}
       {peers.length > 0 && variant === 'desktop' && (
         <div role="table" aria-label={t.details.tabPeers}>

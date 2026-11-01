@@ -34,6 +34,11 @@ export function formatSpeed(n: number): string {
   return `${formatBytes(n)}${t.units.perSecond}`
 }
 
+/** A limit somebody set rather than a measurement: a whole value goes without zeros, "5 МБ/с". */
+export function formatLimitSpeed(n: number): string {
+  return formatSpeed(n).replace(/\.0+(?= )/, '')
+}
+
 export function formatEta(sec: number): string {
   if (!Number.isFinite(sec) || sec < 0 || sec >= 8640000) return t.eta.infinite
   if (sec < 60) return t.eta.lessThanMinute

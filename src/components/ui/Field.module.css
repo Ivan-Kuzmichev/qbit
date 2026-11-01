@@ -10,12 +10,15 @@
 .frame {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   height: var(--field-h);
   padding: 0 12px;
   border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--bg);
+}
+.frame[data-height='36'] {
+  border-radius: 9px;
 }
 .frame:has(button) {
   padding-right: 4px;
@@ -27,7 +30,6 @@
 .leading {
   display: inline-flex;
   flex: none;
-  margin-right: 4px;
   color: var(--muted);
 }
 .input {
@@ -44,9 +46,23 @@
 .input:focus-visible {
   box-shadow: none;
 }
+.input[type='password'] {
+  letter-spacing: 0.1em;
+}
+.mono {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
 @media (max-width: 767px) {
   .frame {
     height: max(var(--field-h), 44px);
+  }
+  .frame[data-height='36'] {
+    border-radius: 10px;
+  }
+  .frame:has(button) {
+    gap: 4px;
+    padding-right: 0;
   }
   .input {
     /* the whole 44px frame, borders included, takes the tap */
@@ -54,8 +70,11 @@
     margin: -1px 0;
     font-size: 16px;
   }
+  .input[type='password'] {
+    letter-spacing: normal;
+  }
   /* the 44px button sits on the 1px borders of the 44px frame instead of overflowing it */
   .frame > button {
-    margin: -1px -1px -1px 0;
+    margin: -1px 0;
   }
 }

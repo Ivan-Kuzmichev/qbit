@@ -6,17 +6,20 @@
   align-items: center;
   justify-content: center;
   padding: 16px;
-  background: rgb(0 0 0 / 0.6);
+  background: rgb(0 0 0 / 0.62);
 }
 .dialog {
+  --dialog-pad: 20px;
   display: flex;
   flex-direction: column;
   width: 100%;
   max-width: var(--dialog-w, 480px);
   max-height: 100%;
+  min-height: var(--dialog-min-h, 0);
   border: 1px solid var(--border);
   border-radius: 16px;
   background: var(--card);
+  box-shadow: 0 24px 64px rgb(0 0 0 / 0.5);
   outline: none;
 }
 .header {
@@ -24,7 +27,47 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 16px 16px 0 20px;
+  flex: none;
+  padding: 18px 20px 14px;
+}
+.withIcon {
+  align-items: flex-start;
+  gap: 14px;
+  padding: 20px 20px 0;
+}
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  color: var(--danger);
+}
+.heading {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.withIcon .heading {
+  gap: 6px;
+}
+.description {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.withIcon .description {
+  font-size: 12.5px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 .title {
   margin: 0;
@@ -32,8 +75,24 @@
   font-weight: 600;
 }
 .body {
-  padding: 16px 20px 20px;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0 var(--dialog-pad) 20px;
   overflow: auto;
+}
+.body > * {
+  flex: none;
+}
+.withIcon + .body {
+  padding-top: 18px;
+}
+@media (min-width: 768px) {
+  .backdrop[data-anchor='top'] {
+    align-items: flex-start;
+    padding-top: 64px;
+  }
 }
 @media (max-width: 767px) {
   .backdrop {
@@ -41,10 +100,41 @@
     padding: 0;
   }
   .dialog {
+    --dialog-pad: 16px;
     max-width: none;
+    max-height: calc(100% - 64px);
+    min-height: 0;
+    border-width: 1px 0 0;
     border-radius: 18px 18px 0 0;
+    box-shadow: none;
+  }
+  /* the sheet's grabber */
+  .dialog::before {
+    content: '';
+    flex: none;
+    width: 40px;
+    height: 4px;
+    margin: 10px auto 4px;
+    border-radius: 2px;
+    background: var(--neutral);
+  }
+  .header {
+    padding: 8px 16px 16px;
+  }
+  .withIcon {
+    padding: 8px 16px 0;
+  }
+  /* the 44px close button must not push the title down: the header keeps the height of the text */
+  .header > button {
+    margin: -12px -12px -12px 0;
   }
   .title {
     font-size: 17px;
+  }
+  .description {
+    font-size: 14px;
+  }
+  .withIcon .description {
+    font-size: 14px;
   }
 }

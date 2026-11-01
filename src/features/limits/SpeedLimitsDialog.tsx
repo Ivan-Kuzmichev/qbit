@@ -7,7 +7,7 @@ import { Dialog } from '../../components/ui/Dialog'
 import { Segmented } from '../../components/ui/Segmented'
 import { toast } from '../../components/ui/Toast'
 import { t } from '../../i18n/ru'
-import { formatSpeed, plural } from '../../lib/format'
+import { formatLimitSpeed, plural } from '../../lib/format'
 import { parseLimitMb } from '../../lib/parseNumber'
 import type { LimitsTab } from '../../store/dialogs'
 import { useTorrents } from '../../store/torrents'
@@ -125,7 +125,7 @@ export function SpeedLimitsDialog({ tab: initialTab, hashes, onClose }: SpeedLim
     const own = bytes(dir)
     const global = effective?.[dir] ?? 0
     if (tab !== 'torrent' || !own || global <= 0 || global >= own) return []
-    return [`${dir === 'dl' ? t.limits.hintDownload : t.limits.hintUpload} ${formatSpeed(global)} ${t.limits.hintTail}`]
+    return [`${dir === 'dl' ? t.limits.hintDownload : t.limits.hintUpload} ${formatLimitSpeed(global)} ${t.limits.hintTail}`]
   })
 
   const subtitle =
@@ -139,9 +139,14 @@ export function SpeedLimitsDialog({ tab: initialTab, hashes, onClose }: SpeedLim
   ]
 
   return (
-    <Dialog title={t.limits.title} onClose={onClose} width={460}>
+    <Dialog
+      title={t.limits.title}
+      onClose={onClose}
+      width={420}
+      minHeight={430}
+      description={tab === 'torrent' ? subtitle : undefined}
+    >
       <form onSubmit={submit} className={styles.form}>
-        {tab === 'torrent' && <span className={styles.subtitle}>{subtitle}</span>}
         <div className={styles.tabs}>
           <Segmented<LimitsTab>
             aria-label={t.limits.tabsLabel}

@@ -2,8 +2,7 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  min-height: 24px;
+  gap: 10px;
   cursor: pointer;
 }
 .input {
@@ -18,12 +17,15 @@
   align-items: center;
   justify-content: center;
   flex: none;
-  width: 16px;
-  height: 16px;
-  border: 1px solid var(--border);
+  width: var(--checkbox-size, 16px);
+  height: var(--checkbox-size, 16px);
+  border: 1px solid var(--control-border);
   border-radius: 4px;
-  background: var(--bg);
   color: var(--bg);
+}
+.box svg {
+  width: 10px;
+  height: 10px;
 }
 .input:checked + .box,
 .input:indeterminate + .box {

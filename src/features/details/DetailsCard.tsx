@@ -34,6 +34,8 @@ export function DetailsCard() {
   const hash = useTorrents((s) => (s.selected.size === 1 ? [...s.selected][0] : null))
   const torrent = useTorrents((s) => (hash !== null ? s.torrents[hash] : undefined))
   const [tab, setTab] = useState<DetailsTab>('files')
+  // Trackers and peers put their toolbar on the line of the tabs.
+  const [tabTools, setTabTools] = useState<HTMLElement | null>(null)
   const data = useDetailsPolling(torrent ? hash : null, tab)
   if (!torrent || hash === null) return null
 
@@ -56,7 +58,7 @@ export function DetailsCard() {
             <h2 className={styles.title} title={torrent.name}>
               {torrent.name}
             </h2>
-            <Button onClick={() => void runTorrentAction(resume ? 'torrents/start' : 'torrents/stop', hashes)}>
+            <Button className={styles.pause} onClick={() => void runTorrentAction(resume ? 'torrents/start' : 'torrents/stop', hashes)}>
               {resume ? t.details.resume : t.details.pause}
             </Button>
           </div>
@@ -114,6 +116,7 @@ export function DetailsCard() {
       </div>
       <div className={styles.tabs}>
         <Tabs<DetailsTab> tabs={TABS} value={tab} onChange={setTab} aria-label={t.details.tabsLabel} idPrefix="details" />
+        <div ref={setTabTools} className={styles.tabTools} />
       </div>
       <div className={styles.body} role="tabpanel" id="details-panel" aria-labelledby={`details-tab-${tab}`} data-tab={tab}>
         {tab === 'files' && data.files && (
@@ -131,6 +134,7 @@ export function DetailsCard() {
             key={hash}
             trackers={data.trackers}
             variant="desktop"
+            toolbarTarget={tabTools}
             onAdd={async (urls) => {
               await api.post('torrents/addTrackers', { hash, urls: urls.join('\n') })
             }}
@@ -139,7 +143,7 @@ export function DetailsCard() {
             }}
           />
         )}
-        {tab === 'peers' && <PeersTab key={hash} peers={data.peers} swarm={swarm} variant="desktop" />}
+        {tab === 'peers' && <PeersTab key={hash} peers={data.peers} swarm={swarm} variant="desktop" toolbarTarget={tabTools} />}
         {tab === 'info' && <InfoTab properties={data.properties} torrent={torrent} variant="desktop" />}
       </div>
     </section>

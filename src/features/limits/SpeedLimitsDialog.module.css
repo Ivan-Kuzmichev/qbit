@@ -1,15 +1,11 @@
 .form {
   display: flex;
+  flex: 1 0 auto;
   flex-direction: column;
-  gap: 18px;
 }
-.subtitle {
-  margin-top: -14px;
-  overflow: hidden;
-  color: var(--muted);
-  font-size: 12px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+/* not a gap: the footer sits right under the content when the dialog has no slack */
+.form > * + *:not(.actions) {
+  margin-top: 18px;
 }
 .tabs > div {
   display: flex;
@@ -125,11 +121,13 @@
   display: flex;
   justify-content: flex-end;
   gap: 8px;
+  margin: auto calc(-1 * var(--dialog-pad)) -20px;
+  padding: 14px var(--dialog-pad);
+  border-top: 1px solid var(--border-subtle);
 }
 @media (max-width: 767px) {
-  .subtitle {
-    margin-top: -12px;
-    font-size: 14px;
+  .actions {
+    padding-bottom: max(14px, env(safe-area-inset-bottom));
   }
   .label {
     font-size: 14px;

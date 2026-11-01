@@ -78,9 +78,29 @@
   color: var(--text);
   font-weight: 500;
 }
+.pause.pause {
+  height: 34px;
+  border-radius: 9px;
+}
 .tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   padding: 0 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.tabs > [role='tablist'] {
+  border-bottom: 0;
+}
+.tabTools {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
 }
 .body {
   padding: 4px 18px 12px;
+}
+.body[data-tab='trackers'],
+.body[data-tab='peers'] {
+  padding: 0;
 }

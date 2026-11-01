@@ -106,7 +106,7 @@ export function Sidebar() {
       </nav>
 
       <div className={styles.bottom}>
-        <SpeedCard />
+        {!onSettings && <SpeedCard />}
         <button
           type="button"
           className={styles.item}

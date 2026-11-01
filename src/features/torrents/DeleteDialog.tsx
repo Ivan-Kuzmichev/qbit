@@ -29,15 +29,15 @@ export function DeleteDialog({ hashes, onClose }: DeleteDialogProps) {
   }
 
   return (
-    <Dialog title={title} onClose={onClose}>
-      <div className={styles.head}>
-        <div className={styles.icon}>
-          <Trash2 size={18} aria-hidden="true" />
-        </div>
-        <p className={styles.text}>
-          {one && targets[0] ? `«${targets[0].name}» ${t.dialogs.deleteBodyOne}` : t.dialogs.deleteBodyMany}
-        </p>
-      </div>
+    <Dialog
+      title={title}
+      onClose={onClose}
+      width={440}
+      minHeight={260}
+      icon={<Trash2 size={18} aria-hidden="true" />}
+      description={one && targets[0] ? `«${targets[0].name}» ${t.dialogs.deleteBodyOne}` : t.dialogs.deleteBodyMany}
+      hideClose
+    >
       <label className={styles.option}>
         <input type="checkbox" className={styles.input} checked={deleteFiles} onChange={(e) => setDeleteFiles(e.target.checked)} />
         <span className={styles.box} aria-hidden="true" />

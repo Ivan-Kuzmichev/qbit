@@ -5,6 +5,15 @@
   font-size: 11px;
   color: var(--muted);
 }
+.summaryOnTabs {
+  padding: 0;
+}
+.desktop .grid {
+  padding: 0 18px;
+}
+.desktop .empty {
+  padding: 14px 18px;
+}
 .empty {
   margin: 0;
   padding: 6px 0;

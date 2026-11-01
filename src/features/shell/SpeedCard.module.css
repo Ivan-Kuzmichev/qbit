@@ -33,12 +33,17 @@
 }
 .meta {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
+  gap: 0 8px;
   padding-top: 8px;
   border-top: 1px solid var(--border-subtle);
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--muted);
+}
+.meta > span {
+  white-space: nowrap;
 }
 .alt {
   display: flex;

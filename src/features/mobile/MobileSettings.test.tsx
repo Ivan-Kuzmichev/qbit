@@ -67,7 +67,7 @@ describe('MobileSettings', () => {
     await open()
     expect(screen.getByRole('button', { name: /Папка по умолчанию/ })).toHaveTextContent('/downloads')
     expect(screen.getByRole('button', { name: /Лимит загрузки/ })).toHaveTextContent('∞')
-    expect(screen.getByRole('button', { name: /Лимит отдачи/ })).toHaveTextContent('5.00 МБ/с')
+    expect(screen.getByRole('button', { name: /Лимит отдачи/ })).toHaveTextContent('5 МБ/с')
     expect(screen.getByRole('button', { name: /Остановить при ratio/ })).toHaveTextContent('2.0')
     expect(screen.getByRole('button', { name: /Время раздачи/ })).toHaveTextContent('24 ч')
   })

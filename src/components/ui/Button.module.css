@@ -6,7 +6,6 @@
   border-radius: 10px;
   border: 1px solid transparent;
   padding: 0 14px;
-  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
@@ -17,6 +16,7 @@
 }
 .sm {
   height: 36px;
+  border-radius: 9px;
 }
 .md {
   height: 38px;
@@ -26,6 +26,7 @@
   font-size: 14px;
 }
 .primary {
+  padding: 0 16px;
   background: var(--accent);
   color: var(--bg);
 }
@@ -39,6 +40,7 @@
   background: var(--hover);
 }
 .danger {
+  padding: 0 16px;
   background: var(--danger-bg);
   color: #fff;
 }

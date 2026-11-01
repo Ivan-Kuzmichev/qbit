@@ -1,5 +1,6 @@
 import { MoreHorizontal, Plus } from 'lucide-react'
 import { memo, useCallback, useId, useState } from 'react'
+import { createPortal } from 'react-dom'
 import type { Tracker } from '../../api/types'
 import { Button } from '../../components/ui/Button'
 import { Dialog } from '../../components/ui/Dialog'
@@ -15,6 +16,8 @@ export interface TrackersTabProps {
   onAdd(urls: string[]): Promise<void>
   onRemove(url: string): Promise<void>
   variant: 'desktop' | 'mobile'
+  /** Where «Добавить трекер» goes instead of a line of its own: the tab bar, once it is mounted. */
+  toolbarTarget?: HTMLElement | null
 }
 
 type Kind = 'disabled' | 'updating' | 'working' | 'error'
@@ -29,9 +32,10 @@ const COLOR: Record<Kind, string> = {
 
 /** DHT, PeX and LSD arrive as pseudo-trackers: they are never removable. */
 const isPseudo = (url: string) => /^\*\* \[.+\] \*\*$/.test(url)
-const count = (n: number) => (n >= 0 ? String(n) : '—')
+/** "18 204": a no-break space between thousands. */
+const count = (n: number) => (n >= 0 ? String(n).replace(/\B(?=(\d{3})+$)/g, '\u00a0') : '—')
 
-export function TrackersTab({ trackers, onAdd, onRemove, variant }: TrackersTabProps) {
+export function TrackersTab({ trackers, onAdd, onRemove, variant, toolbarTarget }: TrackersTabProps) {
   const [adding, setAdding] = useState(false)
 
   const remove = useCallback(
@@ -42,7 +46,7 @@ export function TrackersTab({ trackers, onAdd, onRemove, variant }: TrackersTabP
   )
 
   const addButton = (
-    <Button size="sm" className={styles.add} onClick={() => setAdding(true)}>
+    <Button size="sm" className={`${styles.add} ${toolbarTarget !== undefined ? styles.addOnTabs : ''}`} onClick={() => setAdding(true)}>
       <Plus size={13} strokeWidth={2.2} aria-hidden="true" />
       {t.details.trackers.add}
     </Button>
@@ -50,7 +54,7 @@ export function TrackersTab({ trackers, onAdd, onRemove, variant }: TrackersTabP
 
   return (
     <div className={`${styles.root} ${styles[variant]}`}>
-      <div className={styles.toolbar}>{addButton}</div>
+      {toolbarTarget === undefined ? <div className={styles.toolbar}>{addButton}</div> : toolbarTarget && createPortal(addButton, toolbarTarget)}
       {trackers && trackers.length === 0 && <p className={styles.empty}>{t.details.trackers.empty}</p>}
       {trackers && trackers.length > 0 && variant === 'desktop' && (
         <div role="table" aria-label={t.details.tabTrackers}>

@@ -34,7 +34,7 @@ describe('TrackersTab', () => {
     )
     const row = screen.getByText('udp://t.example/announce').closest('[data-row]') as HTMLElement
     expect(within(row).getByText('—')).toBeInTheDocument()
-    expect(within(row).getByText('18204')).toBeInTheDocument()
+    expect(within(row).getByText('18 204')).toBeInTheDocument()
     expect(within(row).getByText('ok msg')).toBeInTheDocument()
   })
 

@@ -160,13 +160,13 @@ describe('SpeedLimitsDialog', () => {
   it('warns when the global limit is below the torrent limit', async () => {
     setup({ torrents: { a: tor('a', { up_limit: 10 * MB }) } })
     render(<SpeedLimitsDialog tab="torrent" hashes={['a']} onClose={() => {}} />)
-    expect(await screen.findByText('Глобальный лимит отдачи 5.00 МБ/с всё равно действует сверху.')).toBeInTheDocument()
+    expect(await screen.findByText('Глобальный лимит отдачи 5 МБ/с всё равно действует сверху.')).toBeInTheDocument()
   })
 
   it('compares with the alternative limit while alt mode is on', async () => {
     setup({ torrents: { a: tor('a', { dl_limit: 10 * MB }) }, server: { use_alt_speed_limits: true } })
     render(<SpeedLimitsDialog tab="torrent" hashes={['a']} onClose={() => {}} />)
-    expect(await screen.findByText('Глобальный лимит загрузки 2.00 МБ/с всё равно действует сверху.')).toBeInTheDocument()
+    expect(await screen.findByText('Глобальный лимит загрузки 2 МБ/с всё равно действует сверху.')).toBeInTheDocument()
   })
 
   it('no warning when the global limit is higher', async () => {

@@ -30,6 +30,12 @@ body {
   font-weight: 400;
 }
 
+@media (max-width: 767px) {
+  body {
+    font-size: 13px;
+  }
+}
+
 button,
 input,
 select,
