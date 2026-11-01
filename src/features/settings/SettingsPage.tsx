@@ -10,7 +10,7 @@ import { SettingRow } from './SettingRow'
 import { useSettingsDraft } from './useSettingsDraft'
 import styles from './SettingsPage.module.css'
 
-function SessionCard() {
+function SessionCard({ confirmLeave }: { confirmLeave(action: () => void): void }) {
   const known = loadVersions()
   const version = [
     `${t.app.name} v${__APP_VERSION__}`,
@@ -33,7 +33,7 @@ function SessionCard() {
         <span className={styles.cardDesc}>{t.settings.sessionDesc}</span>
       </header>
       <div className={styles.session}>
-        <Button onClick={() => void onLogout()}>{t.settings.logout}</Button>
+        <Button onClick={() => confirmLeave(() => void onLogout())}>{t.settings.logout}</Button>
         <span className={styles.version}>{version}</span>
       </div>
     </section>
@@ -102,7 +102,7 @@ export function SettingsPage() {
                 ))}
               </section>
             ))}
-          {s.draft && section.id === 'webui' && <SessionCard />}
+          {s.draft && section.id === 'webui' && <SessionCard confirmLeave={s.confirmLeave} />}
         </div>
       </div>
 

@@ -35,4 +35,8 @@ describe('settings schema', () => {
     expect(ratio.enabledBy).toBe('max_ratio_enabled')
     expect(ratio.visibleIf!({ max_ratio_enabled: false } as never)).toBe(false)
   })
+  it('the port may be 0..65535', () => {
+    const port = rows.find((r) => r.key === 'listen_port')!
+    expect([port.min, port.max]).toEqual([0, 65535])
+  })
 })

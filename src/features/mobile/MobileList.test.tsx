@@ -169,6 +169,16 @@ describe('MobileList', () => {
     expect(screen.queryByRole('dialog')).toBeNull()
   })
 
+  it('moves focus into the category sheet when it replaces the main one', async () => {
+    vi.useFakeTimers()
+    load([tor('a')], { categories: ['linux'] })
+    render(<MobileLayout />)
+    holdRow('Torrent a')
+    vi.useRealTimers()
+    await userEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Категория' }))
+    expect(screen.getByRole('dialog')).toContainElement(document.activeElement as HTMLElement)
+  })
+
   it('closes by Esc and by a tap on the backdrop', async () => {
     vi.useFakeTimers()
     load([tor('a')])

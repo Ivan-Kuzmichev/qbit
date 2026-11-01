@@ -51,4 +51,8 @@
   .input {
     font-size: 16px;
   }
+  /* the 44px button sits on the 1px borders of the 44px frame instead of overflowing it */
+  .frame > button {
+    margin: -1px -1px -1px 0;
+  }
 }

@@ -107,7 +107,7 @@ export function MobileList() {
           ))}
         </div>
       </div>
-      {sheet && <TorrentSheet sheet={sheet} onChange={setSheet} onClose={closeSheet} />}
+      {sheet && <TorrentSheet key={sheet.view} sheet={sheet} onChange={setSheet} onClose={closeSheet} />}
     </div>
   )
 }

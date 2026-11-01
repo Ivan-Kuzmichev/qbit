@@ -9,17 +9,25 @@ import { sections } from './schema'
 
 export type SettingsStatus = 'loading' | 'error' | 'ready'
 
+const SCHEDULE_KEYS = ['schedule_from_hour', 'schedule_from_min', 'schedule_to_hour', 'schedule_to_min'] as const satisfies readonly (keyof Preferences)[]
+
 const IN_SETTINGS = /^\/settings(\/|$)/
 
+const ROWS = sections.flatMap((s) => s.cards.flatMap((c) => c.rows))
+
 /** Keys that only make sense while their switch is on: changes to them are not sent when it is off. */
-const DEPENDENT = sections
-  .flatMap((s) => s.cards.flatMap((c) => c.rows))
-  .filter((r) => r.enabledBy)
-  .map((r) => [r.key as keyof Preferences, r.enabledBy!] as const)
+const DEPENDENT = ROWS.filter((r) => r.enabledBy).map((r) => [r.key as keyof Preferences, r.enabledBy!] as const)
+
+/** Rows hidden by `visibleIf` alone; the schedule row stands for all four time keys. */
+const HIDEABLE = ROWS.filter((r) => r.visibleIf && !r.enabledBy).map((r) => ({
+  keys: r.kind === 'schedule' ? SCHEDULE_KEYS : [r.key as keyof Preferences],
+  visible: r.visibleIf!,
+}))
 
 function effectiveDiff(orig: Preferences, draft: Preferences): Partial<Preferences> {
   const diff = diffPrefs(orig, draft)
   for (const [key, switchKey] of DEPENDENT) if (!draft[switchKey]) delete diff[key]
+  for (const { keys, visible } of HIDEABLE) if (!visible(draft)) for (const key of keys) delete diff[key]
   return diff
 }
 
@@ -115,6 +123,15 @@ export function useSettingsDraft() {
     }
   }, [dirty])
 
+  /** Runs `action` now, or after the user confirms losing unsaved changes. */
+  const confirmLeave = useCallback(
+    (action: () => void) => {
+      if (dirty) setPendingLeave(() => action)
+      else action()
+    },
+    [dirty],
+  )
+
   const stay = useCallback(() => setPendingLeave(null), [])
   const leave = useCallback(() => {
     const proceed = pendingLeave
@@ -137,5 +154,6 @@ export function useSettingsDraft() {
     leaving: pendingLeave !== null,
     stay,
     leave,
+    confirmLeave,
   }
 }

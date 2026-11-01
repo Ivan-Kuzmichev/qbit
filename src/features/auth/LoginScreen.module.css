@@ -1,12 +1,13 @@
 .page {
   min-height: 100vh;
+  min-height: 100dvh;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 20px;
-  padding: 24px 16px;
+  padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
   background: var(--bg);
 }
 .card {
@@ -83,7 +84,7 @@
 @media (max-width: 767px) {
   .page {
     gap: 18px;
-    padding: 16px 16px 24px;
+    padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
   }
   .card {
     max-width: none;

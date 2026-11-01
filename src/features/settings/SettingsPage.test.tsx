@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { navigate } from '../../lib/router'
@@ -146,7 +146,7 @@ describe('SettingsPage', () => {
     expect(screen.queryByRole('alert')).toBeNull()
   })
 
-  it('a port outside 1-65535 blocks saving', async () => {
+  it('a port outside 0-65535 blocks saving', async () => {
     setup()
     const user = await open()
     await user.click(screen.getByRole('button', { name: 'Соединение' }))
@@ -239,5 +239,53 @@ describe('SettingsPage', () => {
     await waitFor(() =>
       expect(f.mock.calls.some(([u, i]) => String(u).endsWith('auth/logout') && i?.method === 'POST')).toBe(true),
     )
+  })
+  it('"Выйти" with unsaved changes asks first; staying does not log out', async () => {
+    const f = setup()
+    const user = await open()
+    await user.type(screen.getByLabelText('Папка по умолчанию'), '/x')
+    await user.click(screen.getByRole('button', { name: 'WebUI' }))
+    await user.click(screen.getByRole('button', { name: 'Выйти' }))
+    expect(await screen.findByRole('dialog')).toBeInTheDocument()
+    const loggedOut = () => f.mock.calls.some(([u]) => String(u).endsWith('auth/logout'))
+    expect(loggedOut()).toBe(false)
+    await user.click(screen.getByRole('button', { name: 'Остаться' }))
+    expect(loggedOut()).toBe(false)
+    await user.click(screen.getByRole('button', { name: 'Выйти' }))
+    await user.click(await screen.findByRole('button', { name: 'Уйти' }))
+    await waitFor(() => expect(loggedOut()).toBe(true))
+  })
+
+  it('queue values edited before the queue was switched off are not sent', async () => {
+    const f = setup()
+    const user = await open()
+    await user.click(screen.getByRole('button', { name: 'BitTorrent' }))
+    const field = screen.getByLabelText('Активных загрузок')
+    await user.clear(field)
+    await user.type(field, '9')
+    await user.click(screen.getByRole('switch', { name: 'Очередь торрентов' }))
+    await user.click(save())
+    await waitFor(() => expect(sent(f)).toEqual([{ queueing_enabled: false }]))
+  })
+
+  it('schedule times edited before the schedule was switched off are not sent', async () => {
+    const f = setup({ 'app/preferences': () => json({ ...prefs, scheduler_enabled: true }) })
+    const user = await open()
+    await user.click(screen.getByRole('button', { name: 'Скорость' }))
+    fireEvent.change(screen.getByLabelText('Начало'), { target: { value: '09:15' } })
+    await user.click(screen.getByRole('switch', { name: 'Включать по расписанию' }))
+    await user.click(save())
+    await waitFor(() => expect(sent(f)).toEqual([{ scheduler_enabled: false }]))
+  })
+
+  it('port 0 is legal: it does not block saving on open', async () => {
+    const f = setup({ 'app/preferences': () => json({ ...prefs, listen_port: 0 }) })
+    const user = await open()
+    await user.click(screen.getByRole('button', { name: 'Соединение' }))
+    expect(screen.getByLabelText('Порт входящих соединений')).toHaveValue('0')
+    await user.click(screen.getByRole('switch', { name: 'UPnP / NAT-PMP' }))
+    expect(save()).toBeEnabled()
+    await user.click(save())
+    await waitFor(() => expect(sent(f)).toEqual([{ upnp: false }]))
   })
 })

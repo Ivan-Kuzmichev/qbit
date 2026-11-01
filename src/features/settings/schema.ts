@@ -134,7 +134,7 @@ export const sections: Section[] = [
         title: 'Порт',
         desc: 'Входящие соединения',
         rows: [
-          { key: 'listen_port', kind: 'number', label: 'Порт входящих соединений', min: 1, max: 65535 },
+          { key: 'listen_port', kind: 'number', label: 'Порт входящих соединений', min: 0, max: 65535 },
           { key: 'upnp', kind: 'toggle', label: 'UPnP / NAT-PMP', hint: 'Автоматически пробрасывать порт на роутере' },
         ],
       },
