@@ -50,9 +50,17 @@ test.describe('stage 1: login, sync, table', () => {
     expect(await page.evaluate(() => (window as unknown as { __marker?: number }).__marker)).toBe(1)
   })
 
-  test('mobile: login reaches the app shell', async ({ page, isMobile }) => {
+  test('mobile: login shows the list; an added torrent appears as a row that opens its screen', async ({ page, isMobile, qb }) => {
     test.skip(!isMobile, 'desktop covered above')
     await signIn(page)
     await expect(page.getByRole('main')).toBeVisible()
+
+    const list = page.getByRole('list', { name: 'Торренты' })
+    await expect(page.getByRole('textbox', { name: 'Поиск торрентов' })).toBeVisible()
+    await qb.addTorrent()
+    const row = list.getByRole('link', { name: new RegExp(TINY_NAME) })
+    await expect(row).toBeVisible({ timeout: 10_000 })
+    await row.click()
+    await expect(page).toHaveURL(/#\/torrent\/[0-9a-f]+$/)
   })
 })

@@ -15,7 +15,7 @@ import styles from './TorrentRow.module.css'
 
 export const ROW_HEIGHT = 48
 
-const STATUS_VIEW: Record<UiKind, { Icon: LucideIcon; color: string; tone: 'accent' | 'done' | 'dim' }> = {
+export const STATUS_VIEW: Record<UiKind, { Icon: LucideIcon; color: string; tone: 'accent' | 'done' | 'dim' }> = {
   downloading: { Icon: ArrowDown, color: 'var(--accent)', tone: 'accent' },
   seeding: { Icon: ArrowUp, color: 'var(--seed)', tone: 'done' },
   done: { Icon: Check, color: 'var(--text-2)', tone: 'done' },

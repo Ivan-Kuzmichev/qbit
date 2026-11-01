@@ -1,21 +1,11 @@
-import { api } from '../../api/client'
 import { Toggle } from '../../components/ui/Toggle'
 import { t } from '../../i18n/ru'
 import { formatBytes, formatSpeed } from '../../lib/format'
 import { useDialogs } from '../../store/dialogs'
 import { useTorrents } from '../../store/torrents'
+import { toggleAltLimits } from '../torrents/actions'
 import { Sparkline } from './Sparkline'
 import styles from './SpeedCard.module.css'
-
-async function toggleAltLimits(): Promise<void> {
-  try {
-    await api.post('transfer/toggleSpeedLimitsMode', {})
-  } catch {
-    // the next sync shows the real state; a failed toggle just stays off
-    return
-  }
-  await useTorrents.getState().refresh().catch(() => {})
-}
 
 export function SpeedCard() {
   const server = useTorrents((s) => s.server)

@@ -10,6 +10,7 @@ import { DesktopLayout } from './features/shell/DesktopLayout'
 import { DetailsCard } from './features/details/DetailsCard'
 import { DropOverlay } from './features/add/DropOverlay'
 import { SettingsPage } from './features/settings/SettingsPage'
+import { MobileLayout } from './features/mobile/MobileLayout'
 import { DialogHost } from './features/torrents/DialogHost'
 import { TopBar } from './features/torrents/TopBar'
 import { TorrentTable } from './features/torrents/TorrentTable'
@@ -102,7 +103,7 @@ export function App() {
           <DialogHost />
           <DropOverlay />
           {isMobile ? (
-            <main>{t.app.name}</main>
+            <MobileLayout />
           ) : (
             <DesktopLayout>
               {onSettings ? (

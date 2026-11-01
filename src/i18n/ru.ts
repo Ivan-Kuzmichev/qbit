@@ -285,6 +285,16 @@ export const t = {
     copyMagnet: 'Скопировать magnet',
     remove: 'Удалить…',
   },
+  mobile: {
+    altLimits: 'Альтернативные лимиты скорости',
+    back: 'Назад',
+    torrentList: 'Торренты',
+    filters: 'Фильтры',
+    limits: 'Ограничение скорости',
+    remove: 'Удалить',
+    category: 'Категория',
+    torrentSoon: 'Экран торрента появится позже',
+  },
   settings: {
     title: 'Настройки',
     sectionsLabel: 'Разделы настроек',

@@ -53,3 +53,14 @@ export function runBulkPause(kind: 'stop' | 'start'): Promise<void> {
 export function pauseAllLabel(torrents: readonly Torrent[]): 'pause' | 'start' {
   return torrents.length > 0 && torrents.every((x) => uiStatus(x).action === 'start') ? 'start' : 'pause'
 }
+
+/** Flips the alternative speed limits, then refreshes so the next render shows the real state. */
+export async function toggleAltLimits(): Promise<void> {
+  try {
+    await api.post('transfer/toggleSpeedLimitsMode', {})
+  } catch {
+    // the next sync shows the real state; a failed toggle just stays off
+    return
+  }
+  await useTorrents.getState().refresh().catch(() => {})
+}
