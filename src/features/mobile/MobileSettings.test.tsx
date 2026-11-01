@@ -81,6 +81,17 @@ describe('MobileSettings', () => {
     expect(save()).toBeEnabled()
   })
 
+  it('has the delete-.torrent switch, saved as 0/1', async () => {
+    const f = setup()
+    const user = await open()
+    const sw = screen.getByRole('switch', { name: 'Удалять .torrent после добавления' })
+    expect(sw).not.toBeChecked()
+    await user.click(sw)
+    expect(sw).toBeChecked()
+    await user.click(save())
+    await waitFor(() => expect(sent(f)).toEqual([{ auto_delete_mode: 1 }]))
+  })
+
   it('a tap on a value opens a sheet; Готово keeps the edit and Сохранить sends only that', async () => {
     const f = setup()
     const user = await open()

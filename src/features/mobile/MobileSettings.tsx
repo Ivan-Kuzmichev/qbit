@@ -25,7 +25,7 @@ const ratio = (n: number) => (Number.isInteger(n) ? n.toFixed(1) : String(Math.r
 const minutes = (n: number) => (n >= 60 && n % 60 === 0 ? `${n / 60} ${t.eta.hours}` : `${n} ${t.eta.minutes}`)
 
 type Item =
-  | { type: 'toggle'; key: keyof Preferences; label: string; visible?(d: Preferences): boolean }
+  | { type: 'toggle'; key: keyof Preferences; label: string; toggleValues?: [number, number]; visible?(d: Preferences): boolean }
   | { type: 'value'; label: string; rows: string[]; value(d: Preferences): string; visible?(d: Preferences): boolean }
 
 const GROUPS: { title: string; items: Item[] }[] = [
@@ -42,6 +42,7 @@ const GROUPS: { title: string; items: Item[] }[] = [
         visible: (d) => d.temp_path_enabled,
       },
       { type: 'toggle', key: 'add_stopped_enabled', label: rowOf('add_stopped_enabled').label },
+      { type: 'toggle', key: 'auto_delete_mode', label: rowOf('auto_delete_mode').label, toggleValues: [0, 1] },
     ],
   },
   {
@@ -156,10 +157,16 @@ export function MobileSettings() {
               {g.items.map((item) => {
                 if (item.visible && !item.visible(draft)) return null
                 if (item.type === 'toggle') {
+                  const [off, on] = item.toggleValues ?? [0, 1]
+                  const checked = item.toggleValues ? draft[item.key] === on : Boolean(draft[item.key])
                   return (
                     <div key={item.key} className={styles.item}>
                       <span className={styles.label}>{item.label}</span>
-                      <Toggle aria-label={item.label} checked={Boolean(draft[item.key])} onChange={(v) => s.set(item.key, v as never)} />
+                      <Toggle
+                        aria-label={item.label}
+                        checked={checked}
+                        onChange={(v) => s.set(item.key, (item.toggleValues ? (v ? on : off) : v) as never)}
+                      />
                     </div>
                   )
                 }

@@ -40,13 +40,15 @@ export const ACCENT_PRESETS = ['#60A5FA', '#A78BFA', '#22D3EE', '#FBBF24'] as co
 
 const s = t.settings
 const d = s.days
+const R = s.schema.rows
+const C = s.schema.cards
 
 const switchedBy = (key: keyof Preferences) => (p: Preferences) => Boolean(p[key])
 
 const encryption = [
-  { value: 0, label: 'Разрешить' },
-  { value: 1, label: 'Требовать' },
-  { value: 2, label: 'Отключить' },
+  { value: 0, label: s.schema.encryption.allow },
+  { value: 1, label: s.schema.encryption.require },
+  { value: 2, label: s.schema.encryption.disable },
 ] as const
 
 const days = [
@@ -62,11 +64,12 @@ const days = [
   { value: 9, label: d.sun },
 ] as const
 
-const slots = (key: keyof Preferences, label: string, hint?: string): Row => ({
+type SlotKey = 'max_connec' | 'max_connec_per_torrent' | 'max_uploads' | 'max_uploads_per_torrent' | 'max_active_downloads' | 'max_active_uploads' | 'max_active_torrents'
+
+const slots = (key: keyof Preferences): Row => ({
   key,
   kind: 'number',
-  label,
-  hint,
+  label: R[key as SlotKey].label,
   min: 0,
   unlimited: true,
 })
@@ -77,46 +80,46 @@ export const sections: Section[] = [
     title: s.sections.downloads,
     cards: [
       {
-        title: 'Сохранение',
-        desc: 'Куда и как складывать файлы',
+        title: C.saving.title,
+        desc: C.saving.desc,
         rows: [
-          { key: 'save_path', kind: 'text', label: 'Папка по умолчанию', hint: 'Для торрентов без категории' },
+          { key: 'save_path', kind: 'text', label: R.save_path.label, hint: R.save_path.hint },
           {
             key: 'temp_path_enabled',
             kind: 'toggle',
-            label: 'Отдельная папка для незавершённых',
-            hint: 'Файлы переедут в основную после загрузки',
+            label: R.temp_path_enabled.label,
+            hint: R.temp_path_enabled.hint,
           },
           {
             key: 'temp_path',
             kind: 'text',
-            label: 'Папка для незавершённых',
+            label: R.temp_path.label,
             enabledBy: 'temp_path_enabled',
             visibleIf: switchedBy('temp_path_enabled'),
           },
-          { key: 'add_stopped_enabled', kind: 'toggle', label: 'Добавлять на паузе', hint: 'Не начинать загрузку сразу' },
-          { key: 'auto_delete_mode', kind: 'toggle', label: 'Удалять .torrent после добавления', toggleValues: [0, 1] },
+          { key: 'add_stopped_enabled', kind: 'toggle', label: R.add_stopped_enabled.label, hint: R.add_stopped_enabled.hint },
+          { key: 'auto_delete_mode', kind: 'toggle', label: R.auto_delete_mode.label, toggleValues: [0, 1] },
         ],
       },
       {
-        title: 'Раздача',
-        desc: 'Когда прекращать раздачу',
+        title: C.seeding.title,
+        desc: C.seeding.desc,
         rows: [
-          { key: 'max_ratio_enabled', kind: 'toggle', label: 'Останавливать при ratio' },
+          { key: 'max_ratio_enabled', kind: 'toggle', label: R.max_ratio_enabled.label },
           {
             key: 'max_ratio',
             kind: 'number',
-            label: 'Ratio',
+            label: R.max_ratio.label,
             min: 0,
             decimal: true,
             enabledBy: 'max_ratio_enabled',
             visibleIf: switchedBy('max_ratio_enabled'),
           },
-          { key: 'max_seeding_time_enabled', kind: 'toggle', label: 'Останавливать после времени раздачи' },
+          { key: 'max_seeding_time_enabled', kind: 'toggle', label: R.max_seeding_time_enabled.label },
           {
             key: 'max_seeding_time',
             kind: 'number',
-            label: 'Время раздачи',
+            label: R.max_seeding_time.label,
             unit: s.units.min,
             min: 0,
             enabledBy: 'max_seeding_time_enabled',
@@ -131,21 +134,21 @@ export const sections: Section[] = [
     title: s.sections.connection,
     cards: [
       {
-        title: 'Порт',
-        desc: 'Входящие соединения',
+        title: C.port.title,
+        desc: C.port.desc,
         rows: [
-          { key: 'listen_port', kind: 'number', label: 'Порт входящих соединений', min: 0, max: 65535 },
-          { key: 'upnp', kind: 'toggle', label: 'UPnP / NAT-PMP', hint: 'Автоматически пробрасывать порт на роутере' },
+          { key: 'listen_port', kind: 'number', label: R.listen_port.label, min: 0, max: 65535 },
+          { key: 'upnp', kind: 'toggle', label: R.upnp.label, hint: R.upnp.hint },
         ],
       },
       {
-        title: 'Лимиты соединений',
+        title: C.connLimits.title,
         desc: s.unlimitedHint,
         rows: [
-          slots('max_connec', 'Всего соединений'),
-          slots('max_connec_per_torrent', 'Соединений на торрент'),
-          slots('max_uploads', 'Слотов отдачи всего'),
-          slots('max_uploads_per_torrent', 'Слотов отдачи на торрент'),
+          slots('max_connec'),
+          slots('max_connec_per_torrent'),
+          slots('max_uploads'),
+          slots('max_uploads_per_torrent'),
         ],
       },
     ],
@@ -155,36 +158,36 @@ export const sections: Section[] = [
     title: s.sections.speed,
     cards: [
       {
-        title: 'Глобальные лимиты',
-        desc: '0 — без ограничений',
+        title: C.globalLimits.title,
+        desc: C.globalLimits.desc,
         rows: [
-          { key: 'dl_limit', kind: 'limit', label: 'Лимит загрузки', unit: s.units.kbs },
-          { key: 'up_limit', kind: 'limit', label: 'Лимит отдачи', unit: s.units.kbs },
+          { key: 'dl_limit', kind: 'limit', label: R.dl_limit.label, unit: s.units.kbs },
+          { key: 'up_limit', kind: 'limit', label: R.up_limit.label, unit: s.units.kbs },
         ],
       },
       {
-        title: 'Альтернативные лимиты',
-        desc: 'Включаются кнопкой в боковой панели или по расписанию',
+        title: C.altLimits.title,
+        desc: C.altLimits.desc,
         rows: [
-          { key: 'alt_dl_limit', kind: 'limit', label: 'Альт. лимит загрузки', unit: s.units.kbs },
-          { key: 'alt_up_limit', kind: 'limit', label: 'Альт. лимит отдачи', unit: s.units.kbs },
+          { key: 'alt_dl_limit', kind: 'limit', label: R.alt_dl_limit.label, unit: s.units.kbs },
+          { key: 'alt_up_limit', kind: 'limit', label: R.alt_up_limit.label, unit: s.units.kbs },
         ],
       },
       {
-        title: 'Расписание',
-        desc: 'Когда включать альтернативные лимиты',
+        title: C.schedule.title,
+        desc: C.schedule.desc,
         rows: [
-          { key: 'scheduler_enabled', kind: 'toggle', label: 'Включать по расписанию' },
+          { key: 'scheduler_enabled', kind: 'toggle', label: R.scheduler_enabled.label },
           {
             key: 'schedule_from_hour',
             kind: 'schedule',
-            label: 'Время',
+            label: R.schedule_from_hour.label,
             visibleIf: switchedBy('scheduler_enabled'),
           },
           {
             key: 'scheduler_days',
             kind: 'select',
-            label: 'Дни',
+            label: R.scheduler_days.label,
             options: days,
             visibleIf: switchedBy('scheduler_enabled'),
           },
@@ -197,24 +200,24 @@ export const sections: Section[] = [
     title: s.sections.bittorrent,
     cards: [
       {
-        title: 'Поиск пиров',
-        desc: 'Как находить других участников раздачи',
+        title: C.peerSearch.title,
+        desc: C.peerSearch.desc,
         rows: [
-          { key: 'dht', kind: 'toggle', label: 'DHT' },
-          { key: 'pex', kind: 'toggle', label: 'PeX', hint: 'Обмен списками пиров' },
-          { key: 'lsd', kind: 'toggle', label: 'LSD', hint: 'Поиск пиров в локальной сети' },
-          { key: 'encryption', kind: 'select', label: 'Шифрование', options: encryption },
-          { key: 'anonymous_mode', kind: 'toggle', label: 'Анонимный режим' },
+          { key: 'dht', kind: 'toggle', label: R.dht.label },
+          { key: 'pex', kind: 'toggle', label: R.pex.label, hint: R.pex.hint },
+          { key: 'lsd', kind: 'toggle', label: R.lsd.label, hint: R.lsd.hint },
+          { key: 'encryption', kind: 'select', label: R.encryption.label, options: encryption },
+          { key: 'anonymous_mode', kind: 'toggle', label: R.anonymous_mode.label },
         ],
       },
       {
-        title: 'Очередь',
-        desc: 'Сколько торрентов работает одновременно',
+        title: C.queue.title,
+        desc: C.queue.desc,
         rows: [
-          { key: 'queueing_enabled', kind: 'toggle', label: 'Очередь торрентов' },
-          { ...slots('max_active_downloads', 'Активных загрузок'), visibleIf: switchedBy('queueing_enabled') },
-          { ...slots('max_active_uploads', 'Активных раздач'), visibleIf: switchedBy('queueing_enabled') },
-          { ...slots('max_active_torrents', 'Активных торрентов'), visibleIf: switchedBy('queueing_enabled') },
+          { key: 'queueing_enabled', kind: 'toggle', label: R.queueing_enabled.label },
+          { ...slots('max_active_downloads'), visibleIf: switchedBy('queueing_enabled') },
+          { ...slots('max_active_uploads'), visibleIf: switchedBy('queueing_enabled') },
+          { ...slots('max_active_torrents'), visibleIf: switchedBy('queueing_enabled') },
         ],
       },
     ],
@@ -224,33 +227,33 @@ export const sections: Section[] = [
     title: s.sections.webui,
     cards: [
       {
-        title: 'Доступ',
-        desc: 'Логин и пароль для входа в WebUI',
+        title: C.access.title,
+        desc: C.access.desc,
         rows: [
-          { key: 'web_ui_username', kind: 'text', label: 'Логин' },
-          { key: 'web_ui_password', kind: 'password', label: 'Новый пароль', hint: 'Оставьте пустым, чтобы не менять' },
+          { key: 'web_ui_username', kind: 'text', label: R.web_ui_username.label },
+          { key: 'web_ui_password', kind: 'password', label: R.web_ui_password.label, hint: R.web_ui_password.hint },
         ],
       },
       {
-        title: 'Обход авторизации',
-        desc: 'Без входа с доверенных адресов',
+        title: C.bypass.title,
+        desc: C.bypass.desc,
         rows: [
-          { key: 'bypass_local_auth', kind: 'toggle', label: 'Не требовать вход с localhost' },
-          { key: 'bypass_auth_subnet_whitelist_enabled', kind: 'toggle', label: 'Не требовать вход для подсетей' },
+          { key: 'bypass_local_auth', kind: 'toggle', label: R.bypass_local_auth.label },
+          { key: 'bypass_auth_subnet_whitelist_enabled', kind: 'toggle', label: R.bypass_auth_subnet_whitelist_enabled.label },
           {
             key: 'bypass_auth_subnet_whitelist',
             kind: 'text',
-            label: 'Подсети',
-            hint: 'CIDR через запятую, например 192.168.1.0/24',
+            label: R.bypass_auth_subnet_whitelist.label,
+            hint: R.bypass_auth_subnet_whitelist.hint,
             enabledBy: 'bypass_auth_subnet_whitelist_enabled',
             visibleIf: switchedBy('bypass_auth_subnet_whitelist_enabled'),
           },
         ],
       },
       {
-        title: 'Пиры',
-        desc: 'Отображение в списке пиров',
-        rows: [{ key: 'resolve_peer_countries', kind: 'toggle', label: 'Определять страны пиров' }],
+        title: C.peers.title,
+        desc: C.peers.desc,
+        rows: [{ key: 'resolve_peer_countries', kind: 'toggle', label: R.resolve_peer_countries.label }],
       },
     ],
   },
@@ -260,7 +263,7 @@ export const sections: Section[] = [
     cards: [
       {
         title: s.accentLabel,
-        desc: 'Хранится в этом браузере, не в qBittorrent',
+        desc: C.appearance.desc,
         rows: [{ key: 'accent', kind: 'accent', label: s.accentLabel }],
       },
     ],
