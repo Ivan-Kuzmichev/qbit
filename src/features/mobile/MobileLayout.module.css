@@ -75,6 +75,14 @@
   border-radius: 12px;
   background: var(--card);
 }
+.search:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+/* the frame draws the focus ring */
+.input:focus-visible {
+  box-shadow: none;
+}
 .input {
   flex: 1;
   min-width: 0;
@@ -133,7 +141,7 @@
 .footer {
   display: flex;
   gap: 8px;
-  padding: 10px max(16px, env(safe-area-inset-right)) max(30px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  padding: 10px max(16px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
   border-top: 1px solid var(--border);
   background: var(--surface);
 }

@@ -97,7 +97,7 @@
   border-top: 0;
 }
 .footer[data-kind='sheet'] {
-  padding: 12px var(--dialog-pad) max(30px, env(safe-area-inset-bottom));
+  padding: 12px var(--dialog-pad) max(12px, env(safe-area-inset-bottom));
 }
 .withIcon + .body {
   padding-top: 18px;

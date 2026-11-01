@@ -563,7 +563,8 @@ test('mobile list', async ({ page }) => {
   await m('row foot', cls(row, 'foot'), { fontSize: '12px', color: MUTED, columnGap: '8px' })
   await m('row meta', cls(row, 'meta'), { fontFamily: MONO, fontSize: '11px', text: '↓ 12.1 МБ/с · 8 мин' })
   const footer = page.locator('footer')
-  await m('footer', footer, { padding: '10px 16px 30px', columnGap: '8px', borderTopColor: BORDER, backgroundColor: SURFACE })
+  // spec over mockup: the bottom gap comes from the safe area, not a fixed 30px
+  await m('footer', footer, { padding: '10px 16px', columnGap: '8px', borderTopColor: BORDER, backgroundColor: SURFACE })
   await m('add', cls(footer, 'add'), { h: 46, borderRadius: '12px', backgroundColor: ACCENT, color: BG, fontSize: '14px', fontWeight: '600', columnGap: '8px' })
   await m('square', cls(footer, 'square'), { w: 46, h: 46, borderRadius: '12px', backgroundColor: CARD, color: TEXT, borderTopColor: BORDER })
   verdict(S)
@@ -612,7 +613,8 @@ test('mobile torrent', async ({ page }) => {
   await m('file priority', cls(row, 'prio').first(), { h: 44, borderRadius: '8px', fontSize: '12px', paddingLeft: '10px', paddingRight: '8px', color: ACCENT, text: 'Макс.' })
   await m('file progress', cls(row, 'bar'), { h: 2 })
   const footer = cls(page, 'footer')
-  await m('footer', footer, { padding: '10px 16px 30px', borderTopColor: BORDER, backgroundColor: SURFACE })
+  // spec over mockup: the bottom gap comes from the safe area, not a fixed 30px
+  await m('footer', footer, { padding: '10px 16px', borderTopColor: BORDER, backgroundColor: SURFACE })
   await m('pause', cls(footer, 'toggle'), { h: 46, borderRadius: '12px', backgroundColor: CARD, color: TEXT, fontSize: '14px', fontWeight: '500', columnGap: '8px', borderTopColor: BORDER })
   verdict(S)
 })
@@ -654,7 +656,7 @@ test('mobile add', async ({ page }) => {
   await m('option', cls(dlg, 'option').first(), { h: 48, columnGap: '12px', paddingLeft: '12px' })
   const toggle = dlg.getByRole('switch', { name: 'Запустить сразу' })
   await m('toggle zone', toggle, { w: 44, h: 44 })
-  await m('footer', cls(dlg, 'footer'), { padding: '12px 16px 30px', columnGap: '8px', borderTopColor: SUBTLE })
+  await m('footer', cls(dlg, 'footer'), { padding: '12px 16px', columnGap: '8px', borderTopColor: SUBTLE })
   await m('cancel', cls(dlg, 'cancel'), { h: 48, paddingLeft: '18px', borderRadius: '12px', fontSize: '14px', fontWeight: '500', color: TEXT, borderTopColor: BORDER })
   await m('submit', cls(dlg, 'submit'), { h: 48, borderRadius: '12px', backgroundColor: ACCENT, color: BG, fontSize: '15px', fontWeight: '600' })
   verdict(S)
