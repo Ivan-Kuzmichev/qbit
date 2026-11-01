@@ -1,0 +1,54 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.sm {
+  height: 36px;
+}
+.md {
+  height: 38px;
+}
+.lg {
+  height: 42px;
+  font-size: 14px;
+}
+.primary {
+  background: var(--accent);
+  color: var(--bg);
+}
+.secondary {
+  background: var(--card);
+  border-color: var(--border);
+  color: var(--text);
+  font-weight: 500;
+}
+.secondary:hover:not(:disabled) {
+  background: var(--hover);
+}
+.danger {
+  background: var(--danger-bg);
+  color: #fff;
+}
+@media (max-width: 767px) {
+  .sm,
+  .md {
+    min-height: 44px;
+  }
+  .lg {
+    height: 46px;
+    font-size: 15px;
+  }
+}

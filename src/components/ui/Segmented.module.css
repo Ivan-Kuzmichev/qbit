@@ -1,0 +1,26 @@
+.root {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--hover);
+}
+.item {
+  height: 30px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 500;
+  cursor: pointer;
+}
+.item[aria-checked='true'] {
+  background: var(--chip);
+  color: var(--text);
+}
+@media (max-width: 767px) {
+  .item {
+    min-height: 44px;
+  }
+}

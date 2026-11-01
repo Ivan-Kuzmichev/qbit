@@ -1,6 +1,29 @@
 export const t = {
   app: {
     name: 'qBit',
+    qbittorrent: 'qBittorrent',
+    webApi: 'WebAPI',
+    close: 'Закрыть',
+  },
+  login: {
+    title: 'Вход в qBit',
+    formLabel: 'Вход',
+    username: 'Логин',
+    password: 'Пароль',
+    submit: 'Войти',
+    showPassword: 'Показать пароль',
+    hidePassword: 'Скрыть пароль',
+    bad: 'Неверный логин или пароль',
+    banned: 'Слишком много попыток, вход временно заблокирован',
+    network: 'Нет соединения с сервером',
+    failed: 'Не удалось войти, попробуйте ещё раз',
+  },
+  upgrade: {
+    title: 'Нужен qBittorrent 5.0 или новее',
+    hint: 'Этот интерфейс работает с WebAPI 2.11 и выше.',
+  },
+  connection: {
+    lost: 'Нет соединения, повторяем…',
   },
   units: {
     bytes: ['Б', 'КБ', 'МБ', 'ГБ', 'ТБ'],

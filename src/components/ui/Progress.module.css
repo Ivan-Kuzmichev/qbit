@@ -1,0 +1,17 @@
+.bar {
+  --seg-color: var(--accent);
+  width: 100%;
+  overflow: hidden;
+  border-radius: 2px;
+  background: repeating-linear-gradient(90deg, var(--border) 0 3px, transparent 3px 5px);
+}
+.bar[data-tone='done'] {
+  --seg-color: var(--text-2);
+}
+.bar[data-tone='dim'] {
+  --seg-color: var(--dim);
+}
+.fill {
+  height: 100%;
+  background: repeating-linear-gradient(90deg, var(--seg-color) 0 3px, transparent 3px 5px);
+}

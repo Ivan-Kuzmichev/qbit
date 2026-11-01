@@ -21,6 +21,9 @@ interface TorrentsState extends SyncState {
   refresh(): Promise<void>
 }
 
+/** Bumped by stopSync so a response that was already in flight is discarded. */
+let epoch = 0
+
 export const useTorrents = create<TorrentsState>()((set, get) => ({
   ...emptySync,
   speedHistory: [],
@@ -53,16 +56,19 @@ export const useTorrents = create<TorrentsState>()((set, get) => ({
   },
 
   async refresh() {
+    const startedAt = epoch
     let resp: MainData
     try {
       resp = await api.get<MainData>('sync/maindata', { rid: get().rid })
     } catch (e) {
+      if (startedAt !== epoch) return
       if (e instanceof NetworkError) {
         set({ connection: 'lost' })
         return
       }
       throw e
     }
+    if (startedAt !== epoch) return
     const prev = get()
     const next = mergeMainData(prev, resp)
     const selected = [...prev.selected].filter((h) => h in next.torrents)
@@ -81,6 +87,7 @@ export const useTorrents = create<TorrentsState>()((set, get) => ({
     poller.start()
   },
   stopSync() {
+    epoch++
     poller.stop()
   },
 }))

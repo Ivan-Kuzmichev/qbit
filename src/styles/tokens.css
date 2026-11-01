@@ -17,6 +17,8 @@
   --queue: #FBBF24;
   --danger: #F87171;
   --danger-bg: #DC2626;
+  --danger-text: #FCA5A5;
+  --neutral: #3F3F46;
 
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;

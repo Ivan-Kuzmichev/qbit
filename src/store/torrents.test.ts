@@ -81,6 +81,28 @@ describe('refresh', () => {
   })
 })
 
+describe('stopSync', () => {
+  it('drops the response of a refresh that was in flight', async () => {
+    let resolve!: (v: MainData) => void
+    get.mockReturnValueOnce(new Promise<MainData>((r) => (resolve = r)))
+    const pending = useTorrents.getState().refresh()
+    useTorrents.getState().stopSync()
+    resolve({ rid: 7, full_update: true, torrents: { a: t('a') } })
+    await pending
+    expect(useTorrents.getState().rid).toBe(0)
+    expect(useTorrents.getState().torrents).toEqual({})
+  })
+  it('does not flag connection lost for a request that was in flight', async () => {
+    let reject!: (e: Error) => void
+    get.mockReturnValueOnce(new Promise<MainData>((_, r) => (reject = r)))
+    const pending = useTorrents.getState().refresh()
+    useTorrents.getState().stopSync()
+    reject(new NetworkError())
+    await pending
+    expect(useTorrents.getState().connection).toBe('ok')
+  })
+})
+
 describe('select', () => {
   const order = ['a', 'b', 'c', 'd', 'e']
   it('single replaces selection', () => {

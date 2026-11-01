@@ -1,0 +1,8 @@
+.banner {
+  padding: 8px 16px;
+  border-bottom: 1px solid color-mix(in srgb, var(--queue) 30%, transparent);
+  background: color-mix(in srgb, var(--queue) 10%, transparent);
+  color: var(--queue);
+  font-size: 12px;
+  text-align: center;
+}
