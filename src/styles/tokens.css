@@ -1,0 +1,23 @@
+:root {
+  --bg: #09090B;
+  --surface: #0C0C0E;
+  --card: #0F0F12;
+  --row-selected: #16171B;
+  --hover: #18181B;
+  --chip: #1C1C20;
+  --border: #27272A;
+  --border-subtle: #1F1F23;
+  --divider: #18181B;
+  --text: #FAFAFA;
+  --text-2: #D4D4D8;
+  --muted: #A1A1AA;
+  --dim: #71717A;
+  --accent: #60A5FA;
+  --seed: #4ADE80;
+  --queue: #FBBF24;
+  --danger: #F87171;
+  --danger-bg: #DC2626;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
