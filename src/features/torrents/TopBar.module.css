@@ -25,6 +25,11 @@
   color: var(--text);
   font: inherit;
 }
+/* the frame draws the focus ring */
+.input:focus-visible {
+  box-shadow: none;
+}
 .search:focus-within {
   border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
 }

@@ -125,3 +125,13 @@ test.describe('acceptance: keyboard', () => {
     await expect(page.getByText('Ничего не найдено')).toBeVisible()
   })
 })
+
+test.describe('acceptance: focus ring', () => {
+  test('a framed field shows one ring, on its frame', async ({ page, qb }) => {
+    await openSignedIn(page, qb)
+    const input = searchBox(page)
+    await input.click()
+    await expect(input).toHaveCSS('box-shadow', 'none')
+    await expect(input.locator('xpath=..')).not.toHaveCSS('box-shadow', 'none')
+  })
+})

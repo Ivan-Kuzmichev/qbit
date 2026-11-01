@@ -52,6 +52,10 @@
 .field[data-invalid] {
   border-color: var(--danger);
 }
+/* the frame draws the focus ring */
+.input:focus-visible {
+  box-shadow: none;
+}
 .input {
   flex: 1;
   min-width: 0;
