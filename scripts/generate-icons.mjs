@@ -16,8 +16,19 @@ const ICONS = [
   ['apple-touch-icon.png', 180],
 ]
 
-const svg = (size) => `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24">
-  <rect width="24" height="24" fill="${ACCENT}"/>
+// The iOS icon shape: a superellipse, whose corners ease into the edges rather than meet them at a circle.
+function squircle(n = 5, steps = 240) {
+  const points = []
+  for (let i = 0; i < steps; i++) {
+    const a = (i / steps) * 2 * Math.PI
+    const at = (v) => (12 + 12 * Math.sign(v) * Math.abs(v) ** (2 / n)).toFixed(3)
+    points.push(`${at(Math.cos(a))} ${at(Math.sin(a))}`)
+  }
+  return `M${points.join('L')}Z`
+}
+
+const svg = (size, rounded = false) => `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24">
+  ${rounded ? `<path d="${squircle()}" fill="${ACCENT}"/>` : `<rect width="24" height="24" fill="${ACCENT}"/>`}
   <!-- glyph scaled to 60% around the centre: inside the maskable safe zone -->
   <g transform="translate(12 12) scale(0.6) translate(-12 -12.2)" fill="none" stroke="${INK}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="${GLYPH}"/>
@@ -34,6 +45,12 @@ try {
     await page.close()
     console.log(`wrote static/icons/${name}`)
   }
+  // The README's logo: GitHub strips CSS, so the rounded corners have to be in the picture.
+  const page = await browser.newPage({ viewport: { width: 384, height: 384 } })
+  await page.setContent(`<body style="margin:0;background:transparent">${svg(384, true)}</body>`)
+  await page.screenshot({ path: fileURLToPath(new URL('../docs/logo.png', import.meta.url)), omitBackground: true })
+  await page.close()
+  console.log('wrote docs/logo.png')
 } finally {
   await browser.close()
 }

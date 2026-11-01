@@ -134,6 +134,8 @@ export interface MockOptions {
   signedOut?: boolean
   /** Adds the mockups' category and tag: the add dialog shows them, the sidebar then has its groups. */
   taxonomy?: boolean
+  /** Moving global speeds, so that the sparkline draws something: for the README screenshots. */
+  liveSpeeds?: boolean
 }
 
 /** Replaces the whole of /api/v2/*; nothing reaches a server. */
@@ -162,7 +164,9 @@ export async function mockApi(page: Page, opts: MockOptions = {}) {
                 categories: opts.taxonomy ? { Софт: { name: 'Софт', savePath: '/downloads/software' } } : {},
                 tags: opts.taxonomy ? ['linux'] : [],
               }
-            : { rid },
+            : opts.liveSpeeds
+              ? { rid, server_state: { dl_info_speed: (19 + 5 * Math.sin(rid / 1.7) + 2 * Math.sin(rid * 1.3)) * M, up_info_speed: (3 + Math.sin(rid / 2)) * M } }
+              : { rid },
         )
       case 'sync/torrentPeers':
         return json({ rid: 1, full_update: true, show_flags: true, peers: Object.fromEntries(peers.map((p) => [`${p.ip}:${p.port}`, p])) })
