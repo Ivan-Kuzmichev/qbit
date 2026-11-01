@@ -8,12 +8,14 @@ export interface DialogProps {
   title: string
   onClose(): void
   children: ReactNode
+  /** Max width in px on desktop; defaults to 480. */
+  width?: number
 }
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
-export function Dialog({ title, onClose, children }: DialogProps) {
+export function Dialog({ title, onClose, children, width }: DialogProps) {
   const titleId = useId()
   const root = useRef<HTMLDivElement>(null)
   const onCloseRef = useRef(onClose)
@@ -74,6 +76,7 @@ export function Dialog({ title, onClose, children }: DialogProps) {
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
+        style={width ? ({ '--dialog-w': `${width}px` } as React.CSSProperties) : undefined}
       >
         <header className={styles.header}>
           <h2 id={titleId} className={styles.title}>

@@ -1,8 +1,9 @@
 import { useDialogs } from '../../store/dialogs'
+import { AddDialog } from '../add/AddDialog'
 import { DeleteDialog } from './DeleteDialog'
 import { MoveDialog } from './MoveDialog'
 
-/** Renders the open dialog. Limits (Task 11) and Add (Task 12) join here; their arguments are in `open`. */
+/** Renders the open dialog. Limits join here; their arguments are in `open`. */
 export function DialogHost() {
   const open = useDialogs((s) => s.open)
   const close = useDialogs((s) => s.close)
@@ -12,6 +13,8 @@ export function DialogHost() {
       return <DeleteDialog hashes={open.hashes} onClose={close} />
     case 'move':
       return <MoveDialog hashes={open.hashes} onClose={close} />
+    case 'add':
+      return <AddDialog tab={open.tab} files={open.files} onClose={close} />
     default:
       return null
   }

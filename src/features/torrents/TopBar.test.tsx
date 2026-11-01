@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Torrent } from '../../api/types'
+import { useDialogs } from '../../store/dialogs'
 import { emptySync } from '../../store/mergeMainData'
 import { useTorrents } from '../../store/torrents'
 import { stubFetch, text } from '../../test/fetchStub'
@@ -57,5 +58,23 @@ describe('TopBar pause all', () => {
     load([])
     render(<TopBar />)
     expect(screen.getByRole('button', { name: 'Пауза для всех' })).toBeDisabled()
+  })
+})
+
+describe('TopBar add buttons', () => {
+  afterEach(() => useDialogs.setState({ open: null }))
+
+  it('"Добавить торрент" opens the dialog on the file tab', async () => {
+    load([])
+    render(<TopBar />)
+    await userEvent.click(screen.getByRole('button', { name: 'Добавить торрент' }))
+    expect(useDialogs.getState().open).toMatchObject({ kind: 'add', tab: 'file' })
+  })
+
+  it('"Добавить magnet" opens it on the magnet tab', async () => {
+    load([])
+    render(<TopBar />)
+    await userEvent.click(screen.getByRole('button', { name: 'Добавить magnet' }))
+    expect(useDialogs.getState().open).toMatchObject({ kind: 'add', tab: 'magnet' })
   })
 })

@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react'
 import { Button } from '../../components/ui/Button'
 import { t } from '../../i18n/ru'
 import { useTorrents } from '../../store/torrents'
+import { useDialogs } from '../../store/dialogs'
 import { useUi } from '../../store/ui'
 import { pauseAllLabel, runBulkPause } from './actions'
 import styles from './TopBar.module.css'
@@ -47,11 +48,11 @@ export function TopBar() {
           onChange={(e) => setSearch(e.target.value)}
         />
       </label>
-      <Button variant="primary">
+      <Button variant="primary" onClick={() => useDialogs.getState().openAdd('file')}>
         <Plus size={15} strokeWidth={2.4} aria-hidden="true" />
         {t.topbar.addTorrent}
       </Button>
-      <Button>
+      <Button onClick={() => useDialogs.getState().openAdd('magnet')}>
         <Link size={15} aria-hidden="true" />
         {t.topbar.addMagnet}
       </Button>

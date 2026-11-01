@@ -5,11 +5,13 @@ export interface FieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
   label: string
   /** Control inside the field frame, e.g. a show-password button. */
   trailing?: ReactNode
+  /** Decoration before the input, e.g. a folder icon. */
+  leading?: ReactNode
   /** Field height in px on desktop; mobile is never below 44px. */
   height?: 36 | 38 | 40
 }
 
-export function Field({ label, trailing, height = 38, className, id, ...rest }: FieldProps) {
+export function Field({ label, trailing, leading, height = 38, className, id, ...rest }: FieldProps) {
   const auto = useId()
   const inputId = id ?? auto
   return (
@@ -18,6 +20,7 @@ export function Field({ label, trailing, height = 38, className, id, ...rest }: 
         {label}
       </label>
       <div className={styles.frame} style={{ '--field-h': `${height}px` } as React.CSSProperties}>
+        {leading && <span className={styles.leading}>{leading}</span>}
         <input id={inputId} className={styles.input} {...rest} />
         {trailing}
       </div>

@@ -1,0 +1,79 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.label {
+  font-size: 12px;
+  color: var(--muted);
+}
+.frame {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 6px;
+  flex-wrap: wrap;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--bg);
+}
+.frame:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 4px 0 8px;
+  border-radius: 6px;
+  background: var(--chip);
+  color: var(--text-2);
+  font-size: 11px;
+}
+.remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.input {
+  flex: 1;
+  min-width: 60px;
+  height: 34px;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 12.5px;
+}
+.input:focus-visible {
+  box-shadow: none;
+}
+@media (max-width: 767px) {
+  .frame {
+    min-height: 44px;
+  }
+  .input {
+    height: 42px;
+    font-size: 16px;
+  }
+  .remove {
+    width: 24px;
+    height: 24px;
+  }
+  .chip {
+    height: 28px;
+  }
+}

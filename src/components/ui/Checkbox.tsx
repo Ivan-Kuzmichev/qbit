@@ -1,11 +1,11 @@
 import { Check } from 'lucide-react'
-import type { InputHTMLAttributes } from 'react'
+import type { InputHTMLAttributes, ReactNode } from 'react'
 import styles from './Checkbox.module.css'
 
 export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'onChange'> {
   checked: boolean
   onChange(checked: boolean): void
-  label: string
+  label: ReactNode
 }
 
 export function Checkbox({ checked, onChange, label, className, ...rest }: CheckboxProps) {

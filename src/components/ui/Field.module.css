@@ -24,6 +24,12 @@
   border-color: var(--accent);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
 }
+.leading {
+  display: inline-flex;
+  flex: none;
+  margin-right: 4px;
+  color: var(--muted);
+}
 .input {
   flex: 1;
   min-width: 0;

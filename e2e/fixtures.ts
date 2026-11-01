@@ -5,6 +5,8 @@ import { BASE_URL, PASSWORD, USERNAME } from './env'
 
 export const TINY_TORRENT = fileURLToPath(new URL('./fixtures/tiny.torrent', import.meta.url))
 export const TINY_NAME = 'qbit-e2e-tiny.bin'
+export const MULTI_TORRENT = fileURLToPath(new URL('./fixtures/multi.torrent', import.meta.url))
+export const MULTI_NAME = 'qbit-e2e-multi'
 
 export interface Qb {
   /** Adds a .torrent from disk; stopped by default so nothing tries to download. */
@@ -12,6 +14,7 @@ export interface Qb {
   prefs(): Promise<Record<string, unknown>>
   setPrefs(prefs: Record<string, unknown>): Promise<void>
   maindata(rid?: number): Promise<{ torrents?: Record<string, Record<string, unknown>>; server_state?: Record<string, unknown> }>
+  files(hash: string): Promise<{ name: string; priority: number }[]>
   removeAll(): Promise<void>
 }
 
@@ -48,6 +51,11 @@ async function makeQb(request: APIRequestContext): Promise<Qb> {
     async maindata(rid = 0) {
       const res = await request.get(`${BASE_URL}/api/v2/sync/maindata?rid=${rid}`)
       await ok(res, 'sync/maindata')
+      return res.json()
+    },
+    async files(hash) {
+      const res = await request.get(`${BASE_URL}/api/v2/torrents/files?hash=${hash}`)
+      await ok(res, 'torrents/files')
       return res.json()
     },
     async removeAll() {

@@ -7,6 +7,7 @@ import { UpgradeScreen } from './features/auth/UpgradeScreen'
 import { saveVersions } from './features/auth/versions'
 import { ConnectionBanner } from './features/shell/ConnectionBanner'
 import { DesktopLayout } from './features/shell/DesktopLayout'
+import { DropOverlay } from './features/add/DropOverlay'
 import { DialogHost } from './features/torrents/DialogHost'
 import { TopBar } from './features/torrents/TopBar'
 import { TorrentTable } from './features/torrents/TorrentTable'
@@ -94,6 +95,7 @@ export function App() {
         <>
           <ConnectionBanner />
           <DialogHost />
+          <DropOverlay />
           {isMobile ? (
             <main>{t.app.name}</main>
           ) : (
