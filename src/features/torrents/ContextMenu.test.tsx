@@ -362,4 +362,26 @@ describe('context menu', () => {
     await waitFor(() => expect(parseFloat(sub.style.top)).toBeLessThanOrEqual(-5 - 208))
     rect.mockRestore()
   })
+
+  it('the pull-up survives closing and reopening the same submenu', async () => {
+    load([tor('a')], { categories: ['Фильмы'] })
+    Object.defineProperty(window, 'innerHeight', { configurable: true, value: 700 })
+    // the box moves with its inline top, as in a real layout: natural top 600 at top:-5
+    const rect = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
+      if (!this.hasAttribute('data-submenu')) return { width: 200, height: 400, top: 0, left: 0, right: 200, bottom: 400, x: 0, y: 0, toJSON() {} } as DOMRect
+      const shifted = parseFloat(this.style.top || '-5') + 5
+      const top = 600 + shifted
+      return { width: 200, height: 300, top, left: 0, right: 200, bottom: top + 300, x: 0, y: 0, toJSON() {} } as DOMRect
+    })
+    render(<TorrentTable />)
+    const menu = open('Torrent a')
+    const cat = within(menu).getByRole('menuitem', { name: 'Категория' })
+    fireEvent.mouseEnter(cat)
+    await waitFor(() => expect(parseFloat(screen.getByRole('menu', { name: 'Категория' }).style.top)).toBeLessThan(-100))
+    fireEvent.mouseEnter(within(menu).getByRole('menuitem', { name: 'Пауза' }))
+    expect(screen.queryByRole('menu', { name: 'Категория' })).toBeNull()
+    fireEvent.mouseEnter(cat)
+    await waitFor(() => expect(parseFloat(screen.getByRole('menu', { name: 'Категория' }).style.top)).toBeLessThan(-100))
+    rect.mockRestore()
+  })
 })

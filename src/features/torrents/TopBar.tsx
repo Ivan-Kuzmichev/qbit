@@ -15,7 +15,7 @@ export function TopBar() {
   const torrents = useTorrents((s) => s.torrents)
   const input = useRef<HTMLInputElement>(null)
 
-  useHotkeys([{ keys: ['/'], anywhere: true, run: () => input.current?.focus() }])
+  useHotkeys([{ keys: ['/'], codes: ['Slash'], anywhere: true, run: () => input.current?.focus() }])
 
   const selected = useTorrents((s) => s.selected)
   const all = Object.values(torrents)

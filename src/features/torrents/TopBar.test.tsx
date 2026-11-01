@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Torrent } from '../../api/types'
@@ -99,5 +99,12 @@ describe('TopBar search hotkey', () => {
     await userEvent.keyboard('/')
     expect(screen.getByRole('textbox', { name: 'Поиск торрентов' })).not.toHaveFocus()
     useDialogs.getState().close()
+  })
+
+  it('the physical Slash key works on the Russian layout (key is ".")', () => {
+    load([])
+    render(<TopBar />)
+    fireEvent.keyDown(document.body, { key: '.', code: 'Slash' })
+    expect(screen.getByRole('textbox', { name: 'Поиск торрентов' })).toHaveFocus()
   })
 })

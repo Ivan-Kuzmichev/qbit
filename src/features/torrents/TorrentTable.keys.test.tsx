@@ -165,6 +165,18 @@ describe('Enter, Space, Delete', () => {
     expect(new URLSearchParams(String(f.mock.calls[0][1]?.body)).get('hashes')).toBe('a|b')
   })
 
+  it('holding Space sends one request, not a flip-flop', async () => {
+    load(abc(), ['a'])
+    const f = stubFetch({ 'torrents/stop': () => text('') })
+    render(<TorrentTable />)
+    row('Torrent a').focus()
+    fireEvent.keyDown(row('Torrent a'), { key: ' ' })
+    fireEvent.keyDown(row('Torrent a'), { key: ' ', repeat: true })
+    fireEvent.keyDown(row('Torrent a'), { key: ' ', repeat: true })
+    await vi.waitFor(() => expect(f).toHaveBeenCalled())
+    expect(f).toHaveBeenCalledTimes(1)
+  })
+
   it('Space resumes when every selected torrent is paused', async () => {
     load([tor('a', { state: 'stoppedDL' }), tor('b', { state: 'stoppedUP', progress: 1 })], ['a', 'b'])
     const f = stubFetch({ 'torrents/start': () => text('') })

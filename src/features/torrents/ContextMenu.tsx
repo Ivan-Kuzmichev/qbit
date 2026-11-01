@@ -135,7 +135,11 @@ export function ContextMenu({ x, y, onClose, onDialog }: ContextMenuProps) {
   // A submenu that would run off the bottom of the window is pulled up.
   useLayoutEffect(() => {
     const el = root.current?.querySelector<HTMLElement>('[data-submenu]')
-    if (!el || !sub) return
+    if (!el || !sub) {
+      // a closed submenu forgets its shift, so reopening it is measured from its natural position
+      setShift(null)
+      return
+    }
     const r = el.getBoundingClientRect()
     const overflow = r.bottom - (window.innerHeight - EDGE)
     setShift({ sub, by: overflow > 0 ? Math.max(0, Math.min(overflow, r.top - EDGE)) : 0 })

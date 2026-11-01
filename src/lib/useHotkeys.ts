@@ -10,6 +10,10 @@ export interface Hotkey {
    * Enter keep their native meaning on a focused button. `anywhere` also allows other focus targets.
    */
   anywhere?: boolean
+  /** Physical keys (`KeyboardEvent.code`) that also trigger it: `/` arrives as `.` on the Russian layout. */
+  codes?: readonly string[]
+  /** Ignore auto-repeat while the key is held. */
+  noRepeat?: boolean
 }
 
 function isTyping(el: Element | null): boolean {
@@ -32,12 +36,13 @@ export function useHotkeys(bindings: readonly Hotkey[]): void {
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return
-      const hit = latest.current.find((b) => b.keys.includes(e.key))
+      const hit = latest.current.find((b) => b.keys.includes(e.key) || (b.codes?.includes(e.code) ?? false))
       if (!hit) return
       const active = document.activeElement
       if (isTyping(active) || dialogOpen()) return
       if (!hit.anywhere && !isIdle(active)) return
       e.preventDefault()
+      if (hit.noRepeat && e.repeat) return
       hit.run(e)
     }
     document.addEventListener('keydown', onKey)

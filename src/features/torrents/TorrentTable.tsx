@@ -141,6 +141,7 @@ export function TorrentTable({ onDialog = openFromMenu }: Pick<ContextMenuProps,
     },
     {
       keys: [' '],
+      noRepeat: true,
       run: () => {
         const hashes = [...useTorrents.getState().selected]
         const focused = focusedHash()

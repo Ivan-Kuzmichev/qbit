@@ -109,4 +109,22 @@ describe('useHotkeys', () => {
     fireEvent.keyDown(document.body, { key: 'ArrowDown' })
     expect(run).not.toHaveBeenCalled()
   })
+
+  it('a binding with codes also fires for the physical key (Russian layout sends "." for "/")', () => {
+    const run = vi.fn()
+    renderHook(() => useHotkeys([{ keys: ['/'], codes: ['Slash'], run }]))
+    fireEvent.keyDown(document.body, { key: '.', code: 'Slash' })
+    expect(run).toHaveBeenCalledTimes(1)
+    fireEvent.keyDown(document.body, { key: '.', code: 'Period' })
+    expect(run).toHaveBeenCalledTimes(1)
+  })
+
+  it('noRepeat ignores auto-repeat but still blocks the default action', () => {
+    const run = vi.fn()
+    renderHook(() => useHotkeys([{ keys: [' '], noRepeat: true, run }]))
+    fireEvent.keyDown(document.body, { key: ' ' })
+    const notPrevented = fireEvent.keyDown(document.body, { key: ' ', repeat: true })
+    expect(run).toHaveBeenCalledTimes(1)
+    expect(notPrevented).toBe(false)
+  })
 })
