@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { ServerState, Torrent } from '../../api/types'
@@ -47,6 +47,16 @@ describe('SpeedLimitsDialog', () => {
   it('the torrent tab is unavailable without a selection', async () => {
     setup()
     render(<SpeedLimitsDialog tab="torrent" hashes={[]} onClose={() => {}} />)
+    expect(screen.getByRole('radio', { name: 'Для торрента' })).toBeDisabled()
+    expect(screen.getByRole('radio', { name: 'Глобальные' })).toBeChecked()
+    await waitFor(() => expect(up()).toHaveValue('5'))
+  })
+
+  it('falls back to the global tab when the torrent disappears', async () => {
+    setup({ torrents: { a: tor('a') } })
+    render(<SpeedLimitsDialog tab="torrent" hashes={['a']} onClose={() => {}} />)
+    expect(screen.getByRole('radio', { name: 'Для торрента' })).toBeChecked()
+    act(() => useTorrents.setState({ torrents: {} }))
     expect(screen.getByRole('radio', { name: 'Для торрента' })).toBeDisabled()
     expect(screen.getByRole('radio', { name: 'Глобальные' })).toBeChecked()
     await waitFor(() => expect(up()).toHaveValue('5'))

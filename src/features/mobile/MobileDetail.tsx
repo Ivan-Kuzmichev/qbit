@@ -119,13 +119,13 @@ export function MobileDetail({ hash }: { hash: string }) {
         </div>
 
         <div className={styles.tabs}>
-          <Tabs<DetailsTab> tabs={TABS} value={tab} onChange={setTab} aria-label={t.details.tabsLabel} />
+          <Tabs<DetailsTab> tabs={TABS} value={tab} onChange={setTab} aria-label={t.details.tabsLabel} idPrefix="details" />
         </div>
-        <div className={styles.panel} role="tabpanel" data-tab={tab}>
+        <div className={styles.panel} role="tabpanel" id="details-panel" aria-labelledby={`details-tab-${tab}`} data-tab={tab}>
           {tab === 'files' && data.files && (
             <FilesTab key={hash} files={data.files} variant="mobile" onSetPriority={setPriority} onPickPriority={setPicking} />
           )}
-          {tab === 'trackers' && data.trackers && (
+          {tab === 'trackers' && (
             <TrackersTab
               key={hash}
               trackers={data.trackers}

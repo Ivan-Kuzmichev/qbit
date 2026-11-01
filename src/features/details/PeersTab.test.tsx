@@ -11,6 +11,12 @@ const peer = (ip: string, extra: Partial<Peer> = {}): Peer => ({
 })
 
 describe('PeersTab', () => {
+  it('shows no counts before the first response', () => {
+    render(<PeersTab peers={null} swarm={41} variant="desktop" />)
+    expect(screen.queryByText(/подключено/)).toBeNull()
+    expect(screen.queryByText(/Пиров нет|нет подключ/i)).toBeNull()
+  })
+
   it('shows connected and swarm counts', () => {
     render(<PeersTab peers={[peer('1.1.1.1'), peer('2.2.2.2')]} swarm={41} variant="desktop" />)
     expect(screen.getByText('2 подключено · 41 в рое')).toBeInTheDocument()

@@ -12,10 +12,13 @@ export function SpeedCard() {
   const history = useTorrents((s) => s.speedHistory)
   const [value, unit] = formatBytes(server.dl_info_speed ?? 0).split(' ')
   const limit = server.dl_rate_limit ?? 0
+  const limitText = limit > 0 ? `${t.speed.limit} ${formatSpeed(limit)}` : t.speed.noLimit
+  // The visible text is a mix of fragments; spell the values out for assistive tech.
+  const label = `${t.speed.openLimits}: ${t.speed.download} ${formatSpeed(server.dl_info_speed ?? 0)}, ${t.speed.upload} ${formatSpeed(server.up_info_speed ?? 0)}, ${limitText}`
 
   return (
     <div className={styles.card}>
-      <button type="button" className={styles.open} aria-label={t.speed.openLimits} onClick={() => useDialogs.getState().openLimits('global')}>
+      <button type="button" className={styles.open} aria-label={label} onClick={() => useDialogs.getState().openLimits('global')}>
         <span className={styles.title}>{t.speed.download}</span>
         <span className={styles.speed}>
           <span className={styles.value}>{value}</span>
@@ -24,7 +27,7 @@ export function SpeedCard() {
         <Sparkline values={history.map((p) => p.dl)} />
         <span className={styles.meta}>
           <span>↑ {formatSpeed(server.up_info_speed ?? 0)}</span>
-          <span>{limit > 0 ? `${t.speed.limit} ${formatSpeed(limit)}` : t.speed.noLimit}</span>
+          <span>{limitText}</span>
         </span>
       </button>
       <div className={styles.alt}>

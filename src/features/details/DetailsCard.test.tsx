@@ -98,6 +98,27 @@ describe('DetailsCard trackers, peers and info tabs', () => {
     expect(body.get('urls')).toBe('udp://a/announce\nhttp://b/announce')
   })
 
+  it('trackers tab shows its toolbar before the first response instead of staying blank', async () => {
+    fetchMock = stubFetch({
+      'torrents/properties': () => json({}),
+      'torrents/pieceStates': () => json([]),
+      'torrents/files': () => json([]),
+      'torrents/trackers': () => new Promise<Response>(() => {}) as never,
+    })
+    load([tor('a')], ['a'])
+    render(<DetailsCard />)
+    await userEvent.click(screen.getByRole('tab', { name: 'Трекеры' }))
+    expect(screen.getByRole('button', { name: 'Добавить трекер' })).toBeInTheDocument()
+    expect(screen.queryByText(/нет трекеров|Трекеров нет/i)).toBeNull()
+  })
+
+  it('the panel is labelled by the active tab', async () => {
+    load([tor('a')], ['a'])
+    render(<DetailsCard />)
+    await userEvent.click(screen.getByRole('tab', { name: 'Сведения' }))
+    expect(screen.getByRole('tabpanel', { name: 'Сведения' })).toBeInTheDocument()
+  })
+
   it('peers tab shows connected and swarm counts from the torrent', async () => {
     fetchMock = stubFetch({
       'torrents/properties': () => json({}),
@@ -112,6 +133,12 @@ describe('DetailsCard trackers, peers and info tabs', () => {
   })
 
   it('peers tab shows only the connected count when the swarm is unknown', async () => {
+    fetchMock = stubFetch({
+      'torrents/properties': () => json({}),
+      'torrents/pieceStates': () => json([]),
+      'torrents/files': () => json([]),
+      'sync/torrentPeers': () => json({ rid: 1, full_update: true, peers: {} }),
+    })
     load([tor('a', { num_complete: -1, num_incomplete: -1 })], ['a'])
     render(<DetailsCard />)
     await userEvent.click(screen.getByRole('tab', { name: 'Пиры' }))

@@ -54,7 +54,9 @@ export function SpeedLimitsDialog({ tab: initialTab, hashes, onClose }: SpeedLim
   const existing = useMemo(() => hashes.filter((h) => h in torrents), [hashes, torrents])
   const altOn = useTorrents((s) => Boolean(s.server.use_alt_speed_limits))
   const canTorrent = existing.length > 0
-  const [tab, setTab] = useState<LimitsTab>(initialTab === 'torrent' && !canTorrent ? 'global' : initialTab)
+  const [chosen, setTab] = useState<LimitsTab>(initialTab)
+  // the torrent can vanish while the dialog is open: its tab then falls back to the global one
+  const tab: LimitsTab = chosen === 'torrent' && !canTorrent ? 'global' : chosen
   const [drafts, setDrafts] = useState<Partial<Record<LimitsTab, Draft>>>({})
   const [torrentStart] = useState(() => torrentInitial(hashes))
   const [prefs, setPrefs] = useState<Preferences | null>(null)

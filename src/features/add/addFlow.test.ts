@@ -144,6 +144,39 @@ describe('addTorrents', () => {
     expect(res.failed[0].reason).toBe('Уже добавлен или неверный файл')
   })
 
+  it('other HTTP errors get a generic message, not "already added"', async () => {
+    for (const status of [400, 403, 500, 503]) {
+      const { deps } = setup({ add: () => new ApiError(status) })
+      const res = await addTorrents(req({ torrents: [file('x.torrent')] }), deps)
+      expect(res.failed[0].reason, String(status)).toBe('Не удалось добавить')
+    }
+    const { deps } = setup({ add: () => new ApiError(409) })
+    expect((await addTorrents(req({ torrents: [file('x.torrent')] }), deps)).failed[0].reason).toBe('Уже добавлен или неверный файл')
+  })
+
+  it('one failed poll does not end the wait: it retries until the torrent shows up', async () => {
+    const { deps, calls } = setup({
+      info: (n) => {
+        if (n < 2) throw new TypeError('blip')
+        return [{ hash: HASH.toLowerCase() }]
+      },
+    })
+    const res = await addTorrents(req({ torrents: [file('a.torrent', [true, false])] }), deps)
+    expect(res).toEqual({ added: 1, failed: [] })
+    expect(calls.map((c) => c.path)).toContain('torrents/filePrio')
+  })
+
+  it('polls that keep failing end at the deadline with the network message', async () => {
+    const { deps } = setup({
+      info: () => {
+        throw new TypeError('down')
+      },
+    })
+    const res = await addTorrents(req({ torrents: [file('a.torrent', [true, false])] }), deps)
+    expect(res.failed).toEqual([{ name: 'a.torrent', reason: 'Нет соединения с сервером' }])
+    expect(deps.sleep.mock.calls.reduce((n, [ms]) => n + ms, 0)).toBeGreaterThanOrEqual(30_000)
+  })
+
   it('several files, one fails: the rest are added and the failure is named', async () => {
     const { deps, calls } = setup({ add: (n) => (n === 1 ? 'Fails.' : 'Ok.') })
     const res = await addTorrents(req({ torrents: [file('1.torrent'), file('2.torrent'), file('3.torrent')] }), deps)

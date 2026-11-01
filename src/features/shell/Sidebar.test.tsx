@@ -105,6 +105,14 @@ describe('SpeedCard in Sidebar', () => {
     expect(screen.getAllByText('МБ/с').length).toBeGreaterThan(0)
     expect(screen.getByText('лимит 5.00 МБ/с')).toBeInTheDocument()
   })
+  it('the speed button names the speeds for assistive tech', () => {
+    load([], { server: { dl_info_speed: 22756000, up_info_speed: 3250000, dl_rate_limit: 5 * 1024 * 1024 } })
+    render(<Sidebar />)
+    const name = screen.getByRole('button', { name: /Скорость и лимиты/ }).getAttribute('aria-label')!
+    expect(name).toContain('21.7 МБ/с')
+    expect(name).toContain('3.10 МБ/с')
+    expect(name).toContain('лимит 5.00 МБ/с')
+  })
   it('zero limit shows the no-limit caption', () => {
     load([], { server: { dl_rate_limit: 0 } })
     render(<Sidebar />)

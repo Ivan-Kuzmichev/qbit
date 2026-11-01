@@ -1,7 +1,9 @@
 // @vitest-environment jsdom
-import { act, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { useDialogs } from '../../store/dialogs'
+import { emptySync } from '../../store/mergeMainData'
+import { useTorrents } from '../../store/torrents'
 import { json, stubFetch } from '../../test/fetchStub'
 import { DialogHost } from './DialogHost'
 
@@ -14,6 +16,20 @@ function media(matches: boolean) {
 afterEach(() => {
   useDialogs.setState({ open: null })
   vi.unstubAllGlobals()
+})
+
+describe('DialogHost per-open state', () => {
+  it('opening the delete dialog again while open resets the checkbox', () => {
+    stubFetch({})
+    media(false)
+    useTorrents.setState({ ...emptySync, torrents: { a: { hash: 'a', name: 'A', completed: 1 } as never } })
+    render(<DialogHost />)
+    act(() => useDialogs.getState().openDelete(['a']))
+    fireEvent.click(screen.getByRole('checkbox'))
+    expect(screen.getByRole('checkbox')).toBeChecked()
+    act(() => useDialogs.getState().openDelete(['a']))
+    expect(screen.getByRole('checkbox')).not.toBeChecked()
+  })
 })
 
 describe('DialogHost add dialog', () => {

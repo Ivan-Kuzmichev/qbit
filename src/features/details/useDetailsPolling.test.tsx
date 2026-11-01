@@ -60,9 +60,9 @@ describe('useDetailsPolling', () => {
     })
     const { result, unmount } = renderHook(() => useDetailsPolling('a', 'peers'))
     await flush(0)
-    const before = result.current.peers
+    const before = result.current.peers!
     await flush(2000)
-    const [a, b] = result.current.peers
+    const [a, b] = result.current.peers!
     expect(a).toMatchObject({ ip: 'a', port: 1, progress: 0.5 })
     expect(b).toBe(before[1])
     unmount()
@@ -81,12 +81,13 @@ describe('useDetailsPolling', () => {
       },
     })
     const { result, unmount } = renderHook(() => useDetailsPolling('a', 'peers'))
+    expect(result.current.peers).toBeNull()
     await flush(0)
     expect(urls[0]).toContain('rid=0')
-    expect(result.current.peers.map((p) => p.ip)).toEqual(['a'])
+    expect(result.current.peers!.map((p) => p.ip)).toEqual(['a'])
     await flush(2000)
     expect(urls[1]).toContain('rid=1')
-    expect(result.current.peers.map((p) => p.ip)).toEqual(['b'])
+    expect(result.current.peers!.map((p) => p.ip)).toEqual(['b'])
     unmount()
   })
 

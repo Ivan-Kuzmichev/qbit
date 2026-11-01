@@ -14,7 +14,8 @@ export interface DetailsData {
   files: TorrentFile[] | null
   pieces: number[]
   trackers: Tracker[] | null
-  peers: Peer[]
+  /** `null` until the first response. */
+  peers: Peer[] | null
   peersMeta: PeersMeta
 }
 
@@ -33,6 +34,7 @@ interface Store {
   pieces: number[]
   trackers: Tracker[] | null
   peerMap: Record<string, Peer>
+  peersLoaded: boolean
   showFlags: boolean
 }
 
@@ -40,7 +42,7 @@ const FAST_MS = 2000
 const TRACKERS_MS = 5000
 
 const emptyStore = (hash: string): Store => ({
-  hash, properties: null, files: null, pieces: [], trackers: null, peerMap: {}, showFlags: false,
+  hash, properties: null, files: null, pieces: [], trackers: null, peerMap: {}, peersLoaded: false, showFlags: false,
 })
 
 const EMPTY = emptyStore('')
@@ -150,13 +152,14 @@ export function useDetailsPolling(hash: string | null, tab: DetailsTab): Details
         // An update carries only the changed fields of a peer: merge, don't replace.
         for (const [key, fields] of Object.entries(resp.peers ?? {})) peerMap[key] = { ...peerMap[key], ...fields }
         for (const key of resp.peers_removed ?? []) delete peerMap[key]
-        return { peerMap, showFlags: resp.show_flags ?? s.showFlags }
+        return { peerMap, peersLoaded: true, showFlags: resp.show_flags ?? s.showFlags }
       })
     })
   }, [hash, peersOpen, patchFor])
 
   const current = store.hash === hash ? store : EMPTY
-  const peers = useMemo(() => Object.values(current.peerMap), [current.peerMap])
+  const peerMap = current.peerMap
+  const peers = useMemo(() => (current.peersLoaded ? Object.values(peerMap) : null), [current.peersLoaded, peerMap])
   return {
     properties: current.properties,
     files: current.files,

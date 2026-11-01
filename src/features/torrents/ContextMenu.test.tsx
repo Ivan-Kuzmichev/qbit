@@ -317,4 +317,49 @@ describe('context menu', () => {
     await waitFor(() => expect(screen.queryByRole('menu')).toBeNull())
     act(() => {})
   })
+
+  it('Escape closes only the menu and returns focus to the row', async () => {
+    load([tor('a')])
+    render(<TorrentTable />)
+    const outer = vi.fn()
+    document.addEventListener('keydown', outer)
+    open('Torrent a')
+    await userEvent.keyboard('{Escape}')
+    document.removeEventListener('keydown', outer)
+    expect(screen.queryByRole('menu')).toBeNull()
+    expect(outer).not.toHaveBeenCalled()
+    expect(rowOf('Torrent a')).toHaveFocus()
+  })
+
+  it('Tab closes the menu and keeps focus on the row', async () => {
+    load([tor('a')])
+    render(<TorrentTable />)
+    open('Torrent a')
+    await userEvent.keyboard('{Tab}')
+    expect(screen.queryByRole('menu')).toBeNull()
+    expect(rowOf('Torrent a')).toHaveFocus()
+  })
+
+  it('picking an item returns focus to the row', async () => {
+    load([tor('a')])
+    stubFetch({ 'torrents/stop': () => text('') })
+    render(<TorrentTable />)
+    await userEvent.click(within(open('Torrent a')).getByRole('menuitem', { name: 'Пауза' }))
+    expect(rowOf('Torrent a')).toHaveFocus()
+  })
+
+  it('a submenu near the bottom of the window is pulled up to fit', async () => {
+    load([tor('a')], { categories: ['Фильмы'] })
+    Object.defineProperty(window, 'innerHeight', { configurable: true, value: 700 })
+    const rect = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
+      const sub = this.hasAttribute('data-submenu')
+      return { width: 200, height: sub ? 300 : 400, top: sub ? 600 : 0, left: 0, right: 200, bottom: sub ? 900 : 400, x: 0, y: 0, toJSON() {} } as DOMRect
+    })
+    render(<TorrentTable />)
+    await userEvent.click(within(open('Torrent a')).getByRole('menuitem', { name: 'Категория' }))
+    const sub = screen.getByRole('menu', { name: 'Категория' })
+    // 900 - 700 + 8 px margin
+    await waitFor(() => expect(parseFloat(sub.style.top)).toBeLessThanOrEqual(-5 - 208))
+    rect.mockRestore()
+  })
 })

@@ -9,14 +9,15 @@ import { MoveDialog } from './MoveDialog'
 /** Renders the open dialog. Each dialog's arguments are in `open`. */
 export function DialogHost() {
   const open = useDialogs((s) => s.open)
+  const seq = useDialogs((s) => s.seq)
   const close = useDialogs((s) => s.close)
   const mobile = useIsMobile()
   if (!open) return null
   switch (open.kind) {
     case 'delete':
-      return <DeleteDialog hashes={open.hashes} onClose={close} />
+      return <DeleteDialog key={seq} hashes={open.hashes} onClose={close} />
     case 'move':
-      return <MoveDialog hashes={open.hashes} onClose={close} />
+      return <MoveDialog key={seq} hashes={open.hashes} onClose={close} />
     case 'add':
       return mobile ? (
         <MobileAddSheet tab={open.tab} files={open.files} onClose={close} />

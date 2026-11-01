@@ -15,22 +15,48 @@ export interface DialogProps {
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
+/**
+ * The last element the pointer went down on. Safari does not focus a button on click, so
+ * `document.activeElement` can be <body> when a dialog opens; this is the fallback opener.
+ */
+let lastPressed: HTMLElement | null = null
+if (typeof document !== 'undefined') {
+  document.addEventListener(
+    'mousedown',
+    (e) => {
+      lastPressed = (e.target as HTMLElement | null)?.closest?.<HTMLElement>('button, a[href], [role="button"], [tabindex]') ?? null
+    },
+    true,
+  )
+}
+
+function findOpener(): HTMLElement | null {
+  const active = document.activeElement as HTMLElement | null
+  if (active && active !== document.body) return active
+  return lastPressed?.isConnected ? lastPressed : null
+}
+
 export function Dialog({ title, onClose, children, width }: DialogProps) {
   const titleId = useId()
   const root = useRef<HTMLDivElement>(null)
+  const body = useRef<HTMLDivElement>(null)
   const onCloseRef = useRef(onClose)
   useEffect(() => {
     onCloseRef.current = onClose
   })
 
   useEffect(() => {
-    const opener = document.activeElement as HTMLElement | null
+    const opener = findOpener()
     const el = root.current!
     const focusables = () => [...el.querySelectorAll<HTMLElement>(FOCUSABLE)]
-    ;(focusables()[0] ?? el).focus()
+    // The first control of the content, not the close button in the header.
+    const first = body.current?.querySelector<HTMLElement>(FOCUSABLE) ?? focusables()[0] ?? el
+    first.focus()
 
     function onKey(e: KeyboardEvent) {
       if (e.key === 'Escape') {
+        // something inside (an open menu) already used this Escape
+        if (e.defaultPrevented) return
         e.stopPropagation()
         onCloseRef.current()
       } else if (e.key === 'Tab') {
@@ -57,7 +83,7 @@ export function Dialog({ title, onClose, children, width }: DialogProps) {
     document.addEventListener('keydown', onKey)
     return () => {
       document.removeEventListener('keydown', onKey)
-      opener?.focus?.()
+      if (opener?.isConnected) opener.focus()
     }
   }, [])
 
@@ -86,7 +112,9 @@ export function Dialog({ title, onClose, children, width }: DialogProps) {
             <X size={16} aria-hidden="true" />
           </IconButton>
         </header>
-        <div className={styles.body}>{children}</div>
+        <div ref={body} className={styles.body}>
+          {children}
+        </div>
       </div>
     </div>
   )

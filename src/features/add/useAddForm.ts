@@ -95,7 +95,9 @@ export function useAddForm({ tab: initialTab, files, onClose }: AddFormArgs) {
   const pickedCount = single ? shownFiles.filter((f) => single.selected[f.i]).length : 0
   const magnetLines = magnets.split('\n').map((l) => l.trim()).filter(Boolean)
 
-  const canSubmit = tab === 'magnet' ? magnetLines.length > 0 : valid.length > 0 && (!single || pickedCount > 0)
+  // a file that is still being read could turn out to be the only valid one, or an invalid one: wait for it
+  const parsing = entries.some((e) => !e.parsed && !e.failed)
+  const canSubmit = tab === 'magnet' ? magnetLines.length > 0 : !parsing && valid.length > 0 && (!single || pickedCount > 0)
 
   function toggleFile(entryId: number, index: number, on: boolean) {
     setEntries((cur) => cur.map((e) => (e.id === entryId ? { ...e, selected: e.selected.map((s, i) => (i === index ? on : s)) } : e)))

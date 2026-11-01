@@ -61,3 +61,8 @@
     height: 44px;
   }
 }
+
+/* Portal popups live in <body>, outside any dialog or sheet (z-index 50): they must sit above them. */
+.portal {
+  z-index: 55;
+}

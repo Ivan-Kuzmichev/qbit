@@ -66,7 +66,8 @@ async function post(deps: AddDeps, form: FormData): Promise<void> {
   try {
     body = await deps.api.post('torrents/add', form)
   } catch (e) {
-    if (e instanceof ApiError) throw new Failure(t.add.alreadyAdded)
+    // 409 / 415: qBittorrent rejects a duplicate or an unreadable file; any other status is not that
+    if (e instanceof ApiError) throw new Failure(e.status === 409 || e.status === 415 ? t.add.alreadyAdded : t.add.failed)
     throw new Failure(t.add.network)
   }
   if (typeof body === 'string' && body.trim() === 'Fails.') throw new Failure(t.add.alreadyAdded)
@@ -77,14 +78,16 @@ async function waitFor(deps: AddDeps, ids: string[]): Promise<string> {
   const want = ids.map((i) => i.toLowerCase())
   const started = deps.now()
   for (;;) {
+    let failed = false
     try {
       const list = await deps.api.get<{ hash: string }[]>('torrents/info', { hashes: want.join('|') })
       const hit = list.find((x) => want.includes(x.hash.toLowerCase()))
       if (hit) return hit.hash
     } catch {
-      throw new Failure(t.add.network)
+      // one failed poll is not the end: keep trying until the deadline
+      failed = true
     }
-    if (deps.now() - started >= WAIT_MS) throw new Failure(t.add.notAppeared)
+    if (deps.now() - started >= WAIT_MS) throw new Failure(failed ? t.add.network : t.add.notAppeared)
     await deps.sleep(POLL_MS)
   }
 }

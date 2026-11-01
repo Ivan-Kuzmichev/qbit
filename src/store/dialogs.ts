@@ -11,6 +11,8 @@ export type OpenDialog =
 
 interface DialogsState {
   open: OpenDialog | null
+  /** Bumped on every open call, so the host can remount a dialog that is opened again while showing. */
+  seq: number
   openDelete(hashes: string[]): void
   openMove(hashes: string[]): void
   openLimits(tab: LimitsTab, hashes?: string[]): void
@@ -20,9 +22,10 @@ interface DialogsState {
 
 export const useDialogs = create<DialogsState>()((set) => ({
   open: null,
-  openDelete: (hashes) => set({ open: { kind: 'delete', hashes } }),
-  openMove: (hashes) => set({ open: { kind: 'move', hashes } }),
-  openLimits: (tab, hashes = []) => set({ open: { kind: 'limits', tab, hashes } }),
-  openAdd: (tab, files = []) => set({ open: { kind: 'add', tab, files } }),
+  seq: 0,
+  openDelete: (hashes) => set((s) => ({ open: { kind: 'delete', hashes }, seq: s.seq + 1 })),
+  openMove: (hashes) => set((s) => ({ open: { kind: 'move', hashes }, seq: s.seq + 1 })),
+  openLimits: (tab, hashes = []) => set((s) => ({ open: { kind: 'limits', tab, hashes }, seq: s.seq + 1 })),
+  openAdd: (tab, files = []) => set((s) => ({ open: { kind: 'add', tab, files }, seq: s.seq + 1 })),
   close: () => set({ open: null }),
 }))

@@ -76,6 +76,8 @@ export function TorrentTable({ onDialog = openFromMenu }: Pick<ContextMenuProps,
     const hash = hashOf(e)
     if (!hash) return
     e.preventDefault()
+    // the menu hands focus back to this row when it closes
+    ;(e.target as HTMLElement).closest<HTMLElement>('[role="row"]')?.focus({ preventScroll: true })
     const state = useTorrents.getState()
     if (!state.selected.has(hash)) state.select(hash, 'single', list.map((x) => x.hash))
     setMenu({ x: e.clientX, y: e.clientY })

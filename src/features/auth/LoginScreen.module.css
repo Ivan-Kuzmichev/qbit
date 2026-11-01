@@ -81,10 +81,15 @@
   color: var(--muted);
   text-align: center;
 }
+.offline {
+  text-align: center;
+  font-size: 13px;
+  color: var(--queue);
+}
 @media (max-width: 767px) {
   .page {
     gap: 18px;
-    padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+    padding: max(24px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
   }
   .card {
     max-width: none;

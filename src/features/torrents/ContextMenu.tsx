@@ -1,5 +1,5 @@
 import { Check, ChevronRight } from 'lucide-react'
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { toast } from '../../components/ui/Toast'
 import { t } from '../../i18n/ru'
 import { copyText } from '../../lib/copyText'
@@ -43,6 +43,17 @@ export function ContextMenu({ x, y, onClose, onDialog }: ContextMenuProps) {
   const root = useRef<HTMLDivElement>(null)
   const [pos, setPos] = useState({ left: x, top: y, flip: false })
   const [sub, setSub] = useState<Sub | null>(null)
+  const [shift, setShift] = useState<{ sub: Sub; by: number } | null>(null)
+  /** Where focus was when the menu opened (the row); it goes back there when the menu closes from the keyboard. */
+  const [opener] = useState(() => document.activeElement as HTMLElement | null)
+  const restoreFocus = useCallback(() => {
+    if (opener?.isConnected) opener.focus({ preventScroll: true })
+  }, [opener])
+  /** Closes the menu and puts focus back first, so a dialog opened next remembers the row as its opener. */
+  const finish = useCallback(() => {
+    restoreFocus()
+    onClose()
+  }, [restoreFocus, onClose])
 
   const targets = useMemo(() => [...selected].filter((h) => h in torrents).map((h) => torrents[h]), [selected, torrents])
   const hashes = targets.map((x) => x.hash)
@@ -73,8 +84,11 @@ export function ContextMenu({ x, y, onClose, onDialog }: ContextMenuProps) {
       if (!root.current?.contains(e.target as Node)) onClose()
     }
     function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') {
-        onClose()
+      if (e.key === 'Escape' || e.key === 'Tab') {
+        // Capture phase + stop: nothing else (a dialog, the hotkeys) may also act on this Escape.
+        if (e.key === 'Escape') e.stopPropagation()
+        e.preventDefault()
+        finish()
         return
       }
       const active = document.activeElement as HTMLElement | null
@@ -99,24 +113,34 @@ export function ContextMenu({ x, y, onClose, onDialog }: ContextMenuProps) {
       if (!(e.target instanceof Node && root.current?.contains(e.target))) onClose()
     }
     document.addEventListener('mousedown', onDown)
-    document.addEventListener('keydown', onKey)
+    document.addEventListener('keydown', onKey, true)
     window.addEventListener('resize', onClose)
     window.addEventListener('blur', onClose)
     document.addEventListener('scroll', onScroll, true)
     return () => {
       document.removeEventListener('mousedown', onDown)
-      document.removeEventListener('keydown', onKey)
+      document.removeEventListener('keydown', onKey, true)
       window.removeEventListener('resize', onClose)
       window.removeEventListener('blur', onClose)
       document.removeEventListener('scroll', onScroll, true)
     }
-  }, [onClose])
+  }, [onClose, finish])
 
   // Keyboard and click open a submenu with focus inside it; hovering only shows it.
   const [focusTick, setFocusTick] = useState(0)
   useEffect(() => {
     if (focusTick > 0) root.current?.querySelector<HTMLElement>('[data-submenu] [role^="menuitem"]')?.focus()
   }, [focusTick])
+
+  // A submenu that would run off the bottom of the window is pulled up.
+  useLayoutEffect(() => {
+    const el = root.current?.querySelector<HTMLElement>('[data-submenu]')
+    if (!el || !sub) return
+    const r = el.getBoundingClientRect()
+    const overflow = r.bottom - (window.innerHeight - EDGE)
+    setShift({ sub, by: overflow > 0 ? Math.max(0, Math.min(overflow, r.top - EDGE)) : 0 })
+  }, [sub])
+  const subShift = shift && shift.sub === sub ? shift.by : 0
 
   if (empty) return null
 
@@ -125,18 +149,18 @@ export function ContextMenu({ x, y, onClose, onDialog }: ContextMenuProps) {
     setFocusTick((n) => n + 1)
   }
   const act = (path: string, ids = hashes, extra = {}) => () => {
-    onClose()
+    finish()
     void runTorrentAction(path, ids, extra)
   }
   const dialog = (kind: DialogKind) => () => {
-    onClose()
+    finish()
     onDialog?.(kind, hashes)
   }
   const allPaused = targets.every((x) => uiStatus(x).action === 'start')
   const allHave = (pick: (x: (typeof targets)[number]) => boolean) => targets.every(pick)
   /** Toggle endpoints flip each torrent, so send only those that are not in the target state yet. */
   const toggle = (path: string, on: boolean, pick: (x: (typeof targets)[number]) => boolean) => () => {
-    onClose()
+    finish()
     void runTorrentAction(path, targets.filter((x) => pick(x) === on).map((x) => x.hash))
   }
   const seqOn = allHave((x) => x.seq_dl)
@@ -160,7 +184,7 @@ export function ContextMenu({ x, y, onClose, onDialog }: ContextMenuProps) {
       id: 'magnet',
       label: t.menu.copyMagnet,
       onSelect: () => {
-        onClose()
+        finish()
         const links = targets.map((x) => x.magnet_uri).filter(Boolean)
         if (links.length === 0) {
           toast(t.actions.magnetFailed)
@@ -233,7 +257,7 @@ export function ContextMenu({ x, y, onClose, onDialog }: ContextMenuProps) {
             {e.sub && <ChevronRight size={14} aria-hidden="true" />}
           </button>
           {e.sub && sub === e.sub && (
-            <div role="menu" data-submenu aria-label={e.label} className={pos.flip ? `${styles.sub} ${styles.flip}` : styles.sub}>
+            <div role="menu" data-submenu aria-label={e.label} style={subShift ? { top: -5 - subShift } : undefined} className={pos.flip ? `${styles.sub} ${styles.flip}` : styles.sub}>
               {subEntries(e.sub).map((s) => (
                 <button
                   key={s.id}

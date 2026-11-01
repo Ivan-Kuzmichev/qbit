@@ -65,6 +65,8 @@ describe('App boot', () => {
     })
     expect(screen.getByText('Нет соединения, повторяем…')).toBeInTheDocument()
     expect(screen.queryByRole('form', { name: 'Вход' })).toBeNull()
+    // same centered card as the login screen, not a bare div
+    expect(screen.getByRole('status').closest('[class*="card"]')).not.toBeNull()
     up = true
     await act(async () => {
       await vi.advanceTimersByTimeAsync(3000)

@@ -76,6 +76,7 @@ export const t = {
     limit: 'лимит',
     noLimit: 'без лимита',
     altLimits: 'Альт. лимиты',
+    upload: 'Отдача',
     openLimits: 'Скорость и лимиты',
   },
   table: {
@@ -178,6 +179,7 @@ export const t = {
     free: 'Свободно',
     submit: 'Добавить',
     alreadyAdded: 'Уже добавлен или неверный файл',
+    failed: 'Не удалось добавить',
     notAppeared: 'Торрент не появился в списке за 30 с',
     prioFailed: 'Не удалось применить выбор файлов',
     network: 'Нет соединения с сервером',

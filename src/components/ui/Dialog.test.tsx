@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
@@ -67,5 +67,34 @@ describe('Dialog', () => {
     expect(onClose).not.toHaveBeenCalled()
     await user.click(screen.getByTestId('dialog-backdrop'))
     expect(onClose).toHaveBeenCalledTimes(1)
+  })
+
+  it('puts the first focus on the first control of the body, not on the close button', async () => {
+    const user = userEvent.setup()
+    render(<Harness />)
+    await user.click(screen.getByText('open'))
+    expect(screen.getByLabelText('first')).toHaveFocus()
+  })
+
+  it('restores focus to the opener even when the click did not focus it (Safari)', async () => {
+    render(<Harness />)
+    const opener = screen.getByText('open')
+    // Safari does not focus a button on click: only the pointer events happen
+    fireEvent.mouseDown(opener)
+    fireEvent.click(opener)
+    expect(opener).not.toHaveFocus()
+    fireEvent.keyDown(document.activeElement!, { key: 'Escape' })
+    expect(screen.queryByRole('dialog')).toBeNull()
+    expect(opener).toHaveFocus()
+  })
+
+  it('Escape handled by something inside (a menu) does not close the dialog', async () => {
+    const onClose = vi.fn()
+    render(<Harness onClose={onClose} />)
+    await userEvent.click(screen.getByText('open'))
+    const input = screen.getByLabelText('first')
+    input.addEventListener('keydown', (e) => e.preventDefault())
+    fireEvent.keyDown(input, { key: 'Escape' })
+    expect(onClose).not.toHaveBeenCalled()
   })
 })

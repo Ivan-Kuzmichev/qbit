@@ -114,6 +114,7 @@ export const TorrentRow = memo(function TorrentRow({ torrent, columns, template,
       aria-rowindex={index + 2}
       aria-selected={selected}
       data-hash={torrent.hash}
+      tabIndex={-1}
       data-selected={selected || undefined}
       className={styles.row}
       style={{ gridTemplateColumns: template, height: ROW_HEIGHT, transform: `translateY(${top}px)` }}

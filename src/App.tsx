@@ -3,6 +3,7 @@ import { ApiError, setOnForbidden } from './api/client'
 import { getApiVersion, getAppVersion, isApiSupported } from './api/version'
 import { ToastHost } from './components/ui/Toast'
 import { LoginScreen } from './features/auth/LoginScreen'
+import { OfflineScreen } from './features/auth/OfflineScreen'
 import { UpgradeScreen } from './features/auth/UpgradeScreen'
 import { saveVersions } from './features/auth/versions'
 import { ConnectionBanner } from './features/shell/ConnectionBanner'
@@ -14,7 +15,6 @@ import { MobileLayout } from './features/mobile/MobileLayout'
 import { DialogHost } from './features/torrents/DialogHost'
 import { TopBar } from './features/torrents/TopBar'
 import { TorrentTable } from './features/torrents/TorrentTable'
-import { t } from './i18n/ru'
 import { useRoute } from './lib/router'
 import { useIsMobile } from './lib/useIsMobile'
 import { emptySync } from './store/mergeMainData'
@@ -94,7 +94,7 @@ export function App() {
       view = <UpgradeScreen appVersion={phase.app} apiVersion={phase.api} />
       break
     case 'offline':
-      view = <div role="status">{t.connection.lost}</div>
+      view = <OfflineScreen />
       break
     case 'ready':
       view = (

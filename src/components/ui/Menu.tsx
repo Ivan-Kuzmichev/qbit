@@ -55,18 +55,26 @@ export function Menu({ items, label, triggerClassName, portal, children }: MenuP
     }
     function onKey(e: KeyboardEvent) {
       if (e.key === 'Escape') {
+        // Capture phase + stop: a dialog or a hotkey layer around the menu must not also see this Escape.
+        e.stopPropagation()
+        e.preventDefault()
         setOpen(false)
         trigger.current?.focus()
-      } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      } else if (e.key === 'Tab') {
+        // Leave the popup; the default Tab then continues from the trigger.
+        setOpen(false)
+        trigger.current?.focus()
+      } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Home' || e.key === 'End') {
         e.preventDefault()
         const els = [...(popup.current ?? root.current!).querySelectorAll<HTMLElement>('[role="menuitem"]')]
         const i = els.indexOf(document.activeElement as HTMLElement)
-        const step = e.key === 'ArrowDown' ? 1 : -1
-        els[(i + step + els.length) % els.length]?.focus()
+        if (e.key === 'Home') els[0]?.focus()
+        else if (e.key === 'End') els[els.length - 1]?.focus()
+        else els[(i + (e.key === 'ArrowDown' ? 1 : -1) + els.length) % els.length]?.focus()
       }
     }
     document.addEventListener('mousedown', onDown)
-    document.addEventListener('keydown', onKey)
+    document.addEventListener('keydown', onKey, true)
     if (portal) {
       window.addEventListener('scroll', onScroll, true)
       window.addEventListener('resize', close)
@@ -75,7 +83,7 @@ export function Menu({ items, label, triggerClassName, portal, children }: MenuP
       window.removeEventListener('scroll', onScroll, true)
       window.removeEventListener('resize', close)
       document.removeEventListener('mousedown', onDown)
-      document.removeEventListener('keydown', onKey)
+      document.removeEventListener('keydown', onKey, true)
     }
   }, [open, portal])
 
@@ -85,7 +93,7 @@ export function Menu({ items, label, triggerClassName, portal, children }: MenuP
       id={menuId}
       role="menu"
       aria-label={label}
-      className={styles.menu}
+      className={portal ? `${styles.menu} ${styles.portal}` : styles.menu}
       style={portal ? (pos ?? { position: 'fixed', opacity: 0, top: 0, left: 0 }) : undefined}
     >
       {items.map((it) => (
@@ -96,6 +104,7 @@ export function Menu({ items, label, triggerClassName, portal, children }: MenuP
           className={it.danger ? `${styles.item} ${styles.danger}` : styles.item}
           onClick={() => {
             setOpen(false)
+            trigger.current?.focus()
             it.onSelect()
           }}
         >

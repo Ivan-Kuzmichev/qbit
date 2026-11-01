@@ -6,7 +6,8 @@ import { Flag } from './Flag'
 import styles from './PeersTab.module.css'
 
 export interface PeersTabProps {
-  peers: readonly Peer[]
+  /** `null` until the first response. */
+  peers: readonly Peer[] | null
   /** Peers in the swarm (`num_complete + num_incomplete`); `null` when the tracker reports none. */
   swarm: number | null
   variant: 'desktop' | 'mobile'
@@ -16,6 +17,7 @@ const percent = (p: number) => `${Math.floor(Math.min(1, Math.max(0, Number.isFi
 const address = (p: Peer) => (p.ip.includes(':') ? `[${p.ip}]:${p.port}` : `${p.ip}:${p.port}`)
 
 export function PeersTab({ peers, swarm, variant }: PeersTabProps) {
+  if (peers === null) return <div className={`${styles.root} ${styles[variant]}`} />
   const summary = `${peers.length} ${t.details.peers.connected}${swarm !== null ? ` · ${swarm} ${t.details.peers.inSwarm}` : ''}`
   return (
     <div className={`${styles.root} ${styles[variant]}`}>

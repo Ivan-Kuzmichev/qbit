@@ -84,7 +84,13 @@ describe('AddDialog', () => {
   })
 
   it('unchecking every file disables Add; a partial selection adds stopped', async () => {
-    const f = routes()
+    // the torrent shows up at once, so the wait for it ends with the test instead of polling for 30 s
+    const hash = sha1hex(torrentBytes(multiInfo as never).infoBytes)
+    const f = routes({
+      'torrents/info': () => json([{ hash }]),
+      'torrents/filePrio': () => text(''),
+      'torrents/start': () => text(''),
+    })
     render(<AddDialog tab="file" files={[torrentFile('m.torrent')]} onClose={() => {}} />)
     await screen.findByText('выбрано 3 из 3')
     const boxes = screen.getAllByRole('checkbox', { name: /(a\.txt|b\.txt|c\.bin)/ })
@@ -97,6 +103,20 @@ describe('AddDialog', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Добавить' }))
     await waitFor(() => expect(added(f)).toHaveLength(1))
     expect(form(f, 'torrents/add').get('stopped')).toBe('true')
+    await waitFor(() => expect(f.mock.calls.some((c) => String(c[0]).includes('torrents/start'))).toBe(true))
+  })
+
+  it('Add stays disabled while a file is still being read', async () => {
+    routes()
+    let release!: (b: ArrayBuffer) => void
+    const slow = torrentFile('slow.torrent', singleInfo)
+    const bytes = await slow.arrayBuffer()
+    slow.arrayBuffer = () => new Promise<ArrayBuffer>((r) => (release = r))
+    render(<AddDialog tab="file" files={[torrentFile('ok.torrent', singleInfo), slow]} onClose={() => {}} />)
+    await screen.findByText('ok.torrent')
+    expect(screen.getByRole('button', { name: 'Добавить' })).toBeDisabled()
+    release(bytes)
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Добавить' })).toBeEnabled())
   })
 
   it('save path: default from settings, category path on select', async () => {
@@ -239,6 +259,18 @@ describe('drag and drop', () => {
     drop({ files: [torrentFile('d.torrent', singleInfo)], types: ['Files'] })
     expect(await screen.findByRole('dialog')).toBeInTheDocument()
     expect(await screen.findByText('d.torrent')).toBeInTheDocument()
+  })
+
+  it('the overlay survives dragenter/dragleave between child elements (Safari has no relatedTarget)', () => {
+    routes()
+    render(<DropOverlay />)
+    const dataTransfer = { types: ['Files'], files: [], dropEffect: 'none' }
+    fireEvent.dragEnter(document.body, { dataTransfer })
+    fireEvent.dragEnter(document.body, { dataTransfer })
+    fireEvent.dragLeave(document.body, { dataTransfer })
+    expect(screen.getByText('Отпусти .torrent, чтобы добавить')).toBeInTheDocument()
+    fireEvent.dragLeave(document.body, { dataTransfer })
+    expect(screen.queryByText('Отпусти .torrent, чтобы добавить')).toBeNull()
   })
 
   it('dropped text does not', () => {

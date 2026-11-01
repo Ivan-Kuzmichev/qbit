@@ -113,9 +113,9 @@ export function DetailsCard() {
         </div>
       </div>
       <div className={styles.tabs}>
-        <Tabs<DetailsTab> tabs={TABS} value={tab} onChange={setTab} aria-label={t.details.tabsLabel} />
+        <Tabs<DetailsTab> tabs={TABS} value={tab} onChange={setTab} aria-label={t.details.tabsLabel} idPrefix="details" />
       </div>
-      <div className={styles.body} role="tabpanel" data-tab={tab}>
+      <div className={styles.body} role="tabpanel" id="details-panel" aria-labelledby={`details-tab-${tab}`} data-tab={tab}>
         {tab === 'files' && data.files && (
           <FilesTab
             key={hash}
@@ -126,7 +126,7 @@ export function DetailsCard() {
             }}
           />
         )}
-        {tab === 'trackers' && data.trackers && (
+        {tab === 'trackers' && (
           <TrackersTab
             key={hash}
             trackers={data.trackers}
