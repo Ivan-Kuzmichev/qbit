@@ -4,7 +4,7 @@
   z-index: 60;
   display: flex;
   padding: 16px;
-  background: rgb(0 0 0 / 0.62);
+  background: var(--overlay);
   pointer-events: none;
 }
 .box {

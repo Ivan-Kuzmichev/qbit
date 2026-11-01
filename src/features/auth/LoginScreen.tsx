@@ -5,7 +5,7 @@ import { Button } from '../../components/ui/Button'
 import { Logo } from '../../components/ui/Logo'
 import { Field } from '../../components/ui/Field'
 import { IconButton } from '../../components/ui/IconButton'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import styles from './LoginScreen.module.css'
 import { loadVersions } from './versions'
 

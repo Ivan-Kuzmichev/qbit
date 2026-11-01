@@ -1,6 +1,7 @@
 {
   "name": "qbit",
-  "version": "0.1.1",
+  "version": "0.1.2",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,7 +12,8 @@
     "lint": "eslint .",
     "check:bundle": "node scripts/check-bundle.mjs",
     "e2e": "playwright test",
-    "visual": "playwright test -c e2e/visual/playwright.config.ts"
+    "visual": "playwright test -c e2e/visual/playwright.config.ts",
+    "screenshots": "SCREENSHOTS=1 playwright test -c e2e/visual/playwright.config.ts readme"
   },
   "dependencies": {
     "@fontsource/inter": "^5.3.0",

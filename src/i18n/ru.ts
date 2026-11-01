@@ -1,4 +1,4 @@
-export const t = {
+export const ru = {
   app: {
     name: 'qBit',
     qbittorrent: 'qBittorrent',
@@ -343,6 +343,9 @@ export const t = {
     leave: 'Уйти',
     scheduleFrom: 'Начало',
     scheduleTo: 'Конец',
+    languageLabel: 'Язык',
+    themeLabel: 'Тема',
+    theme: { light: 'Светлая', dark: 'Тёмная', system: 'Системная' },
     accentLabel: 'Акцентный цвет',
     session: 'Сессия',
     sessionDesc: 'Выход закрывает текущую сессию в этом браузере',
@@ -448,3 +451,5 @@ export const t = {
     },
   },
 }
+
+export type Dict = typeof ru

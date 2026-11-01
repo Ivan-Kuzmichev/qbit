@@ -1,7 +1,7 @@
 import { Check, ChevronRight } from 'lucide-react'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { toast } from '../../components/ui/Toast'
-import { t } from '../../i18n/ru'
+import { locale, t } from '../../i18n'
 import { copyText } from '../../lib/copyText'
 import { useTorrents } from '../../store/torrents'
 import { runTorrentAction } from './actions'
@@ -213,7 +213,7 @@ export function ContextMenu({ x, y, onClose, onDialog }: ContextMenuProps) {
         const common = targets.every((x) => x.category === targets[0].category) ? targets[0].category : null
         return [
           { id: '', label: t.menu.noCategory, checked: common === '', onSelect: act('torrents/setCategory', hashes, { category: '' }) },
-          ...Object.keys(categories).sort((a, b) => a.localeCompare(b, 'ru')).map((name) => ({
+          ...Object.keys(categories).sort((a, b) => a.localeCompare(b, locale)).map((name) => ({
             id: name,
             label: name,
             checked: common === name,

@@ -83,7 +83,7 @@
   text-align: right;
 }
 .active {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 .dim {
   color: var(--dim);

@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import type { Preferences } from '../../api/types'
+import { Segmented } from '../../components/ui/Segmented'
 import { Toggle } from '../../components/ui/Toggle'
-import { t } from '../../i18n/ru'
+import { lang, setLang, t, type Lang } from '../../i18n'
 import { parseDecimal, parseLimitKb } from '../../lib/parseNumber'
-import { useUi } from '../../store/ui'
+import { useUi, type ThemeChoice } from '../../store/ui'
 import { ScheduleEditor } from './ScheduleEditor'
 import { TelegramControl } from './TelegramControl'
 import { ACCENT_PRESETS, type Row } from './schema'
@@ -133,9 +134,38 @@ function Control(props: SettingRowProps) {
       return <ScheduleEditor draft={draft} set={set} />
     case 'accent':
       return <AccentPicker />
+    case 'theme':
+      return <ThemePicker />
+    case 'language':
+      return (
+        <Segmented<Lang> aria-label={t.settings.languageLabel} options={LANGUAGES} value={lang} onChange={setLang} />
+      )
     case 'telegram':
       return <TelegramControl draft={draft} set={set} setInvalid={props.setInvalid} />
   }
+}
+
+// Each language under its own name, so it can be found from the other one.
+const LANGUAGES = [
+  { id: 'en', label: 'English' },
+  { id: 'ru', label: 'Русский' },
+] as const
+
+function ThemePicker() {
+  const theme = useUi((s) => s.theme)
+  const setTheme = useUi((s) => s.setTheme)
+  return (
+    <Segmented<ThemeChoice>
+      aria-label={t.settings.themeLabel}
+      options={[
+        { id: 'light', label: t.settings.theme.light },
+        { id: 'dark', label: t.settings.theme.dark },
+        { id: 'system', label: t.settings.theme.system },
+      ]}
+      value={theme}
+      onChange={setTheme}
+    />
+  )
 }
 
 function AccentPicker() {
@@ -163,7 +193,7 @@ export function SettingRow(props: SettingRowProps) {
   const { row, draft } = props
   if (row.visibleIf && !row.visibleIf(draft)) return null
   // Controls with a label of their own (switches, fields) get it through aria-label.
-  const hidden = row.kind === 'accent' || row.kind === 'telegram'
+  const hidden = row.kind === 'accent' || row.kind === 'telegram' || row.kind === 'theme' || row.kind === 'language'
   return (
     <div className={styles.row}>
       {!hidden && (

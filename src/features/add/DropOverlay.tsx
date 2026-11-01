@@ -1,6 +1,6 @@
 import { Upload } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import { useDialogs } from '../../store/dialogs'
 import styles from './DropOverlay.module.css'
 

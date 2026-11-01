@@ -6,7 +6,7 @@ import { memo } from 'react'
 import type { Torrent } from '../../api/types'
 import { IconButton } from '../../components/ui/IconButton'
 import { Progress } from '../../components/ui/Progress'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import { formatBytes, formatDate, formatSpeed, percentOf } from '../../lib/format'
 import { shownSpeed, type Column } from './columns'
 import { runRowAction } from './actions'
@@ -16,7 +16,7 @@ import styles from './TorrentRow.module.css'
 export const ROW_HEIGHT = 48
 
 export const STATUS_VIEW: Record<UiKind, { Icon: LucideIcon; color: string; tone: 'accent' | 'done' | 'dim' }> = {
-  downloading: { Icon: ArrowDown, color: 'var(--accent)', tone: 'accent' },
+  downloading: { Icon: ArrowDown, color: 'var(--accent-text)', tone: 'accent' },
   seeding: { Icon: ArrowUp, color: 'var(--seed)', tone: 'done' },
   done: { Icon: Check, color: 'var(--text-2)', tone: 'done' },
   paused: { Icon: Pause, color: 'var(--muted)', tone: 'dim' },
@@ -126,7 +126,7 @@ export const TorrentRow = memo(function TorrentRow({ torrent, columns, template,
           <IconButton
             aria-label={actionLabel(action, kind)}
             onClick={() => void runRowAction(torrent, action)}
-            style={{ color: kind === 'downloading' ? 'var(--accent)' : 'var(--muted)' }}
+            style={{ color: kind === 'downloading' ? 'var(--accent-text)' : 'var(--muted)' }}
           >
             <Icon size={14} strokeWidth={2.2} aria-hidden="true" />
           </IconButton>

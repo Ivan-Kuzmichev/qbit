@@ -6,7 +6,7 @@ import { Button } from '../../components/ui/Button'
 import { Dialog } from '../../components/ui/Dialog'
 import { Menu } from '../../components/ui/Menu'
 import { toast } from '../../components/ui/Toast'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import styles from './TrackersTab.module.css'
 
 export interface TrackersTabProps {

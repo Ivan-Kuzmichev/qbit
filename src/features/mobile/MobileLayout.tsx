@@ -1,7 +1,7 @@
 import { Gauge, Link, Plus, Search, SlidersHorizontal } from 'lucide-react'
 import { useEffect, useMemo } from 'react'
 import { Logo } from '../../components/ui/Logo'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import { formatSpeed } from '../../lib/format'
 import { useRoute } from '../../lib/router'
 import { useDialogs } from '../../store/dialogs'

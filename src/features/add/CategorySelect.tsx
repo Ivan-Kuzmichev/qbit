@@ -1,6 +1,6 @@
 import { ChevronDown } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import { categoryColor } from '../../lib/categoryColor'
 import styles from './CategorySelect.module.css'
 

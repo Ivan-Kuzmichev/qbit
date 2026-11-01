@@ -1,6 +1,6 @@
 import { X } from 'lucide-react'
 import { useId, useState } from 'react'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import styles from './TagInput.module.css'
 
 export interface TagInputProps {

@@ -1,5 +1,5 @@
 import type { Preferences } from '../../api/types'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import styles from './SettingRow.module.css'
 
 const pad = (n: number) => String(n).padStart(2, '0')

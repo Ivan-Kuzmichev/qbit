@@ -1,4 +1,4 @@
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 
 const TOKEN = /^\d+:[A-Za-z0-9_-]{20,}$/
 const CHAT = /^(-?\d+|@[A-Za-z0-9_]{5,})$/

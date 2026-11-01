@@ -1,6 +1,6 @@
 import { Button } from '../../components/ui/Button'
 import { Dialog } from '../../components/ui/Dialog'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import { useRoute } from '../../lib/router'
 import { loadVersions } from '../auth/versions'
 import { logOut } from './logout'

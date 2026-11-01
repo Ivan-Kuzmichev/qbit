@@ -1,7 +1,7 @@
 import { memo } from 'react'
 import type { Torrent } from '../../api/types'
 import { Progress } from '../../components/ui/Progress'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import { formatBytes, formatEta, formatSpeed, percentOf } from '../../lib/format'
 import { shownSpeed } from '../torrents/columns'
 import { uiStatus } from '../torrents/status'

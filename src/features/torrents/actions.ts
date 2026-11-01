@@ -1,7 +1,7 @@
 import { api, type Params } from '../../api/client'
 import type { Torrent } from '../../api/types'
 import { toast } from '../../components/ui/Toast'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import { useTorrents } from '../../store/torrents'
 import type { RowAction } from './status'
 import { uiStatus } from './status'

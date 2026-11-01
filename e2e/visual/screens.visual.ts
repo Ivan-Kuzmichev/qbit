@@ -90,6 +90,7 @@ const cls = (root: Page | Locator, name: string) => root.locator(`[class*="_${na
 async function open(page: Page, viewport: { width: number; height: number }, hash: string, opts?: MockOptions) {
   await mockApi(page, opts)
   await page.setViewportSize(viewport)
+  await page.addInitScript(() => localStorage.setItem('qbit.lang', 'ru'))
   await page.addInitScript(() => localStorage.setItem('qbit.versions', JSON.stringify({ app: 'v5.1.2', api: '2.11.4' })))
   await page.goto(`/${hash}`)
   await page.evaluate(() => document.fonts.ready)

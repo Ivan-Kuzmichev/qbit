@@ -1,10 +1,11 @@
+import { locale } from '../../i18n'
 import type { Torrent } from '../../api/types'
 import type { SortDir } from '../../store/ui'
 import { matchesFilter, type Filter } from './filters'
 import { shownSpeed } from './columns'
 import { uiStatus } from './status'
 
-const collator = new Intl.Collator('ru', { sensitivity: 'base', numeric: true })
+const collator = new Intl.Collator(locale, { sensitivity: 'base', numeric: true })
 
 const STATUS_ORDER = ['downloading', 'seeding', 'done', 'paused', 'queued', 'checking', 'moving', 'error']
 

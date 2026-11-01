@@ -1,7 +1,7 @@
 import type { api as realApi } from '../../api/client'
 import { ApiError } from '../../api/client'
 import { toast } from '../../components/ui/Toast'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 
 export interface AddOptions {
   savepath: string

@@ -27,7 +27,7 @@
   justify-content: center;
   border-radius: 8px;
   background: var(--accent);
-  color: var(--bg);
+  color: var(--on-accent);
 }
 .name {
   font-size: 17px;
@@ -44,7 +44,7 @@
   color: var(--muted);
 }
 .down {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 .alt,
 .square {
@@ -63,7 +63,7 @@
 .alt[aria-pressed='true'] {
   border-color: var(--accent);
   background: var(--hover);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 .search {
   height: 44px;
@@ -136,7 +136,7 @@
   color: var(--muted);
 }
 .chipHit[aria-pressed='true'] .count {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 .footer {
   display: flex;
@@ -155,7 +155,7 @@
   border: 0;
   border-radius: 12px;
   background: var(--accent);
-  color: var(--bg);
+  color: var(--on-accent);
   font-size: 14px;
   font-weight: 600;
 }

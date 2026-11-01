@@ -56,7 +56,7 @@
   border: 1px dashed var(--neutral);
   border-radius: 10px;
   background: transparent;
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 15px;
   font-weight: 500;
 }
@@ -148,7 +148,7 @@
   flex: 1;
   border: 0;
   background: var(--accent);
-  color: var(--bg);
+  color: var(--on-accent);
 }
 .submit:disabled {
   opacity: 0.5;

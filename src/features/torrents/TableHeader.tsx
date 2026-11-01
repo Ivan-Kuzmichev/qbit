@@ -1,6 +1,6 @@
 import { ArrowDown, ArrowUp, Check, Columns3 } from 'lucide-react'
 import { Menu, type MenuItem } from '../../components/ui/Menu'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import { useUi, type OptionalColumn, type SortDir } from '../../store/ui'
 import { OPTIONAL_COLUMNS, type Column } from './columns'
 import styles from './TableHeader.module.css'

@@ -1,6 +1,6 @@
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { useCallback, useEffect, useMemo, useRef, useState, type FocusEvent, type MouseEvent } from 'react'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import { useHotkeys } from '../../lib/useHotkeys'
 import { useDialogs } from '../../store/dialogs'
 import { useTorrents } from '../../store/torrents'

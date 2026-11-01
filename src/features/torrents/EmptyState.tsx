@@ -1,6 +1,6 @@
 import { Inbox, SearchX } from 'lucide-react'
 import { Button } from '../../components/ui/Button'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import { useDialogs } from '../../store/dialogs'
 import { useUi } from '../../store/ui'
 import { ALL_FILTER } from './filters'

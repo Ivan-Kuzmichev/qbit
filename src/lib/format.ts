@@ -1,4 +1,4 @@
-import { t } from '../i18n/ru'
+import { locale, t } from '../i18n'
 
 function digits(v: number): string {
   if (v < 10) {
@@ -51,19 +51,15 @@ export function formatEta(sec: number): string {
   return `${Math.floor(sec / 86400)} ${t.eta.days}`
 }
 
+const pluralRules = new Intl.PluralRules(locale)
+
+/** forms: [one, few, many]; a language without "few" repeats its plural there. */
 export function plural(n: number, forms: [string, string, string]): string {
-  const abs = Math.abs(Math.trunc(n))
-  const m100 = abs % 100
-  const m10 = abs % 10
-  let form = forms[2]
-  if (m100 < 11 || m100 > 14) {
-    if (m10 === 1) form = forms[0]
-    else if (m10 >= 2 && m10 <= 4) form = forms[1]
-  }
-  return `${n} ${form}`
+  const rule = pluralRules.select(n)
+  return `${n} ${forms[rule === 'one' ? 0 : rule === 'few' ? 1 : 2]}`
 }
 
-const dateFormat = new Intl.DateTimeFormat('ru', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+const dateFormat = new Intl.DateTimeFormat(locale, { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
 
 /** `unixSeconds` as in the qBittorrent API. */
 export function formatDate(unixSeconds: number): string {

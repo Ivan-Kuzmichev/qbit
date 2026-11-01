@@ -6,6 +6,11 @@ const DEFAULT_ACCENT = '#60A5FA'
 
 const COLUMNS_KEY = 'qbit.columns'
 
+export const THEME_KEY = 'qbit.theme'
+export type ThemeChoice = 'system' | 'light' | 'dark'
+const DEFAULT_THEME: ThemeChoice = 'dark'
+const THEME_COLORS = { light: '#F4F4F5', dark: '#09090B' } as const
+
 export type SortDir = 'asc' | 'desc'
 export type OptionalColumn = 'queue' | 'ratio' | 'added'
 export type ColumnVisibility = Record<OptionalColumn, boolean>
@@ -37,9 +42,31 @@ function applyAccent(c: string): void {
   if (typeof document !== 'undefined') document.documentElement.style.setProperty('--accent', c)
 }
 
+function loadTheme(): ThemeChoice {
+  try {
+    const saved = localStorage.getItem(THEME_KEY)
+    return saved === 'system' || saved === 'light' || saved === 'dark' ? saved : DEFAULT_THEME
+  } catch {
+    return DEFAULT_THEME
+  }
+}
+
+const systemDark = () =>
+  typeof window === 'undefined' || !window.matchMedia ? null : window.matchMedia('(prefers-color-scheme: dark)')
+
+/** The same choice `theme-init.js` makes before first paint. */
+function applyTheme(choice: ThemeChoice): void {
+  if (typeof document === 'undefined') return
+  const resolved = choice === 'system' ? (systemDark()?.matches === false ? 'light' : 'dark') : choice
+  document.documentElement.dataset.theme = resolved
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_COLORS[resolved])
+}
+
 interface UiState {
   accent: string
   setAccent(c: string): void
+  theme: ThemeChoice
+  setTheme(c: ThemeChoice): void
   filter: Filter
   setFilter(f: Filter): void
   search: string
@@ -52,6 +79,8 @@ interface UiState {
 
 const initialAccent = loadAccent()
 applyAccent(initialAccent)
+const initialTheme = loadTheme()
+applyTheme(initialTheme)
 
 export const useUi = create<UiState>()((set) => ({
   accent: initialAccent,
@@ -63,6 +92,16 @@ export const useUi = create<UiState>()((set) => ({
     }
     applyAccent(c)
     set({ accent: c })
+  },
+  theme: initialTheme,
+  setTheme(theme) {
+    try {
+      localStorage.setItem(THEME_KEY, theme)
+    } catch {
+      // storage unavailable: keep the choice for this session only
+    }
+    applyTheme(theme)
+    set({ theme })
   },
   filter: ALL_FILTER,
   setFilter: (filter) => set({ filter }),
@@ -83,3 +122,6 @@ export const useUi = create<UiState>()((set) => ({
     })
   },
 }))
+
+// «Системная» follows the OS while the page stays open.
+systemDark()?.addEventListener?.('change', () => applyTheme(useUi.getState().theme))

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { Preferences } from '../../api/types'
 import { Toggle } from '../../components/ui/Toggle'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import styles from './SettingRow.module.css'
 import { buildTelegramCommand, isTelegramChat, isTelegramToken, parseTelegramCommand } from './telegram'
 

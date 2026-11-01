@@ -24,7 +24,7 @@
   font-weight: 400;
   letter-spacing: -0.03em;
   line-height: 1;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 .unit {
   font-family: var(--font-mono);

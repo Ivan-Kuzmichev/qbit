@@ -1,8 +1,8 @@
 {
   "name": "qBit",
   "short_name": "qBit",
-  "description": "WebUI для qBittorrent",
-  "lang": "ru",
+  "description": "WebUI for qBittorrent",
+  "lang": "en",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",

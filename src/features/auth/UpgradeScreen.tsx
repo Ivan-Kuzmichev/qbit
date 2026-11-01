@@ -1,4 +1,4 @@
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import styles from './LoginScreen.module.css'
 
 export function UpgradeScreen({ appVersion, apiVersion }: { appVersion: string; apiVersion: string }) {

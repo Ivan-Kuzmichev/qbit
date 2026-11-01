@@ -1,5 +1,5 @@
 import type { Torrent } from '../../api/types'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import { formatBytes, formatEta, percentOf, plural } from '../../lib/format'
 
 export type UiKind =

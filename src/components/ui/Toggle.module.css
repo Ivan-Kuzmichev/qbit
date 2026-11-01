@@ -23,11 +23,11 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: var(--text-2);
+  background: var(--knob-off);
   transition: transform 0.12s;
 }
 .toggle[aria-checked='true'] .knob {
-  background: var(--bg);
+  background: var(--on-accent);
   transform: translateX(16px);
 }
 @media (max-width: 767px) {

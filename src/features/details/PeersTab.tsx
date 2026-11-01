@@ -1,7 +1,7 @@
 import { memo } from 'react'
 import { createPortal } from 'react-dom'
 import type { Peer } from '../../api/types'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import { formatBytes, formatSpeed } from '../../lib/format'
 import { Flag } from './Flag'
 import styles from './PeersTab.module.css'

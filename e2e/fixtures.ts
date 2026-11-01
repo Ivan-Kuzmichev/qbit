@@ -80,7 +80,13 @@ async function makeQb(request: APIRequestContext): Promise<Qb> {
   return qb
 }
 
-export const test = base.extend<{ qb: Qb }>({
+export const test = base.extend<{ qb: Qb; lang: string | null }>({
+  // Specs read the Russian strings; null leaves the app on its own default.
+  lang: ['ru', { option: true }],
+  context: async ({ context, lang }, use) => {
+    if (lang) await context.addInitScript((l) => localStorage.getItem('qbit.lang') ?? localStorage.setItem('qbit.lang', l), lang)
+    await use(context)
+  },
   qb: async ({ playwright }, use) => {
     const request = await playwright.request.newContext()
     const qb = await makeQb(request)

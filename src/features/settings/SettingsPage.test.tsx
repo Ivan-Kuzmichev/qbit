@@ -377,4 +377,16 @@ describe('SettingsPage', () => {
       await waitFor(() => expect(sent(f)).toEqual([{ autorun_enabled: false }]))
     })
   })
+
+  it('theme switches at once, stays local and leaves nothing to save', async () => {
+    const f = setup()
+    const user = await open()
+    await user.click(screen.getByRole('button', { name: 'Внешний вид' }))
+    await user.click(screen.getByRole('radio', { name: 'Светлая' }))
+    expect(document.documentElement.dataset.theme).toBe('light')
+    expect(useUi.getState().theme).toBe('light')
+    expect(dirtyLabel()).toBeNull()
+    expect(sent(f)).toEqual([])
+    useUi.getState().setTheme('dark')
+  })
 })

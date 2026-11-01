@@ -13,6 +13,10 @@
   --muted: #A1A1AA;
   --dim: #71717A;
   --accent: #60A5FA;
+  /* accent used as text or a thin line, not as a fill */
+  --accent-text: var(--accent);
+  /* text and marks on a filled accent, the same in both themes */
+  --on-accent: #09090B;
   --seed: #4ADE80;
   --queue: #FBBF24;
   --danger: #F87171;
@@ -20,7 +24,42 @@
   --danger-text: #FCA5A5;
   --neutral: #3F3F46;
   --control-border: #52525B;
+  --knob-off: #D4D4D8;
+  --overlay: rgb(0 0 0 / 0.62);
+  --popup-shadow: rgb(0 0 0 / 0.5);
+  --flag-outline: rgb(255 255 255 / 0.12);
+  color-scheme: dark;
 
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+:root[data-theme='light'] {
+  --bg: #F4F4F5;
+  --surface: #FAFAFA;
+  --card: #FFFFFF;
+  --row-selected: #EEF2F8;
+  --hover: #EDEDEF;
+  --chip: #EDEDEF;
+  --border: #DEDEE2;
+  --border-subtle: #E9E9EC;
+  --divider: #F0F0F2;
+  --text: #18181B;
+  --text-2: #3F3F46;
+  --muted: #5C5C66;
+  --dim: #6B6B74;
+  /* the light accents are too pale to read on white: darken for text, keep the fills */
+  --accent-text: color-mix(in srgb, var(--accent) 55%, black);
+  --seed: #15803D;
+  --queue: #B45309;
+  --danger: #DC2626;
+  --danger-bg: #DC2626;
+  --danger-text: #B91C1C;
+  --neutral: #D4D4D8;
+  --control-border: #A1A1AA;
+  --knob-off: #FFFFFF;
+  --overlay: rgb(0 0 0 / 0.35);
+  --popup-shadow: rgb(0 0 0 / 0.16);
+  --flag-outline: rgb(0 0 0 / 0.12);
+  color-scheme: light;
 }

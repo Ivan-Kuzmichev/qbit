@@ -1,11 +1,11 @@
 import type { Preferences } from '../../api/types'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 
-export type RowKind = 'toggle' | 'text' | 'number' | 'limit' | 'select' | 'password' | 'schedule' | 'accent' | 'telegram'
+export type RowKind = 'toggle' | 'text' | 'number' | 'limit' | 'select' | 'password' | 'schedule' | 'accent' | 'telegram' | 'theme' | 'language'
 
 export interface Row {
-  /** Preference key; 'accent' for the local-only accent row. */
-  key: keyof Preferences | 'accent'
+  /** Preference key; 'accent', 'theme' and 'language' are local-only rows. */
+  key: keyof Preferences | 'accent' | 'theme' | 'language'
   kind: RowKind
   label: string
   hint?: string
@@ -292,6 +292,16 @@ export const sections: Section[] = [
     id: 'appearance',
     title: s.sections.appearance,
     cards: [
+      {
+        title: s.languageLabel,
+        desc: C.appearance.desc,
+        rows: [{ key: 'language', kind: 'language', label: s.languageLabel }],
+      },
+      {
+        title: s.themeLabel,
+        desc: C.appearance.desc,
+        rows: [{ key: 'theme', kind: 'theme', label: s.themeLabel }],
+      },
       {
         title: s.accentLabel,
         desc: C.appearance.desc,

@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 import type { Preferences } from '../../api/types'
 import { Dialog } from '../../components/ui/Dialog'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import { diffPrefs } from '../settings/diffPrefs'
 import type { Row } from '../settings/schema'
 import { SettingRow } from '../settings/SettingRow'

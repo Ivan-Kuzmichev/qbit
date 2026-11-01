@@ -1,7 +1,7 @@
 import { Link, Pause, Play, Plus, Search } from 'lucide-react'
 import { useRef } from 'react'
 import { Button } from '../../components/ui/Button'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import { useHotkeys } from '../../lib/useHotkeys'
 import { useTorrents } from '../../store/torrents'
 import { useDialogs } from '../../store/dialogs'

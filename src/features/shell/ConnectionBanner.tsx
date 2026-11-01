@@ -1,4 +1,4 @@
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import { useTorrents } from '../../store/torrents'
 import styles from './ConnectionBanner.module.css'
 

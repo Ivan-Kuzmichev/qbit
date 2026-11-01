@@ -1,6 +1,6 @@
 import { Gauge } from 'lucide-react'
 import { Toggle } from '../../components/ui/Toggle'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import { formatBytes, formatLimitSpeed, formatSpeed } from '../../lib/format'
 import { useDialogs } from '../../store/dialogs'
 import { useTorrents } from '../../store/torrents'

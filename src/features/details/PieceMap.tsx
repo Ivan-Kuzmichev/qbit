@@ -1,5 +1,5 @@
 import { memo, useMemo } from 'react'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import { compressPieces } from './compressPieces'
 import styles from './PieceMap.module.css'
 

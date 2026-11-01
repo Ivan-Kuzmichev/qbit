@@ -1,5 +1,5 @@
 import type { Torrent } from '../../api/types'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import type { OptionalColumn } from '../../store/ui'
 
 export type ColumnId = 'name' | 'status' | 'progress' | 'speed' | 'size' | OptionalColumn

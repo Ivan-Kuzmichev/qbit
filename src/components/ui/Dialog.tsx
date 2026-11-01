@@ -1,6 +1,6 @@
 import { X } from 'lucide-react'
 import { useEffect, useId, useRef, type ReactNode } from 'react'
-import { t } from '../../i18n/ru'
+import { t } from '../../i18n'
 import { IconButton } from './IconButton'
 import styles from './Dialog.module.css'
 

@@ -1,7 +1,7 @@
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { Gauge, Pause, Play, Tag, Trash2 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent } from 'react'
-import { t } from '../../i18n/ru'
+import { locale, t } from '../../i18n'
 import { navigate } from '../../lib/router'
 import { useDialogs } from '../../store/dialogs'
 import { useTorrents } from '../../store/torrents'
@@ -37,7 +37,7 @@ function TorrentSheet({ sheet, onChange, onClose }: { sheet: Sheet; onChange(s: 
   }
 
   if (sheet.view === 'category') {
-    const names = Object.keys(categories).sort((a, b) => a.localeCompare(b, 'ru'))
+    const names = Object.keys(categories).sort((a, b) => a.localeCompare(b, locale))
     const pick = (category: string) => then(() => void runTorrentAction('torrents/setCategory', hashes, { category }))
     const items: ActionSheetItem[] = [
       { id: '', label: t.menu.noCategory, checked: torrent.category === '', onSelect: pick('') },
